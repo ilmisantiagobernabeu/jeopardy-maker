@@ -1,0 +1,54 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  background: #000;
+}
+
+@font-face {
+  font-family: "swiss911";
+  src: url("fonts/swiss911.woff2") format("woff2"),
+    url("fonts/swiss911.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
+.Game {
+  &-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+    height: 100vh;
+    column-gap: 1em;
+    row-gap: 1em;
+    padding: 1em;
+    font-family: "swiss911";
+    > div {
+      background: #060ce9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      text-align: center;
+      padding: 2em;
+    }
+  }
+
+  &Card {
+    background: #060ce9;
+    border: 0;
+    padding: 0;
+    font: inherit;
+    appearance: none;
+    color: #fff;
+
+    &-front {
+      color: rgb(214, 159, 76);
+      text-shadow: rgb(0 0 0) 0.08em 0.08em;
+      font-size: 4em;
+    }
+  }
+}
