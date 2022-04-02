@@ -16,6 +16,16 @@ body {
   font-style: normal;
 }
 
+@font-face {
+  font-family: "korinna";
+  src: url("fonts/korinna.woff2") format("woff2"),
+    url("fonts/korinna.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
+$blue: #060ce9;
+
 .Game {
   &-grid {
     display: grid;
@@ -26,29 +36,58 @@ body {
     row-gap: 1em;
     padding: 1em;
     font-family: "swiss911";
-    > div {
-      background: #060ce9;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: #fff;
-      text-align: center;
-      padding: 2em;
-    }
+  }
+
+  &-category {
+    background: $blue;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    text-align: center;
+    padding: 1em;
+    line-height: 1;
+    font-size: 3em;
+    text-transform: uppercase;
   }
 
   &Card {
-    background: #060ce9;
+    background: $blue;
     border: 0;
-    padding: 0;
+    padding: 1em;
     font: inherit;
     appearance: none;
     color: #fff;
+    text-transform: uppercase;
 
     &-front {
       color: rgb(214, 159, 76);
       text-shadow: rgb(0 0 0) 0.08em 0.08em;
-      font-size: 4em;
+      font-size: 5em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    &-dollarSign {
+      margin-right: 0.1em;
     }
   }
+}
+
+.ClueModal {
+  font-family: "korinna";
+  // transform: translate(0, 0) scale(1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: $blue;
+  transform-origin: top left;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 2em;
+  text-shadow: rgb(0 0 0) 0.05em 0.05em 0px;
+  line-height: 1;
 }

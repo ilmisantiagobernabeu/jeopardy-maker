@@ -1,4 +1,6 @@
 import { useState } from "react";
+import cx from "classnames";
+import GameCard from "./GameCard";
 import "./App.scss";
 
 type Section = {
@@ -9,62 +11,50 @@ type Section = {
 const data = [
   {
     category: "History",
-    clues: [
-      "First one in first section",
-      "Second one in first section",
-      "Hello",
-      "Testing a much longer answer than the others",
-      "Second to last one",
-    ],
+    clues: ["History 1", "History 2", "History 3", "History 4", "History 5"],
   },
   {
     category: "Geography",
     clues: [
-      "First one in second section",
-      "Second one in second section",
-      "Hello",
-      "Testing a much longer answer than the others",
-      "Second to last one",
+      "Geography 1",
+      "Geography 2",
+      "Geography 3",
+      "Geography 4",
+      "Geography 5",
     ],
   },
   {
     category: "Science",
-    clues: [
-      "First one in third section",
-      "He plays in the sand",
-      "Hello",
-      "Testing a much longer answer than the others",
-      "Second to last one",
-    ],
+    clues: ["Science 1", "Science 2", "Science 3", "Science 4", "Science 5"],
   },
   {
     category: "Astronomy",
     clues: [
-      "First one",
-      "He plays in the sand",
-      "Hello",
-      "Testing a much longer answer than the others",
-      "Second to last one",
+      "Astronomy 1",
+      "Astronomy 2",
+      "Astronomy 3",
+      "Astronomy 4",
+      "Astronomy 5",
     ],
   },
   {
     category: "Celebrities",
     clues: [
-      "First one",
-      "He plays in the sand",
-      "Hello",
-      "Testing a much longer answer than the others",
-      "Second to last one",
+      "Celebrities 1",
+      "Celebrities 2",
+      "Celebrities 3",
+      "Celebrities 4",
+      "Celebrities 5",
     ],
   },
   {
-    category: "1999",
+    category: "Dennett-ology",
     clues: [
-      "First one",
-      "He plays in the sand",
-      "Hello",
-      "Testing a much longer answer than the others",
-      "Second to last one",
+      "This 10-letter word is a friend of Guy Dennett. Used to describe something in a very positive manner.",
+      "1999 2",
+      "1999 3",
+      "1999 4",
+      "1999 5",
     ],
   },
 ];
@@ -73,17 +63,17 @@ const catTitles = data.map((d) => d.category);
 
 const clues = data
   .map((obj) => obj.clues)
-  .reduce((newArr: string[], clues, index, ogArr) => {
-    for (const clueNum in clues) {
-      newArr.push(ogArr[clueNum][index]);
+  .reduce((newArr: string[], _, index, ogArr) => {
+    for (const cat in data) {
+      if (ogArr[cat][index]) {
+        newArr.push(ogArr[cat][index]);
+      }
     }
 
     return newArr;
   }, []);
 
 // loop through each array
-
-console.log("wtfwtfwtfwtfwtf", clues);
 
 function App() {
   const [round, setRound] = useState(1);
@@ -92,17 +82,10 @@ function App() {
     <div className="Game">
       <div className="Game-grid">
         {catTitles.map((title) => (
-          <div>{title}</div>
+          <div className="Game-category">{title}</div>
         ))}
-        {clues.map((a, i) => {
-          return (
-            <button className="GameCard">
-              <div className="GameCard-front">
-                {Math.max(1, Math.ceil((i + 1) / 6)) * 100 * (round * 2)}
-              </div>
-              <div className="GameCard-back">{a}</div>
-            </button>
-          );
+        {clues.map((clue, index) => {
+          return <GameCard clue={clue} index={index} round={round} />;
         })}
       </div>
     </div>
