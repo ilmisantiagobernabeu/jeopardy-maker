@@ -76,7 +76,6 @@ $blue: #060ce9;
 }
 
 .ClueModal {
-  font-family: "korinna";
   // transform: translate(0, 0) scale(1);
   position: fixed;
   top: 0;
@@ -88,6 +87,11 @@ $blue: #060ce9;
   align-items: center;
   text-align: center;
   padding: 2em;
-  text-shadow: rgb(0 0 0) 0.05em 0.05em 0px;
-  line-height: 1;
+  
+  &-text {
+    line-height: 1;
+    font-family: "korinna";
+    text-shadow: rgb(0 0 0) 0.05em 0.05em 0px;
+    
+  }
 }

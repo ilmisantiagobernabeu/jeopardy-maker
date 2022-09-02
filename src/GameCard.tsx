@@ -1,8 +1,14 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import cx from "classnames";
+import { useLocation } from "react-router-dom";
+import { useGlobalState } from "./GlobalStateProvider";
 
+type Clue = {
+  text: string;
+  answer: string;
+};
 type Props = {
-  clue: string;
+  clue: Clue;
   index: number;
   round: number;
 };
@@ -19,6 +25,10 @@ const GameCard = ({ clue, index, round }: Props) => {
   const [scale, setScale] = useState<Record<string, any> | undefined>(
     undefined
   );
+
+  const { search } = useLocation();
+
+  const searchParams = new URLSearchParams(search);
 
   useLayoutEffect(() => {
     if (isFlipped && buttonRef.current) {
@@ -71,24 +81,58 @@ const GameCard = ({ clue, index, round }: Props) => {
     };
   });
 
+  const value = Math.max(1, Math.ceil((index + 1) / 6)) * 100 * (round * 2);
+
+  const isHost = searchParams.get("isHost") === "true";
+
+  const { setPlayers } = useGlobalState() || {};
+
+  const handleCorrect = () => {
+    setPlayers?.((players: any) => ({
+      ...players,
+      "Team 1": 400,
+    }));
+  };
+
   return (
-    <button
-      className={cx("GameCard", {
-        "is-flipped": isFlipped,
-      })}
-      onClick={() => setIsFlipped(true)}
-      ref={buttonRef}
-    >
-      <div className="GameCard-front">
-        <span className="GameCard-dollarSign">$</span>
-        {Math.max(1, Math.ceil((index + 1) / 6)) * 100 * (round * 2)}
-      </div>
-      {isFlipped && (
-        <div className="ClueModal" style={{ ...styles, ...resetStyles }}>
-          {clue}
+    <>
+      <button
+        className={cx("GameCard", {
+          "is-flipped": isFlipped,
+        })}
+        onClick={() => setIsFlipped(true)}
+        ref={buttonRef}
+      >
+        <div className="GameCard-front">
+          <span className="GameCard-dollarSign">$</span>
+          {value}
+        </div>
+        {isFlipped && (
+          <div
+            className="ClueModal flex-col"
+            style={{ ...styles, ...resetStyles }}
+          >
+            <p className="ClueModal-text">{clue.text}</p>
+            {isHost && (
+              <div className="font-normal text-green-700">{clue.answer}</div>
+            )}
+          </div>
+        )}
+      </button>
+      {isFlipped && isHost && (
+        <div className="fixed bottom-0 left-0 right-0 flex justify-center align-center p-5 gap-x-8">
+          <button
+            className="text-green-600 text-6xl bg-white hover:bg-black p-4 rounded-md"
+            onClick={handleCorrect}
+          >
+            Correct!
+          </button>
+          <button className="text-red-600 text-6xl bg-white hover:bg-black p-4 rounded-md">
+            Incorrect!
+          </button>
         </div>
       )}
-    </button>
+    </>
   );
 };
 
