@@ -1,4 +1,5 @@
 import React, { useContext, useState } from "react";
+import { GameState } from "../stateTypes";
 
 interface Player {
   [name: string]: number;
@@ -15,9 +16,13 @@ export type ContextType = {
   >;
   activePlayer: string;
   setActivePlayer: React.Dispatch<React.SetStateAction<string>>;
+  gameState: GameState | null;
+  setGameState: React.Dispatch<React.SetStateAction<GameState | null>>;
 };
 
-const GlobalStateContext = React.createContext<ContextType | null>(null);
+const GlobalStateContext = React.createContext<ContextType | null>(
+  null
+) as React.Context<ContextType>;
 
 export const useGlobalState = () => {
   return useContext(GlobalStateContext);
@@ -30,10 +35,18 @@ const GlobalStateProvider = ({ children }: { children: React.ReactNode }) => {
     "Team 3": 0,
   });
   const [activePlayer, setActivePlayer] = useState("Team 1");
+  const [gameState, setGameState] = useState<GameState | null>(null);
 
   return (
     <GlobalStateContext.Provider
-      value={{ players, setPlayers, activePlayer, setActivePlayer }}
+      value={{
+        players,
+        setPlayers,
+        activePlayer,
+        setActivePlayer,
+        gameState,
+        setGameState,
+      }}
     >
       {children}
     </GlobalStateContext.Provider>

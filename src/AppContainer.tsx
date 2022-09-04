@@ -2,18 +2,11 @@ import React, { useEffect, useRef, useState } from "react";
 import { Routes, Route, Link } from "react-router-dom";
 import App from "./App";
 import useNoSleep from "use-no-sleep";
-import GlobalStateProvider from "./GlobalStateProvider";
+import GlobalStateProvider, { useGlobalState } from "./GlobalStateProvider";
+import { GameState } from "../stateTypes";
 import Scoreboard from "./Scoreboard";
 import { io, Socket } from "socket.io-client";
 // import { socket } from "./socket";
-
-interface GameObject {
-  count: number;
-}
-
-interface GameState {
-  [socketId: string]: GameObject;
-}
 
 interface ServerToClientEvents {
   noArg: () => void;
@@ -34,7 +27,7 @@ let socket: Socket<ServerToClientEvents, ClientToServerEvents> | null = null;
 const AppContainer = () => {
   useNoSleep(true);
 
-  const [gameState, setGameState] = useState<GameState | null>(null);
+  const { gameState, setGameState } = useGlobalState();
 
   useEffect(() => {
     // connect to the socket server
@@ -43,6 +36,7 @@ const AppContainer = () => {
     // when connected, look for when the server emits the updated count
     socket.on("gameState updated", function (gameStateFromServer: GameState) {
       // set the new count on the client
+      console.log("wtf", gameStateFromServer);
       setGameState(gameStateFromServer);
     });
 
@@ -50,19 +44,9 @@ const AppContainer = () => {
       socket?.emit("new player joined");
     });
 
-    function cleanup() {
-      socket?.emit("a player disconnected");
-    }
-
     socket.on("disconnect", () => {
-      cleanup();
+      socket?.emit("a player disconnected");
     });
-
-    window.addEventListener("beforeunload", cleanup);
-
-    return () => {
-      window.addEventListener("beforeunload", cleanup);
-    };
   }, []);
 
   function handleClick() {
@@ -70,7 +54,7 @@ const AppContainer = () => {
   }
 
   return (
-    <GlobalStateProvider>
+    <>
       <button onClick={handleClick} className="text-white">
         State: {JSON.stringify(gameState)}
       </button>
@@ -78,9 +62,9 @@ const AppContainer = () => {
         <Route path="/" element={<App />} />
         <Route path="/scoreboard" element={<Scoreboard />} />
         <Route path="/scoreboard/:name" element={<Scoreboard />} />
-        <Route path="wtf" element={<Scoreboard />} />
+        <Route path="/scoreboard/:name" element={<Scoreboard />} />
       </Routes>
-    </GlobalStateProvider>
+    </>
   );
 };
 

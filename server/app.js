@@ -1,3 +1,5 @@
+// import { GameState } from "../stateTypes";
+
 const io = require("socket.io")(5000, {
   cors: {
     origin: "http://localhost:3000",
