@@ -1,21 +1,14 @@
-import { useState } from "react";
-import cx from "classnames";
+import { useEffect } from "react";
 import GameCard from "./GameCard";
 import "./App.scss";
-import Scoreboard from "./Scoreboard";
-import PlayerJoin from "./PlayerJoin";
-import { useLocation } from "react-router-dom";
 import { useGlobalState } from "./GlobalStateProvider";
 
-type Section = {
-  category: string;
-  clues: string[];
-};
+function App({ round }: { round: number }) {
+  const { gameState, socket } = useGlobalState();
 
-function App() {
-  const [round, setRound] = useState(1);
-
-  const { gameState } = useGlobalState();
+  useEffect(() => {
+    socket?.emit("Host navigates to another round", round);
+  }, [round, socket]);
 
   const catTitles = gameState?.gameBoard.map((d) => d.category);
 

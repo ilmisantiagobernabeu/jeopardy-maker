@@ -1,8 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Routes, Route, Link, useLocation } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import App from "./App";
-import GlobalStateProvider, { useGlobalState } from "./GlobalStateProvider";
-import { GameState } from "../stateTypes";
+import { useGlobalState } from "./GlobalStateProvider";
 import Scoreboard from "./Scoreboard";
 import PlayerJoin from "./PlayerJoin";
 import Homepage from "./Homepage";
@@ -16,21 +14,13 @@ const Debug = () => {
 };
 
 const AppContainer = () => {
-  const { gameState, setGameState, socket } = useGlobalState();
-
-  function handleClick() {
-    socket?.emit("counter clicked", socket.id);
-  }
-
   return (
     <>
-      {/* <button onClick={handleClick} className="text-white">
-        State: {JSON.stringify(gameState)}
-      </button> */}
       <Routes>
         <Route path="/" element={<Homepage />} />
         <Route path="/answer" element={<HostControls />} />
-        <Route path="/game" element={<App />} />
+        <Route path="/game" element={<App round={1} />} />
+        <Route path="/game2" element={<App round={2} />} />
         <Route path="/scoreboard" element={<Scoreboard />} />
         <Route path="/scoreboard/:name" element={<Scoreboard />} />
         <Route path="/scoreboard/:name" element={<Scoreboard />} />

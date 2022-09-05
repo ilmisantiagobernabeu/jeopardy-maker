@@ -1,6 +1,6 @@
 // import { GameState } from "../stateTypes";
 const { on } = require("nodemon");
-const { data } = require("./data");
+const { data, dataRoundTwo } = require("./data");
 
 const io = require("socket.io")(5000, {
   cors: {
@@ -19,6 +19,8 @@ let gameState = {
   gameBoard: data,
   incorrectGuesses: [],
 };
+
+const rounds = [data, dataRoundTwo];
 
 const playersThatLeft = [];
 
@@ -117,6 +119,12 @@ io.on("connect", function (socket) {
     if (gameState.activePlayer) return;
     gameState.activePlayer = socket.id;
     gameState.isBuzzerActive = false;
+    io.emit("gameState updated", gameState);
+  });
+
+  socket.on("Host navigates to another round", (round) => {
+    console.log("navigate 1st round", data);
+    gameState.gameBoard = rounds[round - 1];
     io.emit("gameState updated", gameState);
   });
 
