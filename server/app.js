@@ -1,4 +1,5 @@
 // import { GameState } from "../stateTypes";
+const { on } = require("nodemon");
 const { data } = require("./data");
 
 const io = require("socket.io")(5000, {
@@ -66,33 +67,28 @@ io.on("connect", function (socket) {
     "A player answers the clue",
     ({ value: score, clueText, arrayIndex }) => {
       if (score < 0) {
+        io.emit("play incorrect sound");
         gameState.incorrectGuesses.push(gameState.activePlayer);
+        gameState.isBuzzerActive = true;
 
         const activePlayers = Object.values(gameState.players).filter(
           (x) => x.name
         );
-        console.log(
-          "haha incorrect",
-          activePlayers,
-          gameState.incorrectGuesses
-        );
+
         if (gameState.incorrectGuesses.length === activePlayers.length) {
-          console.log("wtf", { arrayIndex }, gameState.gameBoard);
+          console.log("wtf", { arrayIndex });
           const clueIndex = gameState.gameBoard[arrayIndex].clues.findIndex(
             (clue) => clue.text === clueText
           );
           gameState.gameBoard[arrayIndex].clues[clueIndex].alreadyPlayed = true;
-        } else {
-          gameState.isBuzzerActive = true;
+          gameState.incorrectGuesses = [];
+          gameState.isBuzzerActive = false;
         }
       } else {
+        io.emit("play correct sound");
         gameState.incorrectGuesses = [];
         gameState.isBuzzerActive = false;
-        console.log(
-          "answered CORRECT",
-          clueText,
-          gameState.gameBoard[arrayIndex].clues
-        );
+
         const clueIndex = gameState.gameBoard[arrayIndex].clues.findIndex(
           (clue) => clue.text === clueText
         );
@@ -110,6 +106,7 @@ io.on("connect", function (socket) {
   });
 
   socket.on("A player hits the buzzer", () => {
+    if (gameState.activePlayer) return;
     gameState.activePlayer = socket.id;
     gameState.isBuzzerActive = false;
     io.emit("gameState updated", gameState);
