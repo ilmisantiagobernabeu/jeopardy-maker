@@ -84,8 +84,6 @@ const GameCard = ({ clue, index, round }: Props) => {
 
   const value = Math.max(1, Math.ceil((index + 1) / 6)) * 100 * (round * 2);
 
-  const isHost = searchParams.get("isHost") === "true";
-
   const { socket, gameState } = useGlobalState() || {};
 
   const handleCorrect = () => {
@@ -166,7 +164,7 @@ const GameCard = ({ clue, index, round }: Props) => {
           </div>
         )}
       </button>
-      {isFlipped && isHost && (
+      {isFlipped && (
         <div className="fixed z-10 bottom-0 left-0 right-0 flex justify-center align-center p-5 gap-x-8">
           {gameState?.players[gameState?.activePlayer]?.name && (
             <p className="fixed top-4 w-full text-center text-6xl text-white">

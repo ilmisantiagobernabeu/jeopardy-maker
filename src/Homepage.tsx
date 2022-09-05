@@ -11,16 +11,10 @@ const Homepage = () => {
         Add New Team
       </Link>
       <Link
-        to="/game?isHost=true"
-        className="p-3 bg-[#060ce9] text-[#d69f4c] font-[swiss911] text-3xl"
-      >
-        Host
-      </Link>
-      <Link
         to="/game"
         className="p-3 bg-[#060ce9] text-[#d69f4c] font-[swiss911] text-3xl"
       >
-        Gameboard
+        Host
       </Link>
     </div>
   );

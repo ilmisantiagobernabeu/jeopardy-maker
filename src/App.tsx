@@ -2,9 +2,12 @@ import { useEffect } from "react";
 import GameCard from "./GameCard";
 import "./App.scss";
 import { useGlobalState } from "./GlobalStateProvider";
+import { useNavigate } from "react-router-dom";
 
 function App({ round }: { round: number }) {
   const { gameState, socket } = useGlobalState();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     socket?.emit("Host navigates to another round", round);
@@ -23,6 +26,14 @@ function App({ round }: { round: number }) {
 
       return newArr;
     }, []);
+
+  useEffect(() => {
+    const isEveryCluePlayed = clues?.every((clue) => clue?.alreadyPlayed);
+
+    if (isEveryCluePlayed) {
+      navigate(`/game${round + 1}`);
+    }
+  }, [round, clues]);
 
   return (
     <>
