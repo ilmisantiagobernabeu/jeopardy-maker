@@ -59,6 +59,7 @@ $blue: #060ce9;
     appearance: none;
     color: #fff;
     text-transform: uppercase;
+    position: relative;
 
     &-front {
       color: rgb(214, 159, 76);
@@ -87,6 +88,7 @@ $blue: #060ce9;
   align-items: center;
   text-align: center;
   padding: 2em;
+  z-index: 1;
   
   &-text {
     line-height: 1;

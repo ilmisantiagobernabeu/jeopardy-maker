@@ -47,7 +47,7 @@ function App() {
           {clues?.map((clue, index) => {
             return (
               <GameCard
-                key={clue + index.toString()}
+                key={clue.text + index.toString()}
                 clue={clue}
                 index={index}
                 round={round}

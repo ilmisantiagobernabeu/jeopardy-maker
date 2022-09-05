@@ -1,10 +1,12 @@
 interface Clue {
   text: string;
   answer: string;
+  alreadyPlayed?: boolean;
 }
 
 interface GameBoard {
-  [category: string]: Clue[];
+  category: string;
+  clues: Clue[];
 }
 
 export interface GameObject {
@@ -15,6 +17,7 @@ export interface GameObject {
 interface PlayerObject {
   score: number;
   count: number;
+  name: string;
 }
 
 interface Players {

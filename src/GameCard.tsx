@@ -6,6 +6,7 @@ import { useGlobalState } from "./GlobalStateProvider";
 type Clue = {
   text: string;
   answer: string;
+  alreadyPlayed?: boolean;
 };
 type Props = {
   clue: Clue;
@@ -88,24 +89,49 @@ const GameCard = ({ clue, index, round }: Props) => {
   const { socket, gameState } = useGlobalState() || {};
 
   const handleCorrect = () => {
-    // 1. we need to mark this as correct
-
     // 2. close the clue everywhere
     setResetStyles(undefined);
     setStyles(undefined);
     setIsFlipped(false);
 
-    socket?.emit("A player answers the clue", { value, clueText: clue.text });
+    socket?.emit("A player answers the clue", {
+      value,
+      arrayIndex: index % 6,
+      clueText: clue.text,
+    });
   };
 
   const handleIncorrect = () => {
     console.log("clicked incorrect!");
-    socket?.emit("A player answers the clue", { value: value * -1 });
+    socket?.emit("A player answers the clue", {
+      value: value * -1,
+      arrayIndex: index % 6,
+      clueText: clue.text,
+    });
   };
 
   const handleBuzzerToggle = () => {
     socket?.emit("Host activates the buzzers");
   };
+
+  const handleNobodyKnows = () => {
+    socket?.emit("No player knows the answer", {
+      clueText: clue.text,
+      arrayIndex: index % 6,
+    });
+  };
+
+  if (clue?.alreadyPlayed) {
+    return (
+      <div
+        className={cx("GameCard", {
+          "is-flipped": isFlipped,
+        })}
+      >
+        <div className="bg-black absolute inset-0" />
+      </div>
+    );
+  }
 
   return (
     <>
@@ -133,24 +159,36 @@ const GameCard = ({ clue, index, round }: Props) => {
         )}
       </button>
       {isFlipped && isHost && (
-        <div className="fixed bottom-0 left-0 right-0 flex justify-center align-center p-5 gap-x-8">
+        <div className="fixed z-10 bottom-0 left-0 right-0 flex justify-center align-center p-5 gap-x-8">
           <button
+            disabled={!gameState?.isBuzzerActive && !gameState?.activePlayer}
             onClick={handleCorrect}
-            className="text-green-600 text-6xl bg-white hover:bg-black p-4 rounded-md"
+            className="text-green-600 disabled:opacity-30 text-6xl bg-white hover:bg-black p-4 rounded-md"
           >
             Correct!
           </button>
           <button
+            disabled={!gameState?.isBuzzerActive && !gameState?.activePlayer}
             onClick={handleIncorrect}
-            className="text-red-600 text-6xl bg-white hover:bg-black p-4 rounded-md"
+            className="text-red-600 disabled:opacity-30 text-6xl bg-white hover:bg-black p-4 rounded-md"
           >
             Incorrect!
           </button>
           <button
-            onClick={handleBuzzerToggle}
-            className="text-green-600 text-6xl bg-white hover:bg-black p-4 rounded-md"
+            disabled={!gameState?.isBuzzerActive && !gameState?.activePlayer}
+            onClick={handleNobodyKnows}
+            className="text-red-600 disabled:opacity-30 text-6xl bg-white hover:bg-black p-4 rounded-md"
           >
-            Buzzers {gameState?.isBuzzerActive ? "OFF" : "ON"}
+            Nobody Knows!
+          </button>
+          <button
+            onClick={handleBuzzerToggle}
+            disabled={Boolean(
+              gameState?.isBuzzerActive || gameState?.activePlayer
+            )}
+            className="text-green-600 disabled:opacity-30 text-6xl bg-white hover:bg-black p-4 rounded-md"
+          >
+            Buzzers ON
           </button>
         </div>
       )}

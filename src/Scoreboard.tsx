@@ -4,6 +4,14 @@ import { useGlobalState } from "./GlobalStateProvider";
 import cx from "classnames";
 import { GameState } from "../stateTypes";
 
+function formatScore(score: number) {
+  if (score < 0) {
+    return `-$${Math.abs(score)}`;
+  }
+
+  return `$${score}`;
+}
+
 const Scoreboard = () => {
   const { gameState } = useGlobalState() || {};
   const { name } = useParams();
@@ -21,7 +29,7 @@ const Scoreboard = () => {
       className={cx(
         "flex w-full h-full fixed top-0 left-0 justify-center items-center flex-col",
         {
-          "bg-teal-500": singlePlayerStats,
+          "bg-[#060ce9]": singlePlayerStats,
         }
       )}
     >
@@ -37,10 +45,19 @@ const Scoreboard = () => {
             </div>
           ))}
       {singlePlayerStats && (
-        <div key={name}>
-          <p className="text-9xl text-white my-4">
-            {singlePlayerStats.name}: {singlePlayerStats.score}
-          </p>
+        <div className="GameCard">
+          <div className="GameCard-front text-center flex-col" key={name}>
+            <p className="text-9xl text-white my-4 border-b-4">
+              {singlePlayerStats.name}
+            </p>
+            <p
+              className={cx("text-9xl text-white my-4", {
+                "text-red-500": singlePlayerStats.score < 0,
+              })}
+            >
+              {formatScore(singlePlayerStats.score)}
+            </p>
+          </div>
         </div>
       )}
     </div>

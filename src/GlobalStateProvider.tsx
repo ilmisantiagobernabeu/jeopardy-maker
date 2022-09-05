@@ -21,10 +21,15 @@ interface ClientToServerEvents {
   ["player signed up"]: (playerName: string) => void;
   ["A player answers the clue"]: (clueObject: {
     value: number;
+    arrayIndex: number;
     clueText?: string;
   }) => void;
   ["Host activates the buzzers"]: () => void;
   ["A player hits the buzzer"]: () => void;
+  ["No player knows the answer"]: (clueObject: {
+    arrayIndex: number;
+    clueText: string;
+  }) => void;
 }
 
 export type ContextType = {

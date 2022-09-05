@@ -11,7 +11,8 @@ const PlayerJoin = () => {
 
   const navigate = useNavigate();
 
-  function handleClick() {
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
     socket?.emit("player signed up", playerName);
     navigate("/buzzer");
   }
@@ -21,7 +22,10 @@ const PlayerJoin = () => {
   }
 
   return (
-    <div className="fixed inset-0 w-full h-full flex-col flex items-center justify-center">
+    <form
+      onSubmit={handleSubmit}
+      className="fixed inset-0 w-full h-full flex-col flex items-center justify-center p-8"
+    >
       <label htmlFor="playerJoin" className="text-white mb-2 text-3xl">
         Select a team name
       </label>
@@ -34,18 +38,12 @@ const PlayerJoin = () => {
         onChange={handleChange}
       />
       <div className="flex gap-4 mt-4">
-        <button
-          type="button"
-          onClick={handleClick}
-          className="bg-white p-1 appearance-none"
-        >
-          Join Game
-        </button>
+        <button className="bg-white p-1 appearance-none">Join Game</button>
         {/* <button onClick={handleClick} className="bg-white p-1 appearance-none">
           State: {JSON.stringify(gameState)}
         </button> */}
       </div>
-    </div>
+    </form>
   );
 };
 

@@ -62,19 +62,47 @@ io.on("connect", function (socket) {
     io.emit("gameState updated", gameState);
   });
 
-  socket.on("A player answers the clue", ({ value: score, clueText }) => {
-    if (score < 0) {
-      gameState.incorrectGuesses.push(gameState.activePlayer);
-      gameState.isBuzzerActive = true;
-    } else {
-      gameState.incorrectGuesses = [];
-      gameState.isBuzzerActive = false;
-      // gameState.gameBoardclueText
+  socket.on(
+    "A player answers the clue",
+    ({ value: score, clueText, arrayIndex }) => {
+      if (score < 0) {
+        gameState.incorrectGuesses.push(gameState.activePlayer);
+
+        const activePlayers = Object.values(gameState.players).filter(
+          (x) => x.name
+        );
+        console.log(
+          "haha incorrect",
+          activePlayers,
+          gameState.incorrectGuesses
+        );
+        if (gameState.incorrectGuesses.length === activePlayers.length) {
+          console.log("wtf", { arrayIndex }, gameState.gameBoard);
+          const clueIndex = gameState.gameBoard[arrayIndex].clues.findIndex(
+            (clue) => clue.text === clueText
+          );
+          gameState.gameBoard[arrayIndex].clues[clueIndex].alreadyPlayed = true;
+        } else {
+          gameState.isBuzzerActive = true;
+        }
+      } else {
+        gameState.incorrectGuesses = [];
+        gameState.isBuzzerActive = false;
+        console.log(
+          "answered CORRECT",
+          clueText,
+          gameState.gameBoard[arrayIndex].clues
+        );
+        const clueIndex = gameState.gameBoard[arrayIndex].clues.findIndex(
+          (clue) => clue.text === clueText
+        );
+        gameState.gameBoard[arrayIndex].clues[clueIndex].alreadyPlayed = true;
+      }
+      gameState.players[gameState.activePlayer].score += score;
+      gameState.activePlayer = null;
+      io.emit("gameState updated", gameState);
     }
-    gameState.players[gameState.activePlayer].score += score;
-    gameState.activePlayer = null;
-    io.emit("gameState updated", gameState);
-  });
+  );
 
   socket.on("Host activates the buzzers", () => {
     gameState.isBuzzerActive = !gameState.isBuzzerActive;
@@ -84,12 +112,20 @@ io.on("connect", function (socket) {
   socket.on("A player hits the buzzer", () => {
     gameState.activePlayer = socket.id;
     gameState.isBuzzerActive = false;
-    console.log("players hits the buzzer", gameState);
+    io.emit("gameState updated", gameState);
+  });
+
+  socket.on("No player knows the answer", ({ clueText, arrayIndex }) => {
+    gameState.incorrectGuesses = [];
+    gameState.isBuzzerActive = false;
+    const clueIndex = gameState.gameBoard[arrayIndex].clues.findIndex(
+      (clue) => clue.text === clueText
+    );
+    gameState.gameBoard[arrayIndex].clues[clueIndex].alreadyPlayed = true;
     io.emit("gameState updated", gameState);
   });
 
   socket.on("disconnect", function () {
-    console.log(socket.id + " disconnected!");
     // emit to EVERYONE the update game state
     delete gameState.players[socket.id];
     io.emit("gameState updated", gameState);
