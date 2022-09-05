@@ -20,6 +20,8 @@ let gameState = {
   incorrectGuesses: [],
 };
 
+const playersThatLeft = [];
+
 io.on("connect", function (socket) {
   console.log("A new client has joined", socket.id);
 
@@ -46,15 +48,17 @@ io.on("connect", function (socket) {
     io.emit("gameState updated", gameState);
   });
 
-  socket.on("a player disconnected", () => {
-    // emit to EVERYONE the update game state
-    // console.log("wtfwtfwtf player left!!!", socket.id);
-    delete gameState.players[socket.id];
-    io.emit("gameState updated", gameState);
-  });
-
   socket.on("player signed up", (playerName) => {
-    gameState.players[socket.id].name = playerName;
+    console.log({ playersThatLeft });
+    const returnedPlayer = playersThatLeft.find(
+      (player) => player?.name && player.name === playerName
+    );
+    if (returnedPlayer) {
+      gameState.players[socket.id] = returnedPlayer;
+    } else {
+      console.log("ahhhhhh", socket.id, gameState.players);
+      gameState.players[socket.id].name = playerName;
+    }
     // console.log("yo, this player signed up", gameState);
     io.emit("gameState updated", gameState);
   });
@@ -126,9 +130,23 @@ io.on("connect", function (socket) {
     io.emit("gameState updated", gameState);
   });
 
-  socket.on("disconnect", function () {
-    // emit to EVERYONE the update game state
+  socket.on("a player disconnected", () => {
+    // if they had a name and left, let them rejoin with old score
+    if (gameState.players[socket.id]?.name) {
+      playersThatLeft.push(gameState.players[socket.id]);
+    }
     delete gameState.players[socket.id];
+    // emit to EVERYONE the update game state
+    io.emit("gameState updated", gameState);
+  });
+
+  socket.on("disconnect", function () {
+    // if they had a name and left, let them rejoin with old score
+    if (gameState.players[socket.id]?.name) {
+      playersThatLeft.push(gameState.players[socket.id]);
+    }
+    delete gameState.players[socket.id];
+    // emit to EVERYONE the update game state
     io.emit("gameState updated", gameState);
   });
 });

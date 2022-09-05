@@ -16,15 +16,15 @@ const Buzzer = () => {
   };
 
   const isActivePlayer =
-    gameState!.activePlayer && gameState!.activePlayer === socket!.id;
+    gameState?.activePlayer && gameState?.activePlayer === socket!.id;
 
   // Disable the button if:
   // 1. the buzzer hasn't been activated by the host
   // 2. the buzzer HAS been activated, but it's not the current player.
   const disabled = Boolean(
-    !gameState!.isBuzzerActive ||
-      (gameState!.isBuzzerActive && isActivePlayer) ||
-      gameState!.incorrectGuesses.includes(socket!.id)
+    !gameState?.isBuzzerActive ||
+      (gameState?.isBuzzerActive && isActivePlayer) ||
+      gameState?.incorrectGuesses.includes(socket!.id)
   );
 
   return (

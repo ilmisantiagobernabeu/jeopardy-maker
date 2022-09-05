@@ -7,13 +7,16 @@ import { useNavigate } from "react-router-dom";
 
 const PlayerJoin = () => {
   const { gameState, setGameState, socket, setSocket } = useGlobalState();
-  const [playerName, setPlayerName] = useState("");
+  const [playerName, setPlayerName] = useState(
+    localStorage.getItem("dt-playerName") || ""
+  );
 
   const navigate = useNavigate();
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     socket?.emit("player signed up", playerName);
+    localStorage.setItem("dt-playerName", playerName);
     navigate("/buzzer");
   }
 
@@ -34,7 +37,7 @@ const PlayerJoin = () => {
         type="text"
         placeholder="Team Name"
         className="w-full max-w-lg p-4"
-        value={playerName}
+        value={playerName || localStorage.getItem("dt-playerName")}
         onChange={handleChange}
       />
       <div className="flex gap-4 mt-4">
