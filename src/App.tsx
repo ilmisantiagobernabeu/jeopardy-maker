@@ -15,10 +15,6 @@ type Section = {
 function App() {
   const [round, setRound] = useState(1);
 
-  const { search } = useLocation();
-
-  const searchParams = new URLSearchParams(search);
-
   const { gameState } = useGlobalState();
 
   const catTitles = gameState?.gameBoard.map((d) => d.category);
@@ -56,8 +52,6 @@ function App() {
           })}
         </div>
       </div>
-
-      <button>+ (Add new Player)</button>
     </>
   );
 }

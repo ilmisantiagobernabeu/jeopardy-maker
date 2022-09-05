@@ -2,9 +2,11 @@ import React from "react";
 import { useGlobalState } from "./GlobalStateProvider";
 import cx from "classnames";
 import buzzerSound from "./buzzer.mp3";
+import useNoSleep from "use-no-sleep";
 
 const Buzzer = () => {
   const { socket, gameState } = useGlobalState();
+  useNoSleep(true);
 
   const handleClick = () => {
     console.log("wtf handle click broooo", socket);
@@ -39,10 +41,10 @@ const Buzzer = () => {
         disabled={disabled}
         onClick={handleClick}
       >
-        {isActivePlayer ? "✓" : "×"}
+        {!isActivePlayer && "×"}
       </button>
-      <p className="fixed bottom-0 w-full left-0 text-center pb-10 text-6xl opacity-30">
-        {gameState?.players?.[socket?.id || ""]?.name}
+      <p className="fixed top-0 w-full left-0 text-center pt-10 text-6xl opacity-30">
+        Team {gameState?.players?.[socket?.id || ""]?.name}
       </p>
     </div>
   );

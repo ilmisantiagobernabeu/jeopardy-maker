@@ -1,8 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
-import { GameState } from "../stateTypes";
-import rightAnswerSound from "./rightanswer.mp3";
-import wrongAnswerSound from "./wronganswer.mp3";
+import { Clue, GameState } from "../stateTypes";
 
 interface Player {
   [name: string]: number;
@@ -34,6 +32,7 @@ interface ClientToServerEvents {
     arrayIndex: number;
     clueText: string;
   }) => void;
+  ["Host selects a clue"]: (clueObject: Clue) => void;
 }
 
 export type ContextType = {
@@ -60,7 +59,7 @@ const GlobalStateProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     // connect to the socket server
-    setSocket(io("ws://localhost:5000"));
+    setSocket(io("ws://10.0.0.208:5000"));
   }, []);
 
   useEffect(() => {
@@ -68,16 +67,6 @@ const GlobalStateProvider = ({ children }: { children: React.ReactNode }) => {
     socket?.on("gameState updated", function (gameStateFromServer: GameState) {
       // set the new game state on the client
       setGameState(gameStateFromServer);
-    });
-
-    socket?.on("play correct sound", () => {
-      const audio = new Audio(rightAnswerSound);
-      audio.play();
-    });
-
-    socket?.on("play incorrect sound", () => {
-      const audio = new Audio(wrongAnswerSound);
-      audio.play();
     });
 
     socket?.on("connect", () => {

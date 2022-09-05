@@ -4,16 +4,17 @@ const { data } = require("./data");
 
 const io = require("socket.io")(5000, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: "http://10.0.0.208:3000",
     methods: ["GET", "POST"],
   },
-  "sync disconnect on unload": true,
+  "sync disconnect on unload": false,
 });
 
 // the game state
 let gameState = {
   isBuzzerActive: false,
   activePlayer: null,
+  activeClue: null,
   players: {},
   gameBoard: data,
   incorrectGuesses: [],
@@ -67,7 +68,6 @@ io.on("connect", function (socket) {
     "A player answers the clue",
     ({ value: score, clueText, arrayIndex }) => {
       if (score < 0) {
-        io.emit("play incorrect sound");
         gameState.incorrectGuesses.push(gameState.activePlayer);
         gameState.isBuzzerActive = true;
 
@@ -85,7 +85,6 @@ io.on("connect", function (socket) {
           gameState.isBuzzerActive = false;
         }
       } else {
-        io.emit("play correct sound");
         gameState.incorrectGuesses = [];
         gameState.isBuzzerActive = false;
 
@@ -99,6 +98,11 @@ io.on("connect", function (socket) {
       io.emit("gameState updated", gameState);
     }
   );
+
+  socket.on("Host selects a clue", (activeClue) => {
+    gameState.activeClue = activeClue;
+    io.emit("gameState updated", gameState);
+  });
 
   socket.on("Host activates the buzzers", () => {
     gameState.isBuzzerActive = !gameState.isBuzzerActive;

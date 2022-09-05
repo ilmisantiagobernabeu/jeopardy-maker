@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { useGlobalState } from "./GlobalStateProvider";
 import cx from "classnames";
 import { GameState } from "../stateTypes";
+import useNoSleep from "use-no-sleep";
 
 function formatScore(score: number) {
   if (score < 0) {
@@ -15,6 +16,8 @@ function formatScore(score: number) {
 const Scoreboard = () => {
   const { gameState } = useGlobalState() || {};
   const { name } = useParams();
+
+  useNoSleep(true);
 
   // if a user goes to /scoreboard/[team name], let's show just their score
   const singlePlayerStats =
@@ -47,7 +50,7 @@ const Scoreboard = () => {
       {singlePlayerStats && (
         <div className="GameCard">
           <div className="GameCard-front text-center flex-col" key={name}>
-            <p className="text-9xl text-white my-4 border-b-4">
+            <p className="text-7xl text-white my-4 border-b-4 line-clamp-2">
               {singlePlayerStats.name}
             </p>
             <p

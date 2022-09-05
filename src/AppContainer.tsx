@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Routes, Route, Link, useLocation } from "react-router-dom";
 import App from "./App";
-import useNoSleep from "use-no-sleep";
 import GlobalStateProvider, { useGlobalState } from "./GlobalStateProvider";
 import { GameState } from "../stateTypes";
 import Scoreboard from "./Scoreboard";
 import PlayerJoin from "./PlayerJoin";
+import Homepage from "./Homepage";
 import Buzzer from "./Buzzer";
+import HostControls from "./HostControls";
 
 const Debug = () => {
   const { gameState } = useGlobalState();
@@ -15,8 +16,6 @@ const Debug = () => {
 };
 
 const AppContainer = () => {
-  useNoSleep(true);
-
   const { gameState, setGameState, socket } = useGlobalState();
 
   function handleClick() {
@@ -29,7 +28,9 @@ const AppContainer = () => {
         State: {JSON.stringify(gameState)}
       </button> */}
       <Routes>
-        <Route path="/" element={<App />} />
+        <Route path="/" element={<Homepage />} />
+        <Route path="/answer" element={<HostControls />} />
+        <Route path="/game" element={<App />} />
         <Route path="/scoreboard" element={<Scoreboard />} />
         <Route path="/scoreboard/:name" element={<Scoreboard />} />
         <Route path="/scoreboard/:name" element={<Scoreboard />} />

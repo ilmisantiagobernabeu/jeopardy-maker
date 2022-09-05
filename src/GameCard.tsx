@@ -2,6 +2,10 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import cx from "classnames";
 import { useLocation } from "react-router-dom";
 import { useGlobalState } from "./GlobalStateProvider";
+import NobodyKnowsButton from "./NobodyKnowsButton";
+import rightAnswerSound from "./rightanswer.mp3";
+import wrongAnswerSound from "./wronganswer.mp3";
+import hahaSound from "./haha.mp3";
 
 type Clue = {
   text: string;
@@ -36,9 +40,6 @@ const GameCard = ({ clue, index, round }: Props) => {
       const { left, top, width, height } =
         buttonRef.current.getBoundingClientRect();
 
-      const scaleX = window.innerWidth / width;
-      const scaleY = window.innerHeight / height;
-
       setScale({
         x: window.innerWidth / width,
         y: window.innerHeight / height,
@@ -48,8 +49,7 @@ const GameCard = ({ clue, index, round }: Props) => {
         width,
         height,
         inset: 0,
-        // transition: "transform 3s",
-        transform: `translate(${left}px, ${top}px)`, // scale(${scaleX}, ${scaleY})
+        transform: `translate(${left}px, ${top}px)`,
       };
       setStyles(styles);
     } else {
@@ -99,10 +99,14 @@ const GameCard = ({ clue, index, round }: Props) => {
       arrayIndex: index % 6,
       clueText: clue.text,
     });
+
+    const audio = new Audio(rightAnswerSound);
+    audio.play();
   };
 
   const handleIncorrect = () => {
-    console.log("clicked incorrect!");
+    const audio = new Audio(wrongAnswerSound);
+    audio.play();
     socket?.emit("A player answers the clue", {
       value: value * -1,
       arrayIndex: index % 6,
@@ -115,6 +119,8 @@ const GameCard = ({ clue, index, round }: Props) => {
   };
 
   const handleNobodyKnows = () => {
+    const audio = new Audio(hahaSound);
+    audio.play();
     socket?.emit("No player knows the answer", {
       clueText: clue.text,
       arrayIndex: index % 6,
@@ -133,13 +139,18 @@ const GameCard = ({ clue, index, round }: Props) => {
     );
   }
 
+  const handleClick = () => {
+    setIsFlipped(true);
+    socket?.emit("Host selects a clue", clue);
+  };
+
   return (
     <>
       <button
         className={cx("GameCard", {
           "is-flipped": isFlipped,
         })}
-        onClick={() => setIsFlipped(true)}
+        onClick={handleClick}
         ref={buttonRef}
       >
         <div className="GameCard-front">
@@ -152,44 +163,46 @@ const GameCard = ({ clue, index, round }: Props) => {
             style={{ ...styles, ...resetStyles }}
           >
             <p className="ClueModal-text">{clue.text}</p>
-            {isHost && (
-              <div className="font-normal text-green-700">{clue.answer}</div>
-            )}
           </div>
         )}
       </button>
       {isFlipped && isHost && (
         <div className="fixed z-10 bottom-0 left-0 right-0 flex justify-center align-center p-5 gap-x-8">
-          <button
-            disabled={!gameState?.activePlayer}
-            onClick={handleCorrect}
-            className="text-green-600 disabled:opacity-30 text-6xl bg-white hover:bg-black p-4 rounded-md"
-          >
-            Correct!
-          </button>
-          <button
-            disabled={!gameState?.activePlayer}
-            onClick={handleIncorrect}
-            className="text-red-600 disabled:opacity-30 text-6xl bg-white hover:bg-black p-4 rounded-md"
-          >
-            Incorrect!
-          </button>
-          <button
-            disabled={!gameState?.isBuzzerActive}
-            onClick={handleNobodyKnows}
-            className="text-red-600 disabled:opacity-30 text-6xl bg-white hover:bg-black p-4 rounded-md"
-          >
-            Nobody Knows!
-          </button>
-          <button
-            onClick={handleBuzzerToggle}
-            disabled={Boolean(
-              gameState?.isBuzzerActive || gameState?.activePlayer
-            )}
-            className="text-green-600 disabled:opacity-30 text-6xl bg-white hover:bg-black p-4 rounded-md"
-          >
-            Buzzers ON
-          </button>
+          {gameState?.players[gameState?.activePlayer]?.name && (
+            <p className="fixed top-4 w-full text-center text-6xl text-white">
+              Buzzed In:{" "}
+              <span className="text-green-500">
+                Team {gameState?.players[gameState?.activePlayer]?.name}
+              </span>
+            </p>
+          )}
+          {gameState?.activePlayer && (
+            <>
+              <button
+                onClick={handleCorrect}
+                className="text-green-600 disabled:opacity-30 text-6xl bg-white hover:bg-black p-4 rounded-md"
+              >
+                Correct!
+              </button>
+              <button
+                onClick={handleIncorrect}
+                className="text-red-600 disabled:opacity-30 text-6xl bg-white hover:bg-black p-4 rounded-md"
+              >
+                Incorrect!
+              </button>
+            </>
+          )}
+          {gameState?.isBuzzerActive && (
+            <NobodyKnowsButton onClick={handleNobodyKnows} />
+          )}
+          {Boolean(!gameState?.isBuzzerActive && !gameState?.activePlayer) && (
+            <button
+              onClick={handleBuzzerToggle}
+              className="text-green-600 disabled:opacity-30 text-6xl bg-white hover:bg-black p-4 rounded-md"
+            >
+              Activate Buzzers
+            </button>
+          )}
         </div>
       )}
     </>

@@ -25,6 +25,7 @@ body {
 }
 
 $blue: #060ce9;
+$yellow: rgb(214, 159, 76);
 
 .Game {
   &-grid {
@@ -45,7 +46,7 @@ $blue: #060ce9;
     align-items: center;
     color: #fff;
     text-align: center;
-    padding: 1em;
+    padding: .5em;
     line-height: 1;
     font-size: 3em;
     text-transform: uppercase;
@@ -54,7 +55,6 @@ $blue: #060ce9;
   &Card {
     background: $blue;
     border: 0;
-    padding: 1em;
     font: inherit;
     appearance: none;
     color: #fff;
@@ -62,7 +62,7 @@ $blue: #060ce9;
     position: relative;
 
     &-front {
-      color: rgb(214, 159, 76);
+      color: $yellow;
       text-shadow: rgb(0 0 0) 0.08em 0.08em;
       font-size: 5em;
       display: flex;

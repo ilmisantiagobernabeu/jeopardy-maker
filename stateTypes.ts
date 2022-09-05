@@ -1,4 +1,4 @@
-interface Clue {
+export interface Clue {
   text: string;
   answer: string;
   alreadyPlayed?: boolean;
@@ -32,4 +32,5 @@ export interface GameState {
   activePlayer: string;
   incorrectGuesses: string[];
   gameBoard: GameBoard[];
+  activeClue: Clue;
 }
