@@ -11,7 +11,7 @@ const NobodyKnowsButton = ({
   useEffect(() => {
     timeout.current = setTimeout(() => {
       setDisabled(false);
-    }, 7000);
+    }, 5000);
 
     return () => {
       if (timeout.current) {
