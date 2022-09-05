@@ -1,6 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { GameState } from "../stateTypes";
+import rightAnswerSound from "./rightanswer.mp3";
+import wrongAnswerSound from "./wronganswer.mp3";
 
 interface Player {
   [name: string]: number;
@@ -11,6 +13,8 @@ interface ServerToClientEvents {
   basicEmit: (a: number, b: string, c: Buffer) => void;
   withAck: (d: string, callback: (e: number) => void) => void;
   ["gameState updated"]: (gameStateFromServer: GameState) => void;
+  ["play correct sound"]: () => void;
+  ["play incorrect sound"]: () => void;
 }
 
 interface ClientToServerEvents {
@@ -64,6 +68,16 @@ const GlobalStateProvider = ({ children }: { children: React.ReactNode }) => {
     socket?.on("gameState updated", function (gameStateFromServer: GameState) {
       // set the new game state on the client
       setGameState(gameStateFromServer);
+    });
+
+    socket?.on("play correct sound", () => {
+      const audio = new Audio(rightAnswerSound);
+      audio.play();
+    });
+
+    socket?.on("play incorrect sound", () => {
+      const audio = new Audio(wrongAnswerSound);
+      audio.play();
     });
 
     socket?.on("connect", () => {

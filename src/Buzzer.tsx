@@ -1,12 +1,15 @@
 import React from "react";
 import { useGlobalState } from "./GlobalStateProvider";
 import cx from "classnames";
+import buzzerSound from "./buzzer.mp3";
 
 const Buzzer = () => {
   const { socket, gameState } = useGlobalState();
 
   const handleClick = () => {
     console.log("wtf handle click broooo", socket);
+    const sound = new Audio(buzzerSound);
+    sound.play();
     socket?.emit("A player hits the buzzer");
   };
 
@@ -37,8 +40,10 @@ const Buzzer = () => {
         onClick={handleClick}
       >
         {isActivePlayer ? "✓" : "×"}
-        {/* {socket?.id} */}
       </button>
+      <p className="fixed bottom-0 w-full left-0 text-center pb-10 text-6xl opacity-30">
+        {gameState?.players?.[socket?.id || ""]?.name}
+      </p>
     </div>
   );
 };

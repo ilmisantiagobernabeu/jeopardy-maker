@@ -161,21 +161,21 @@ const GameCard = ({ clue, index, round }: Props) => {
       {isFlipped && isHost && (
         <div className="fixed z-10 bottom-0 left-0 right-0 flex justify-center align-center p-5 gap-x-8">
           <button
-            disabled={!gameState?.isBuzzerActive && !gameState?.activePlayer}
+            disabled={!gameState?.activePlayer}
             onClick={handleCorrect}
             className="text-green-600 disabled:opacity-30 text-6xl bg-white hover:bg-black p-4 rounded-md"
           >
             Correct!
           </button>
           <button
-            disabled={!gameState?.isBuzzerActive && !gameState?.activePlayer}
+            disabled={!gameState?.activePlayer}
             onClick={handleIncorrect}
             className="text-red-600 disabled:opacity-30 text-6xl bg-white hover:bg-black p-4 rounded-md"
           >
             Incorrect!
           </button>
           <button
-            disabled={!gameState?.isBuzzerActive && !gameState?.activePlayer}
+            disabled={!gameState?.isBuzzerActive}
             onClick={handleNobodyKnows}
             className="text-red-600 disabled:opacity-30 text-6xl bg-white hover:bg-black p-4 rounded-md"
           >
