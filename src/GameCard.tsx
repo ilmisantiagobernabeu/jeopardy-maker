@@ -85,13 +85,26 @@ const GameCard = ({ clue, index, round }: Props) => {
 
   const isHost = searchParams.get("isHost") === "true";
 
-  const { setPlayers } = useGlobalState() || {};
+  const { socket, gameState } = useGlobalState() || {};
 
   const handleCorrect = () => {
-    setPlayers?.((players: any) => ({
-      ...players,
-      "Team 1": 400,
-    }));
+    // 1. we need to mark this as correct
+
+    // 2. close the clue everywhere
+    setResetStyles(undefined);
+    setStyles(undefined);
+    setIsFlipped(false);
+
+    socket?.emit("A player answers the clue", { value, clueText: clue.text });
+  };
+
+  const handleIncorrect = () => {
+    console.log("clicked incorrect!");
+    socket?.emit("A player answers the clue", { value: value * -1 });
+  };
+
+  const handleBuzzerToggle = () => {
+    socket?.emit("Host activates the buzzers");
   };
 
   return (
@@ -122,13 +135,22 @@ const GameCard = ({ clue, index, round }: Props) => {
       {isFlipped && isHost && (
         <div className="fixed bottom-0 left-0 right-0 flex justify-center align-center p-5 gap-x-8">
           <button
-            className="text-green-600 text-6xl bg-white hover:bg-black p-4 rounded-md"
             onClick={handleCorrect}
+            className="text-green-600 text-6xl bg-white hover:bg-black p-4 rounded-md"
           >
             Correct!
           </button>
-          <button className="text-red-600 text-6xl bg-white hover:bg-black p-4 rounded-md">
+          <button
+            onClick={handleIncorrect}
+            className="text-red-600 text-6xl bg-white hover:bg-black p-4 rounded-md"
+          >
             Incorrect!
+          </button>
+          <button
+            onClick={handleBuzzerToggle}
+            className="text-green-600 text-6xl bg-white hover:bg-black p-4 rounded-md"
+          >
+            Buzzers {gameState?.isBuzzerActive ? "OFF" : "ON"}
           </button>
         </div>
       )}

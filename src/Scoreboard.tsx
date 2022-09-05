@@ -1,34 +1,47 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useGlobalState } from "./GlobalStateProvider";
 import cx from "classnames";
+import { GameState } from "../stateTypes";
 
 const Scoreboard = () => {
-  const { players } = useGlobalState() || {};
+  const { gameState } = useGlobalState() || {};
   const { name } = useParams();
 
-  const currentPlayerScore = name && players?.[name];
-
-  console.log(name, players, players?.[name!]);
+  // if a user goes to /scoreboard/[team name], let's show just their score
+  const singlePlayerStats =
+    name &&
+    gameState?.players &&
+    Object.values(gameState.players).filter(
+      ({ name: playerName }) => name === playerName
+    )[0];
 
   return (
     <div
       className={cx(
         "flex w-full h-full fixed top-0 left-0 justify-center items-center flex-col",
         {
-          "bg-teal-500": currentPlayerScore !== undefined,
+          "bg-teal-500": singlePlayerStats,
         }
       )}
     >
-      {currentPlayerScore === undefined &&
-        players &&
-        Object.entries(players).map(([player, score]) => (
+      {!singlePlayerStats &&
+        gameState?.players &&
+        Object.values(gameState.players)
+          .filter(({ name }) => name)
+          .map(({ score, name }, index) => (
+            <div key={name + index}>
+              <p className="text-9xl text-white my-4">
+                {name}: {score}
+              </p>
+            </div>
+          ))}
+      {singlePlayerStats && (
+        <div key={name}>
           <p className="text-9xl text-white my-4">
-            {player}: {score}
+            {singlePlayerStats.name}: {singlePlayerStats.score}
           </p>
-        ))}
-      {currentPlayerScore !== undefined && (
-        <p className="text-9xl text-white my-4">{currentPlayerScore}</p>
+        </div>
       )}
     </div>
   );

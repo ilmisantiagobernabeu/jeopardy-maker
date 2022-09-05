@@ -7,11 +7,11 @@ import GlobalStateProvider from "./GlobalStateProvider";
 
 ReactDOM.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <GlobalStateProvider>
+    <GlobalStateProvider>
+      <BrowserRouter>
         <AppContainer />
-      </GlobalStateProvider>
-    </BrowserRouter>
+      </BrowserRouter>
+    </GlobalStateProvider>
   </React.StrictMode>,
   document.getElementById("root")
 );
