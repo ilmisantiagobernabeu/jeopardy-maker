@@ -7,6 +7,7 @@
     "start": "nodemon app.js"
   },
   "dependencies": {
+    "convert-csv-to-json": "^1.3.3",
     "socket.io": "^4.5.2"
   },
   "devDependencies": {

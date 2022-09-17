@@ -1,6 +1,8 @@
 // import { GameState } from "../stateTypes";
 const { on } = require("nodemon");
 const { data, dataRoundTwo } = require("./data");
+const fs = require("fs");
+const { formatCSVToJSON } = require("./convert");
 
 const io = require("socket.io")(5000, {
   cors: {
@@ -9,6 +11,8 @@ const io = require("socket.io")(5000, {
   },
   "sync disconnect on unload": false,
 });
+
+// const data = formatCSVToJSON("example.csv")
 
 // the game state
 let gameState = {
@@ -44,9 +48,15 @@ io.on("connect", function (socket) {
     io.emit("gameState updated", gameState);
   });
 
-  socket.on("new player joined", () => {
+  socket.on("new player joined", (playerName) => {
     // emit to EVERYONE the update game state
     // console.log("hahahahaha");
+    const returnedPlayer = playersThatLeft.find(
+      (player) => player?.name && player.name === playerName
+    );
+    if (returnedPlayer) {
+      gameState.players[socket.id] = returnedPlayer;
+    }
     io.emit("gameState updated", gameState);
   });
 

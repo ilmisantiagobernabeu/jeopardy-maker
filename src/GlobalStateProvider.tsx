@@ -7,9 +7,6 @@ interface Player {
 }
 
 interface ServerToClientEvents {
-  noArg: () => void;
-  basicEmit: (a: number, b: string, c: Buffer) => void;
-  withAck: (d: string, callback: (e: number) => void) => void;
   ["gameState updated"]: (gameStateFromServer: GameState) => void;
   ["play correct sound"]: () => void;
   ["play incorrect sound"]: () => void;
@@ -17,7 +14,7 @@ interface ServerToClientEvents {
 
 interface ClientToServerEvents {
   ["counter clicked"]: (socketId: string) => void;
-  ["new player joined"]: () => void;
+  ["new player joined"]: (playerName?: string | null) => void;
   ["a player disconnected"]: () => void;
   ["give updated game state"]: () => void;
   ["player signed up"]: (playerName: string) => void;
@@ -33,6 +30,7 @@ interface ClientToServerEvents {
     clueText: string;
   }) => void;
   ["Host selects a clue"]: (clueObject: Clue) => void;
+  ["Host navigates to another round"]: (round: number) => void;
 }
 
 export type ContextType = {
@@ -70,7 +68,7 @@ const GlobalStateProvider = ({ children }: { children: React.ReactNode }) => {
     });
 
     socket?.on("connect", () => {
-      socket?.emit("new player joined");
+      socket?.emit("new player joined", localStorage.getItem("dt-playerName"));
     });
 
     socket?.on("disconnect", () => {

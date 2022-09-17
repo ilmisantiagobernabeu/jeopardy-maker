@@ -1,22 +1,22 @@
-import React from "react";
-import { useGlobalState } from "./GlobalStateProvider";
-import cx from "classnames";
-import buzzerSound from "./buzzer.mp3";
-import useNoSleep from "use-no-sleep";
+import React, { useEffect } from "react"
+import { useGlobalState } from "./GlobalStateProvider"
+import cx from "classnames"
+import buzzerSound from "./buzzer.mp3"
+import useNoSleep from "use-no-sleep"
 
 const Buzzer = () => {
-  const { socket, gameState } = useGlobalState();
-  useNoSleep(true);
+  const { socket, gameState } = useGlobalState()
+  useNoSleep(true)
 
   const handleClick = () => {
-    console.log("wtf handle click broooo", socket);
-    const sound = new Audio(buzzerSound);
-    sound.play();
-    socket?.emit("A player hits the buzzer");
-  };
+    console.log("wtf handle click broooo", socket)
+    const sound = new Audio(buzzerSound)
+    sound.play()
+    socket?.emit("A player hits the buzzer")
+  }
 
   const isActivePlayer =
-    gameState?.activePlayer && gameState?.activePlayer === socket!.id;
+    gameState?.activePlayer && gameState?.activePlayer === socket!.id
 
   // Disable the button if:
   // 1. the buzzer hasn't been activated by the host
@@ -25,7 +25,7 @@ const Buzzer = () => {
     !gameState?.isBuzzerActive ||
       (gameState?.isBuzzerActive && isActivePlayer) ||
       gameState?.incorrectGuesses.includes(socket!.id)
-  );
+  )
 
   return (
     <div className="fixed inset-0 h-full w-full bg-white">
@@ -47,7 +47,7 @@ const Buzzer = () => {
         Team {gameState?.players?.[socket?.id || ""]?.name}
       </p>
     </div>
-  );
-};
+  )
+}
 
-export default Buzzer;
+export default Buzzer
