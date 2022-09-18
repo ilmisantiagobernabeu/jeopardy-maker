@@ -31,7 +31,7 @@ function App({ round }: { round: number }) {
     const isEveryCluePlayed = clues?.every((clue) => clue?.alreadyPlayed);
 
     if (isEveryCluePlayed) {
-      navigate(`/game${round + 1}`);
+      // navigate(`/game${round + 1}`);
     }
   }, [round, clues]);
 

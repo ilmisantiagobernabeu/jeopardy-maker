@@ -6,6 +6,7 @@ import NobodyKnowsButton from "./NobodyKnowsButton";
 import rightAnswerSound from "./rightanswer.mp3";
 import wrongAnswerSound from "./wronganswer.mp3";
 import hahaSound from "./haha.mp3";
+import Answer from "./Answer";
 
 type Clue = {
   text: string;
@@ -30,6 +31,8 @@ const GameCard = ({ clue, index, round }: Props) => {
   const [scale, setScale] = useState<Record<string, any> | undefined>(
     undefined
   );
+  const [showAnswer, setShowAnswer] = useState(false);
+  const prevAlreadyPlayed = useRef(false);
 
   const { search } = useLocation();
 
@@ -100,6 +103,7 @@ const GameCard = ({ clue, index, round }: Props) => {
 
     const audio = new Audio(rightAnswerSound);
     audio.play();
+    setShowAnswer(true);
   };
 
   const handleIncorrect = () => {
@@ -110,6 +114,13 @@ const GameCard = ({ clue, index, round }: Props) => {
       arrayIndex: index % 6,
       clueText: clue.text,
     });
+
+    // Only show answer if this is the last incorrect guess
+    const numOfPlayers =
+      Object.values(gameState?.players || {}).filter((x) => x.name).length || 0;
+    if (gameState?.incorrectGuesses.length === numOfPlayers - 1) {
+      setShowAnswer(true);
+    }
   };
 
   const handleBuzzerToggle = () => {
@@ -123,17 +134,21 @@ const GameCard = ({ clue, index, round }: Props) => {
       clueText: clue.text,
       arrayIndex: index % 6,
     });
+    setShowAnswer(true);
   };
 
   if (clue?.alreadyPlayed) {
     return (
-      <div
-        className={cx("GameCard", {
-          "is-flipped": isFlipped,
-        })}
-      >
-        <div className="bg-black absolute inset-0" />
-      </div>
+      <>
+        <div
+          className={cx("GameCard", {
+            "is-flipped": isFlipped,
+          })}
+        >
+          <div className="bg-black absolute inset-0" />
+        </div>
+        {showAnswer && <Answer setShowAnswer={setShowAnswer} />}
+      </>
     );
   }
 
@@ -203,6 +218,7 @@ const GameCard = ({ clue, index, round }: Props) => {
           )}
         </div>
       )}
+      {showAnswer && <Answer setShowAnswer={setShowAnswer} />}
     </>
   );
 };
