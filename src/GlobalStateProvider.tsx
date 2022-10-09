@@ -12,6 +12,12 @@ interface ServerToClientEvents {
   ["play incorrect sound"]: () => void;
 }
 
+type DailyDoubleObject = {
+  dailyDoubleAmount: number;
+  arrayIndex: number;
+  clueText: string;
+};
+
 interface ClientToServerEvents {
   ["counter clicked"]: (socketId: string) => void;
   ["new player joined"]: (playerName?: string | null) => void;
@@ -31,6 +37,9 @@ interface ClientToServerEvents {
   }) => void;
   ["Host selects a clue"]: (clueObject: Clue) => void;
   ["Host navigates to another round"]: (round: number) => void;
+  ["A player sets daily double wager"]: (
+    dailyDoubleObject: DailyDoubleObject
+  ) => void;
 }
 
 export type ContextType = {

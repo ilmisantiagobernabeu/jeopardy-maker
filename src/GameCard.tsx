@@ -11,6 +11,7 @@ import Answer from "./Answer";
 type Clue = {
   text: string;
   answer: string;
+  isDailyDouble?: boolean;
   alreadyPlayed?: boolean;
 };
 type Props = {
@@ -32,11 +33,12 @@ const GameCard = ({ clue, index, round }: Props) => {
     undefined
   );
   const [showAnswer, setShowAnswer] = useState(false);
-  const prevAlreadyPlayed = useRef(false);
+  const [dailyDoubleAmount, setDailyDoubleAmount] = useState(0);
+  const [showDailyDoubleScreen, setShowDailyDoubleScreen] = useState(false);
 
-  const { search } = useLocation();
+  // const { search } = useLocation();
 
-  const searchParams = new URLSearchParams(search);
+  // const searchParams = new URLSearchParams(search);
 
   useLayoutEffect(() => {
     if (isFlipped && buttonRef.current) {
@@ -57,6 +59,10 @@ const GameCard = ({ clue, index, round }: Props) => {
       setStyles(styles);
     } else {
       setStyles(undefined);
+    }
+
+    if (clue?.isDailyDouble) {
+      setShowDailyDoubleScreen(true);
     }
   }, [isFlipped]);
 
@@ -157,6 +163,22 @@ const GameCard = ({ clue, index, round }: Props) => {
     socket?.emit("Host selects a clue", clue);
   };
 
+  const handleRangeChange = (e: any) => {
+    setDailyDoubleAmount(Number(e.target.value));
+  };
+
+  const handleSetWager = () => {
+    // seend daily double amount ot server
+    socket?.emit("A player sets daily double wager", {
+      dailyDoubleAmount,
+      arrayIndex: index % 6,
+      clueText: clue.text,
+    });
+
+    setShowDailyDoubleScreen(false);
+    setDailyDoubleAmount(0);
+  };
+
   return (
     <>
       <button
@@ -171,12 +193,37 @@ const GameCard = ({ clue, index, round }: Props) => {
           {value}
         </div>
         {isFlipped && (
-          <div
-            className="ClueModal flex-col"
-            style={{ ...styles, ...resetStyles }}
-          >
-            <p className="ClueModal-text">{clue.text}</p>
-          </div>
+          <>
+            <div
+              className="ClueModal flex-col"
+              style={{ ...styles, ...resetStyles }}
+            >
+              {showDailyDoubleScreen && clue.isDailyDouble && (
+                <div className="absolute top-0 w-full h-full flex flex-col justify-center items-center z-20 bg-[#060ce9]">
+                  It's a daily double bitches
+                  <label htmlFor="wager">
+                    How much would you like to wager?
+                  </label>
+                  <input
+                    id="wager"
+                    type="range"
+                    step="200"
+                    min="200"
+                    onChange={handleRangeChange}
+                    value={dailyDoubleAmount}
+                    max={Math.max(
+                      gameState?.players[gameState?.lastActivePlayer]?.score ||
+                        0,
+                      1000
+                    )}
+                  />
+                  <p>${dailyDoubleAmount}</p>
+                  <button onClick={handleSetWager}>Set Wager</button>
+                </div>
+              )}
+              <p className="ClueModal-text">{clue.text}</p>
+            </div>
+          </>
         )}
       </button>
       {isFlipped && (
@@ -208,7 +255,11 @@ const GameCard = ({ clue, index, round }: Props) => {
           {gameState?.isBuzzerActive && (
             <NobodyKnowsButton onClick={handleNobodyKnows} />
           )}
-          {Boolean(!gameState?.isBuzzerActive && !gameState?.activePlayer) && (
+          {Boolean(
+            !gameState?.isBuzzerActive &&
+              !gameState?.activePlayer &&
+              !showDailyDoubleScreen
+          ) && (
             <button
               onClick={handleBuzzerToggle}
               className="text-green-600 disabled:opacity-30 text-6xl bg-white hover:bg-black p-4 rounded-md"

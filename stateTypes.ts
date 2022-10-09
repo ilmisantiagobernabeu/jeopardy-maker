@@ -30,6 +30,7 @@ export interface GameState {
   score: number;
   isBuzzerActive: boolean;
   activePlayer: string;
+  lastActivePlayer: string;
   incorrectGuesses: string[];
   gameBoard: GameBoard[];
   activeClue: Clue;

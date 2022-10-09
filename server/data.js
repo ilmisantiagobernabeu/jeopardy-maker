@@ -17,6 +17,7 @@ const data = [
       {
         text: "This Wrestling Group is headquartered in Stamford, Conneticut",
         answer: "WWE",
+        isDailyDouble: true,
       },
       {
         text: "22 states have chosen milk as their official beverage but this tart, maroon hued drink has been chosen only by the state of Massachusetts. ",
@@ -149,7 +150,7 @@ const data = [
       },
     ],
   },
-]
+];
 
 const dataRoundTwo = [
   {
@@ -212,6 +213,6 @@ const dataRoundTwo = [
       { text: "Dennett-ology 5", answer: "Answer!" },
     ],
   },
-]
+];
 
-module.exports = { data, dataRoundTwo }
+module.exports = { data, dataRoundTwo };

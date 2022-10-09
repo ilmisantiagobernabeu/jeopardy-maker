@@ -4,9 +4,14 @@ const { data, dataRoundTwo } = require("./data");
 const fs = require("fs");
 const { formatCSVToJSON } = require("./convert");
 
+const { networkInterfaces } = require("os");
+const nets = networkInterfaces();
+
+const localIP = nets.Ethernet.find((obj) => obj.family === "IPv4").address;
+
 const io = require("socket.io")(5000, {
   cors: {
-    origin: "http://10.0.0.208:3000",
+    origin: `http://${localIP}:3000`,
     methods: ["GET", "POST"],
   },
   "sync disconnect on unload": false,
@@ -18,6 +23,8 @@ const io = require("socket.io")(5000, {
 let gameState = {
   isBuzzerActive: false,
   activePlayer: null,
+  lastActivePlayer: null,
+  dailyDoubleAmount: 0,
   activeClue: null,
   players: {},
   gameBoard: data,
@@ -91,7 +98,10 @@ io.on("connect", function (socket) {
           (x) => x.name
         );
 
-        if (gameState.incorrectGuesses.length === activePlayers.length) {
+        if (
+          gameState.incorrectGuesses.length === activePlayers.length ||
+          gameState.dailyDoubleAmount
+        ) {
           console.log("wtf", { arrayIndex });
           const clueIndex = gameState.gameBoard[arrayIndex].clues.findIndex(
             (clue) => clue.text === clueText
@@ -99,6 +109,9 @@ io.on("connect", function (socket) {
           gameState.gameBoard[arrayIndex].clues[clueIndex].alreadyPlayed = true;
           gameState.incorrectGuesses = [];
           gameState.isBuzzerActive = false;
+          if (gameState.dailyDoubleAmount) {
+            gameState.dailyDoubleAmount *= -1;
+          }
         }
       } else {
         gameState.incorrectGuesses = [];
@@ -109,7 +122,10 @@ io.on("connect", function (socket) {
         );
         gameState.gameBoard[arrayIndex].clues[clueIndex].alreadyPlayed = true;
       }
-      gameState.players[gameState.activePlayer].score += score;
+      console.log("fuuuuuuuck", gameState.activePlayer);
+      gameState.players[gameState.activePlayer].score +=
+        gameState.dailyDoubleAmount || score;
+      gameState.dailyDoubleAmount = 0;
       gameState.activePlayer = null;
       io.emit("gameState updated", gameState);
     }
@@ -120,6 +136,13 @@ io.on("connect", function (socket) {
     io.emit("gameState updated", gameState);
   });
 
+  socket.on(
+    "A player sets daily double wager",
+    ({ dailyDoubleAmount, clueText, arrayIndex }) => {
+      gameState.dailyDoubleAmount = dailyDoubleAmount;
+    }
+  );
+
   socket.on("Host activates the buzzers", () => {
     gameState.isBuzzerActive = !gameState.isBuzzerActive;
     io.emit("gameState updated", gameState);
@@ -128,6 +151,7 @@ io.on("connect", function (socket) {
   socket.on("A player hits the buzzer", () => {
     if (gameState.activePlayer) return;
     gameState.activePlayer = socket.id;
+    gameState.lastActivePlayer = socket.id;
     gameState.isBuzzerActive = false;
     io.emit("gameState updated", gameState);
   });
