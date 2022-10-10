@@ -122,9 +122,18 @@ io.on("connect", function (socket) {
         );
         gameState.gameBoard[arrayIndex].clues[clueIndex].alreadyPlayed = true;
       }
-      console.log("fuuuuuuuck", gameState.activePlayer);
-      gameState.players[gameState.activePlayer].score +=
-        gameState.dailyDoubleAmount || score;
+
+      // Give the score to the active player, otherwise the last active player (if daily double)
+      // otherwise, give it to the first team to join the game, they'll go first
+      const firstActivePlayer = Object.keys(gameState.players).find(
+        (playerId) => gameState.players[playerId]?.name
+      );
+      console.log("what the heck", firstActivePlayer);
+      gameState.players[
+        gameState.activePlayer ||
+          gameState.lastActivePlayer ||
+          firstActivePlayer
+      ].score += gameState.dailyDoubleAmount || score;
       gameState.dailyDoubleAmount = 0;
       gameState.activePlayer = null;
       io.emit("gameState updated", gameState);
