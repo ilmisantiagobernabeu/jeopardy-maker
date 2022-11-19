@@ -5,6 +5,7 @@ import { useGlobalState } from "./GlobalStateProvider";
 import NobodyKnowsButton from "./NobodyKnowsButton";
 import rightAnswerSound from "./rightanswer.mp3";
 import wrongAnswerSound from "./wronganswer.mp3";
+import dailyDoubleSound from "./dailydouble.mp3";
 import hahaSound from "./haha.mp3";
 import Answer from "./Answer";
 
@@ -61,8 +62,10 @@ const GameCard = ({ clue, index, round }: Props) => {
       setStyles(undefined);
     }
 
-    if (clue?.isDailyDouble) {
+    if (isFlipped && clue?.isDailyDouble) {
       setShowDailyDoubleScreen(true);
+      const audio = new Audio(dailyDoubleSound);
+      audio.play();
     }
   }, [isFlipped]);
 
@@ -102,7 +105,7 @@ const GameCard = ({ clue, index, round }: Props) => {
     setIsFlipped(false);
 
     socket?.emit("A player answers the clue", {
-      value,
+      value: gameState?.dailyDoubleAmount || value,
       arrayIndex: index % 6,
       clueText: clue.text,
     });
@@ -115,8 +118,16 @@ const GameCard = ({ clue, index, round }: Props) => {
   const handleIncorrect = () => {
     const audio = new Audio(wrongAnswerSound);
     audio.play();
+    console.log(
+      "wtf bruh",
+      gameState?.dailyDoubleAmount
+        ? gameState.dailyDoubleAmount * -1
+        : value * -1
+    );
     socket?.emit("A player answers the clue", {
-      value: value * -1,
+      value: gameState?.dailyDoubleAmount
+        ? gameState.dailyDoubleAmount * -1
+        : value * -1,
       arrayIndex: index % 6,
       clueText: clue.text,
     });
@@ -174,6 +185,7 @@ const GameCard = ({ clue, index, round }: Props) => {
       arrayIndex: index % 6,
       clueText: clue.text,
     });
+    // socket?.emit("Host activates the buzzers");
 
     setShowDailyDoubleScreen(false);
     setDailyDoubleAmount(0);
@@ -236,7 +248,7 @@ const GameCard = ({ clue, index, round }: Props) => {
               </span>
             </p>
           )}
-          {gameState?.activePlayer && (
+          {Boolean(gameState?.activePlayer || gameState?.dailyDoubleAmount) && (
             <>
               <button
                 onClick={handleCorrect}
@@ -258,7 +270,8 @@ const GameCard = ({ clue, index, round }: Props) => {
           {Boolean(
             !gameState?.isBuzzerActive &&
               !gameState?.activePlayer &&
-              !showDailyDoubleScreen
+              !showDailyDoubleScreen &&
+              !Boolean(gameState?.dailyDoubleAmount)
           ) && (
             <button
               onClick={handleBuzzerToggle}

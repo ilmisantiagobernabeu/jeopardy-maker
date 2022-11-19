@@ -34,4 +34,5 @@ export interface GameState {
   incorrectGuesses: string[];
   gameBoard: GameBoard[];
   activeClue: Clue;
+  dailyDoubleAmount?: number;
 }

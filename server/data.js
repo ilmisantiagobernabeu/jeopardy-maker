@@ -1,127 +1,102 @@
 const data = [
   {
-    category: "New England",
+    category: "South of Boston",
     clues: [
       {
-        text: "This New England coast boasts about 3,500 miles of coastline, more than California.",
-        answer: "Maine",
+        text: "Steve Carrell owns this establishment in Marshfield.",
+        answer: "Marshfield Hills General Store",
       },
       {
-        text: "This state may be petite but it boasts 20 percent of the U.S.'s historical landmarks.",
-        answer: "Rhode Island",
+        text: "This state forest on the South Shore is the second largest state forest in the State.",
+        answer: "Myles Standish State Forrest",
       },
       {
-        text: "This state shares borders with 3 other NE neighbors.",
-        answer: "New Hampshire",
+        text: "This south of Boston town, home of the Dennett Elementary School, had a population of 2,930 in 2020.",
+        answer: "Plympton",
       },
       {
-        text: "This Wrestling Group is headquartered in Stamford, Conneticut",
-        answer: "WWE",
+        text: "This south of Boston town was once known as Bare Cove when it was first settled by some murderous Pilgrims in 1633.",
+        answer: "Hingham",
         isDailyDouble: true,
       },
       {
-        text: "22 states have chosen milk as their official beverage but this tart, maroon hued drink has been chosen only by the state of Massachusetts. ",
-        answer: "Cranberry Juice",
+        text: "If you drew a perfectly straight horizontal line on a map starting from Duxbury Beach east to Europe, what would be the first European country you'd hit?",
+        answer: "Spain",
       },
     ],
   },
   {
-    category: "Sports",
+    category: "Song and Artist",
     clues: [
       {
-        text: "This tennis superstar has won more Grand Slam titles than her sister.",
-        answer: "Serena Williams",
+        text: "So you can take that cookie and stick it up your, YEAH! - 1999.",
+        answer: "Nookie - Limp Bizkit",
       },
       {
-        text: "This Bruins defensemen is in the iconic sports photo titled, The Goal.",
-        answer: "Bobby Orr",
+        text: "They see me rollin', they hatin' - 2005.",
+        answer: "Ridin' - Chamillionaire",
       },
       {
-        text: "A turkey is when a player makes three back to back strikes in this sport",
-        answer: "Bowling",
+        text: "I put my hands up they're playing my song - 2009",
+        answer: "Party in the U.S.A - Miley Cyrus",
       },
       {
-        text: "This team has the longest winning streak in NBA history",
-        answer: "LA Lakers",
+        text: "Somewhere between the sacred silence and sleep - 2001",
+        answer: "Toxicity - System of a Down",
       },
       {
-        text: "This speedy sporting event is held every year on Memorial Day. ",
-        answer: "Indianapolis 500",
+        text: "Teenage wasteland, it's only teenage wasteland - 1971.",
+        answer: "Baba O'Riley - The Who",
       },
     ],
   },
   {
-    category: "Music",
-    clues: [
-      {
-        text: "This sassy singer gave audiences the Juice by jamming out on the flute.  ",
-        answer: "Lizzo",
-      },
-      {
-        text: "This Journey hit is extremely popular at Boston sporting events.",
-        answer: "Don't Stop Believing",
-      },
-      {
-        text: "This folksy crooner is known for writing songs about her past lovers.",
-        answer: "Taylor Swift",
-      },
-      {
-        text: `The iconic Beantown song "I'm shipping up to Boston" is performed by this band.`,
-        answer: "Drop Kick Murphy's",
-      },
-      {
-        text: "This Queen of Christmas diva has had a Billboard No. 1 hit in each of the last four decades",
-        answer: "Mariah Carey",
-      },
-    ],
-  },
-  {
-    category: "Y2K",
+    category: "2000s",
     clues: [
       {
         text: "This social media platform allowed users to choose their Top 8 friends. ",
-        answer: "Myspace",
+        answer: "MySpace",
       },
       {
         text: "This kiss between these songstresses rocked the MTV Music Awards in 2003",
         answer: "Madonna and Britney Spears",
       },
       {
-        text: "This fictional paper company takes place in Scranton, PA.",
-        answer: "The Office",
+        text: "This is what the 'ty' tag on a Beanie Baby stood for",
+        answer: "Ty Warner",
       },
       {
-        text: "Afterschool series on MTV featuring popular music videos played during its countdown",
-        answer: "TRL - Total Request Live",
+        text: "Which movie had the highest box office collections in the 2000s?",
+        answer: "Avatar",
       },
       {
-        text: "This 44th President of the United States is inaugurated in January 2009.",
-        answer: "Barack Obama",
+        text: "This repetitively-named 2000s rock band is led by the singer, songwriter, and guitarist Karen O",
+        answer: "Yeah Yeah Yeahs",
       },
     ],
   },
   {
-    category: "Science",
+    category: "Classical Memery",
     clues: [
       {
-        text: "Alexander Graham Bell is regarded as the man who invented this.",
-        answer: "telephone",
+        text: "This meme depicts a Shiba Inu with a quizzical face",
+        answer: "Doge",
       },
       {
-        text: "Animals that eat both plants and meat are known as this",
-        answer: "omnivores",
+        text: "This man with braces is not known for his good fortune",
+        answer: "Bad Luck Brian",
       },
       {
-        text: "This material or device that will carry an electrical charge",
-        answer: "conductor",
+        text: "The classic facepalm meme depicts Patrick Stewart playing this character in Star Trek",
+        answer: "Jean-Luc Picard",
       },
       {
-        text: "The concept of gravity was discovered by this famous physicist",
-        answer: "Sir Isaac Newton",
+        text: "This backwards hat wearing fool is the antithesis of Good Guy Greg",
+        answer: "Scumbag Steve",
       },
       {
-        text: "This world’s largest and most powerful space telescope released its first images in July 2022.",
-        answer: "James Webb",
+        text: "This thought-provoking dinosaur that asks all the right questions",
+        answer: "Philosoraptor",
       },
     ],
   },
@@ -129,24 +104,49 @@ const data = [
     category: "Name That Boomer",
     clues: [
       {
-        text: "This Green-Harbor-loving Boomer recently gained his first prison stripes and is now known as Prison Mike",
-        answer: "Michael Dennett",
+        text: "This actress played the Mom in the movie Mrs. Doubtfire",
+        answer: "Sally Field",
       },
       {
-        text: "This Turkish–American television personality recently ran for Senate in Pennsylvania.",
-        answer: "Dr. Oz",
+        text: "This Boomer politician looks like a turtle. That's it. That's the clue.",
+        answer: "Mitch McConnell",
       },
       {
-        text: "Django Unchained actor is known for his potty mouth.",
+        text: "This Snakes on a Plane actor is known for his potty mouth.",
         answer: "Samuel L. Jackson",
       },
       {
-        text: "This Boomer played the cringey boss on a popular workplace sitcom, and is Marshfield, MA's most popular resident.",
-        answer: "Steve Carell",
+        text: "On the big screen in 2004, this Boomer stole the Declaration of Independence",
+        answer: "Nicholas Cage",
       },
       {
         text: "This buxom country icon once lost a lookalike contest for herself.",
         answer: "Dolly Parton",
+      },
+    ],
+  },
+  {
+    category: "Sportsball",
+    clues: [
+      {
+        text: "Gisele Bundchen's ex-husband'",
+        answer: "Thomas Brady",
+      },
+      {
+        text: "The New England Patriots were trailing the Atlanta Falcons by this amount before winning Superbowl 51",
+        answer: "25",
+      },
+      {
+        text: "What is the only team in the NFL to neither host nor play in the Super Bowl?",
+        answer: "Cleveland Browns",
+      },
+      {
+        text: "The national sport of Canada",
+        answer: "Lacrosee",
+      },
+      {
+        text: "This boxer beat Muhammad Ali",
+        answer: "Joe Frazier",
       },
     ],
   },
