@@ -30,8 +30,8 @@ function App({ round }: { round: number }) {
   useEffect(() => {
     const isEveryCluePlayed = clues?.every((clue) => clue?.alreadyPlayed);
 
-    if (isEveryCluePlayed) {
-      // navigate(`/game${round + 1}`);
+    if (round === 0 && isEveryCluePlayed) {
+      navigate(`/game${round + 1}`);
     }
   }, [round, clues]);
 

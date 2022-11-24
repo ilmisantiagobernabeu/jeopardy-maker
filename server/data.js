@@ -157,7 +157,7 @@ const dataRoundTwo = [
     category: "History 2",
     clues: [
       { text: "History 1", answer: "Answer" },
-      { text: "History 2", answer: "Answer" },
+      { text: "History 2", answer: "Answer", isDailyDouble: true },
       { text: "History 3", answer: "Answer" },
       { text: "History 4", answer: "Answer" },
       { text: "History 5", answer: "Answer" },
