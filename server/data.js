@@ -3,10 +3,6 @@ const data = [
     category: "South of Boston",
     clues: [
       {
-        text: "Steve Carrell owns this establishment in Marshfield.",
-        answer: "Marshfield Hills General Store",
-      },
-      {
         text: "This state forest on the South Shore is the second largest state forest in the State.",
         answer: "Myles Standish State Forrest",
       },
@@ -15,9 +11,13 @@ const data = [
         answer: "Plympton",
       },
       {
-        text: "This south of Boston town was once known as Bare Cove when it was first settled by some murderous Pilgrims in 1633.",
+        text: "This south of Boston town was once known as Bare Cove when it was first settled by Pilgrims in 1633.",
         answer: "Hingham",
         isDailyDouble: true,
+      },
+      {
+        text: "The south shore town where the actress Jennifer Coolidge grew up",
+        answer: "Norwell",
       },
       {
         text: "If you drew a perfectly straight horizontal line on a map starting from Duxbury Beach east to Europe, what would be the first European country you'd hit?",
@@ -101,22 +101,22 @@ const data = [
     ],
   },
   {
-    category: "Name That Boomer",
+    category: "Older Celebrities",
     clues: [
       {
         text: "This actress played the Mom in the movie Mrs. Doubtfire",
         answer: "Sally Field",
       },
       {
-        text: "This Boomer politician looks like a turtle. That's it. That's the clue.",
-        answer: "Mitch McConnell",
+        text: "This actor voiced the character of Darth Vader in Star Wars",
+        answer: "James Earl Jones",
       },
       {
         text: "This Snakes on a Plane actor is known for his potty mouth.",
         answer: "Samuel L. Jackson",
       },
       {
-        text: "On the big screen in 2004, this Boomer stole the Declaration of Independence",
+        text: "On the big screen in 2004, this actor stole the Declaration of Independence",
         answer: "Nicholas Cage",
       },
       {
