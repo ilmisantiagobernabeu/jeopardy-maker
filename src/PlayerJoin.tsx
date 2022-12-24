@@ -17,12 +17,19 @@ const PlayerJoin = () => {
     e.preventDefault();
     socket?.emit("player signed up", playerName);
     localStorage.setItem("dt-playerName", playerName);
-    navigate("/buzzer");
   }
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setPlayerName(e.target.value);
   }
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("player successfully added to game", () => {
+        navigate("/buzzer");
+      });
+    }
+  }, [socket]);
 
   return (
     <form
@@ -37,7 +44,7 @@ const PlayerJoin = () => {
         type="text"
         placeholder="Team Name"
         className="w-full max-w-lg p-4"
-        value={playerName || localStorage.getItem("dt-playerName")}
+        value={playerName || localStorage.getItem("dt-playerName") || undefined}
         onChange={handleChange}
       />
       <div className="flex gap-4 mt-4">

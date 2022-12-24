@@ -78,6 +78,8 @@ io.on("connect", function (socket) {
       console.log("ahhhhhh", socket.id, gameState.players);
       gameState.players[socket.id] = { name: "", score: 0 };
       gameState.players[socket.id].name = playerName;
+      socket.emit("gameState updated", gameState);
+      socket.emit("player successfully added to game");
     }
     // console.log("yo, this player signed up", gameState);
     io.emit("gameState updated", gameState);

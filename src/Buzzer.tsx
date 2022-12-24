@@ -3,9 +3,11 @@ import { useGlobalState } from "./GlobalStateProvider"
 import cx from "classnames"
 import buzzerSound from "./buzzer.mp3"
 import useNoSleep from "use-no-sleep"
+import { useNavigate } from "react-router-dom"
 
 const Buzzer = () => {
   const { socket, gameState } = useGlobalState()
+  const navigate = useNavigate()
   useNoSleep(true)
 
   const handleClick = () => {
@@ -26,6 +28,14 @@ const Buzzer = () => {
       (gameState?.isBuzzerActive && isActivePlayer) ||
       gameState?.incorrectGuesses.includes(socket!.id)
   )
+
+  const hasDisconnected = !gameState?.players?.[socket?.id || ""]
+
+  useEffect(() => {
+    if (hasDisconnected) {
+      navigate("/join")
+    }
+  }, [hasDisconnected])
 
   return (
     <div className="fixed inset-0 h-full w-full bg-white">

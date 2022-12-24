@@ -10,6 +10,7 @@ interface ServerToClientEvents {
   ["gameState updated"]: (gameStateFromServer: GameState) => void;
   ["play correct sound"]: () => void;
   ["play incorrect sound"]: () => void;
+  ["player successfully added to game"]: () => void;
 }
 
 type DailyDoubleObject = {

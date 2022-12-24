@@ -29,7 +29,10 @@ const AppContainer = () => {
         <Route path="/" element={<Homepage />} />
         <Route path="/answer" element={<HostControls />} />
         <Route path="/game" element={<App round={1} />} />
-        <Route path="/game2" element={<App round={2} />} />
+        <Route
+          path="/game2"
+          element={<App round={2} key={window.location.pathname} />}
+        />
         <Route path="/scoreboard" element={<Scoreboard />} />
         <Route path="/scoreboard/:name" element={<Scoreboard />} />
         <Route path="/scoreboard/:name" element={<Scoreboard />} />
