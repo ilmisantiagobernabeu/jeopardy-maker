@@ -1,4 +1,4 @@
-const dataRoundTwo = [
+const data = [
   {
     category: "South of Boston",
     clues: [
@@ -153,7 +153,7 @@ const dataRoundTwo = [
   },
 ];
 
-const data = [
+const dataRoundTwo = [
   {
     category: "Geography",
     clues: [
