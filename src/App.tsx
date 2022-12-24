@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import GameCard from "./GameCard";
 import "./App.scss";
 import { useGlobalState } from "./GlobalStateProvider";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function App({ round }: { round: number }) {
   const { gameState, socket } = useGlobalState();
@@ -27,34 +27,39 @@ function App({ round }: { round: number }) {
       return newArr;
     }, []);
 
-  useEffect(() => {
-    const isEveryCluePlayed = clues?.every((clue) => clue?.alreadyPlayed);
-
-    if (round === 0 && isEveryCluePlayed) {
-      navigate(`/game${round + 1}`);
-    }
-  }, [round, clues]);
+  const isEveryCluePlayed = clues?.every((clue) => clue?.alreadyPlayed);
 
   return (
     <>
       <div className="Game">
-        <div className="Game-grid">
-          {catTitles?.map((title) => (
-            <div className="Game-category" key={title}>
-              {title}
-            </div>
-          ))}
-          {clues?.map((clue, index) => {
-            return (
-              <GameCard
-                key={clue.text + index.toString()}
-                clue={clue}
-                index={index}
-                round={round}
-              />
-            );
-          })}
-        </div>
+        {isEveryCluePlayed ? (
+          <div className="h-screen flex justify-center items-center h-full">
+            <Link
+              className="text-white h-full w-full flex justify-center items-center text-9xl bg-[#060ce9]"
+              to={`/game${round + 1}`}
+            >
+              Double Jeopardy Round Next
+            </Link>
+          </div>
+        ) : (
+          <div className="Game-grid">
+            {catTitles?.map((title) => (
+              <div className="Game-category" key={title}>
+                {title}
+              </div>
+            ))}
+            {clues?.map((clue, index) => {
+              return (
+                <GameCard
+                  key={clue.text + index.toString()}
+                  clue={clue}
+                  index={index}
+                  round={round}
+                />
+              );
+            })}
+          </div>
+        )}
       </div>
     </>
   );
