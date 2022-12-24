@@ -76,6 +76,7 @@ io.on("connect", function (socket) {
       gameState.players[socket.id] = returnedPlayer;
     } else {
       console.log("ahhhhhh", socket.id, gameState.players);
+      gameState.players[socket.id] = { name: "", score: 0 };
       gameState.players[socket.id].name = playerName;
     }
     // console.log("yo, this player signed up", gameState);

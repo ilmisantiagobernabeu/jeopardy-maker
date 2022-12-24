@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import GameCard from "./GameCard";
 import "./App.scss";
 import { useGlobalState } from "./GlobalStateProvider";
@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 function App({ round }: { round: number }) {
   const { gameState, socket } = useGlobalState();
+  const [roundOver, setRoundOver] = useState(false);
 
   const navigate = useNavigate();
 
@@ -29,10 +30,23 @@ function App({ round }: { round: number }) {
 
   const isEveryCluePlayed = clues?.every((clue) => clue?.alreadyPlayed);
 
+  useEffect(() => {
+    let timeout = 0;
+    if (isEveryCluePlayed) {
+      timeout = window.setTimeout(() => {
+        setRoundOver(true);
+      }, 3000);
+    }
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [isEveryCluePlayed]);
+
   return (
     <>
       <div className="Game">
-        {isEveryCluePlayed ? (
+        {roundOver ? (
           <div className="h-screen flex justify-center items-center h-full">
             <Link
               className="text-white h-full w-full flex justify-center items-center text-9xl bg-[#060ce9]"
