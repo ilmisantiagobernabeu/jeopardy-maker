@@ -1,52 +1,55 @@
 const data = [
   {
-    category: "South of Boston",
+    category: "Song Mashups",
     clues: [
       {
-        text: "This state forest on the South Shore is the second largest state forest in the State.",
-        answer: "Myles Standish State Forrest",
+        text: "01_hot_in_here.mp3",
+        answer: "Nelly - Hot in Here + Bee gee's - Stayin' Alive",
       },
       {
-        text: "This south of Boston town with a population of 3,000 is the home of the Dennett Elementary School.",
-        answer: "Plympton",
+        text: "02_all_my_life.mp3",
+        answer: "Lion King - Circle of Life + Foo Fighters - All My Life",
       },
       {
-        text: "This south of Boston town was once known as Bare Cove when it was first settled by Pilgrims in 1633.",
-        answer: "Hingham",
+        text: "03_all_star.mp3",
+        answer: "The Chainsmokers - Closer + Smashmouth - All Star",
         isDailyDouble: true,
       },
       {
-        text: "The south shore town 13 miles east of Randolph where the actress Jennifer Coolidge grew up",
-        answer: "Norwell",
+        text: "04_britney.mp3",
+        answer: "Billy Joel - We Didn't Start The Fire + Any Way You Want It",
       },
       {
-        text: "If you drew a perfectly straight horizontal line on a map starting from Duxbury Beach east to Europe, what would be the first European country you'd hit?",
-        answer: "Spain",
+        text: "05_nirvana.mp3",
+        answer:
+          "Nirvana - Smells Like Teen Spirit + Rick Astley - Never Gonna Give You Up",
       },
     ],
   },
   {
-    category: "Song and Artist",
+    category: "Song Mashups 2",
     clues: [
       {
-        text: "I put my hands up they're playing my song - 2009",
-        answer: "Party in the U.S.A - Miley Cyrus",
+        text: "07_californiacation.mp3",
+        answer:
+          "EAGLES - HOTEL CALIFORNIA + Red Hot Chilli Peppers - CALIFORNICATION",
       },
       {
-        text: "I just met you and this is crazy so here's my number - 2012.",
-        answer: "Call Me Maybe - Carly Rae Jepsen",
+        text: "08_whitney.mp3",
+        answer:
+          "WHITNEY HOUSTON – HOW WILL I KNOW + JOURNEY – DON’T STOP BELIEVING",
       },
       {
-        text: "Not a trace of doubt in my mind - 1967.",
-        answer: "I'm a believer - The Monkees",
+        text: "06_mumford.mp3",
+        answer: "MGMT - KIDS + EARTH WIND AND FIRE - SEPTEMBER",
       },
       {
-        text: "Say after me, it's no better to be safe than sorry - 1985",
-        answer: "Take on Me - A-ha",
+        text: "09_taylor.mp3",
+        answer: "MARSHMELLOW BASTILLE - HAPPIER + TAYLOR SWIFT - BLANK SPACE",
       },
       {
-        text: "Teenage wasteland, it's only teenage wasteland - 1971.",
-        answer: "Baba O'Riley - The Who",
+        text: "10_mgmt.mp3",
+        answer: "MGMT - KIDS VS EARTH WIND AND FIRE - SEPTEMBER",
       },
     ],
   },
@@ -151,7 +154,7 @@ const data = [
       },
     ],
   },
-];
+]
 
 const dataRoundTwo = [
   {
@@ -241,8 +244,8 @@ const dataRoundTwo = [
         answer: "White Gold",
       },
       {
-        text: "Oh my God, look at that face, you look like my next ______",
-        answer: "Mistake",
+        text: "Oh my God, look at that face, you look like my ______ ______",
+        answer: "Next Mistake",
       },
       {
         text: "I’m through with standin’ in lines to clubs I’ll never get in, it’s like the bottom of the ninth and I’m _____ _____ _____",
@@ -272,6 +275,6 @@ const dataRoundTwo = [
       },
     ],
   },
-];
+]
 
-module.exports = { data, dataRoundTwo };
+module.exports = { data, dataRoundTwo }
