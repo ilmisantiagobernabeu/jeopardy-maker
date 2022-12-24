@@ -79,7 +79,7 @@ const data = [
     ],
   },
   {
-    category: "Name That Movie",
+    category: "Movie Quotes",
     clues: [
       {
         text: "Well, that esclated quickly",
@@ -184,27 +184,27 @@ const dataRoundTwo = [
     ],
   },
   {
-    category: "Booze",
+    category: "Movie GIFs",
     clues: [
       {
-        text: "This cocktail named after a boroguh of New York is comprised of spicy rye and sweet vermouth",
-        answer: "Manhattan",
+        text: "napoleon.gif",
+        answer: "Napoleon Dynamite",
       },
       {
-        text: "This cocktail is made from gin, lemon juice, sugar, and carbonated water",
-        answer: "Tom Collins",
+        text: "braveheart.gif",
+        answer: "Braveheart",
       },
       {
-        text: "This brewing company is named after a mountain range that runs through California and part of a neighboring state",
-        answer: "Sierra Nevada",
+        text: "wizardofoz.gif",
+        answer: "Charlie and the Chocolate Factory",
       },
       {
-        text: "James Bond's drink of choice",
-        answer: "Vodka (Vesper) Martini",
+        text: "indianajones.gif",
+        answer: "Indiana Jones: Raiders of the Lost Ark",
       },
       {
-        text: "This drink is a mix of Goslings rum and ginger beer",
-        answer: "Dark 'n' Stormy",
+        text: "the_outsiders.gif",
+        answer: "The Outsiders",
       },
     ],
   },

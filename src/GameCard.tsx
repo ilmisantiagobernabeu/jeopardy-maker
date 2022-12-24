@@ -257,10 +257,23 @@ const GameCard = ({ clue, index, round }: Props) => {
                 </div>
               )}
               <p className="ClueModal-text">
-                {clue.text.endsWith("mp3") ? (
+                {clue.text.trim().endsWith("mp3") ? (
                   <audio controls>
                     <source src={soundMap[clue.text]} type="audio/mpeg" />
                   </audio>
+                ) : clue.text.trim().endsWith("gif") ? (
+                  <div
+                    className="flex justify-center items-center w-[50vw] h-[50vh]"
+                    style={{
+                      transform: `scale(${scale?.x / (scale?.x * scale?.x)})`,
+                    }}
+                  >
+                    <img
+                      src={clue.text}
+                      alt=""
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
                 ) : (
                   <>{clue.text}</>
                 )}
