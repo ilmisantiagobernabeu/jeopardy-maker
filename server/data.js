@@ -41,7 +41,8 @@ const data = [
       },
       {
         text: "06_mumford.mp3",
-        answer: "MGMT - KIDS + EARTH WIND AND FIRE - SEPTEMBER",
+        answer:
+          "MUMFORD AND SONS - LITTLE LION MAN + MILEY CYRUS - WRECKING BALL",
       },
       {
         text: "09_taylor.mp3",
@@ -57,7 +58,7 @@ const data = [
     category: "2000s",
     clues: [
       {
-        text: "This social media platform allowed users to choose their Top 8 friends. ",
+        text: "This social media platform allowed users to choose their Top 8 friends.",
         answer: "MySpace",
       },
       {
@@ -73,7 +74,7 @@ const data = [
         answer: "Legally Blonde",
       },
       {
-        text: "Who was the biggest selling artist of the 2000s?",
+        text: "The biggest selling artist of the 2000s",
         answer: "Eminem",
       },
     ],
@@ -141,7 +142,7 @@ const data = [
         answer: "25",
       },
       {
-        text: "What is the only team in the NFL to neither host nor play in the Super Bowl?",
+        text: "Tthe only team in the NFL to neither host nor play in the Super Bowl",
         answer: "Cleveland Browns",
       },
       {
@@ -169,7 +170,7 @@ const dataRoundTwo = [
         answer: "The Himalayas",
       },
       {
-        text: "What is the only continent that exists in all four hempispheres (North, East, South, and West)",
+        text: "The only continent that exists in all four hempispheres (North, East, South, and West)",
         answer: "Africa",
         isDailyDouble: true,
       },
@@ -258,7 +259,7 @@ const dataRoundTwo = [
     clues: [
       { text: "Name the band: 🚫👂🐆", answer: "Def Leppard" },
       {
-        text: "What color outfit was Jacqueline Kennedy wearing in public on Nov 22, 1963",
+        text: "This color outfit that Jacqueline Kennedy wearing in public on Nov 22, 1963",
         answer: "Pink",
       },
       {

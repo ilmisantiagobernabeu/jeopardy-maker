@@ -7,13 +7,14 @@ const { formatCSVToJSON } = require("./convert");
 const { networkInterfaces } = require("os");
 const nets = networkInterfaces();
 
-const localIP = nets.Ethernet.find((obj) => obj.family === "IPv4").address;
+const localIP = "192.168.0.18";
 
 const io = require("socket.io")(5000, {
   cors: {
     origin: `http://${localIP}:3000`,
     methods: ["GET", "POST"],
   },
+  pingTimeout: 300000,
   "sync disconnect on unload": false,
 });
 
@@ -68,14 +69,13 @@ io.on("connect", function (socket) {
   });
 
   socket.on("player signed up", (playerName) => {
-    console.log({ playersThatLeft });
     const returnedPlayer = playersThatLeft.find(
       (player) => player?.name && player.name === playerName
     );
     if (returnedPlayer) {
       gameState.players[socket.id] = returnedPlayer;
+      socket.emit("player successfully added to game");
     } else {
-      console.log("ahhhhhh", socket.id, gameState.players);
       gameState.players[socket.id] = { name: "", score: 0 };
       gameState.players[socket.id].name = playerName;
       socket.emit("gameState updated", gameState);
@@ -186,7 +186,10 @@ io.on("connect", function (socket) {
 
   socket.on("a player disconnected", () => {
     // if they had a name and left, let them rejoin with old score
-    if (gameState.players[socket.id]?.name) {
+    if (
+      gameState.players[socket.id]?.name &&
+      !playersThatLeft.includes(gameState.players[socket.id]?.name)
+    ) {
       playersThatLeft.push(gameState.players[socket.id]);
     }
     delete gameState.players[socket.id];
