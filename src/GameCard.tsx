@@ -9,18 +9,6 @@ import dailyDoubleSound from "./dailydouble.mp3";
 import hahaSound from "./haha.mp3";
 import Answer from "./Answer";
 
-import Sound1 from "./01_hot_in_here.mp3";
-import Sound2 from "./02_all_my_life.mp3";
-import Sound3 from "./03_all_star.mp3";
-import Sound4 from "./04_britney.mp3";
-import Sound5 from "./05_nirvana.mp3";
-
-import Sound6 from "./07_californiacation.mp3";
-import Sound7 from "./08_whitney.mp3";
-import Sound8 from "./06_mumford.mp3";
-import Sound9 from "./09_taylor.mp3";
-import Sound10 from "./10_mgmt.mp3";
-
 const COUNTDOWN_SECONDS = 25;
 
 type Clue = {
@@ -33,19 +21,6 @@ type Props = {
   clue: Clue;
   index: number;
   round: number;
-};
-
-const soundMap: { [key: string]: string } = {
-  "01_hot_in_here.mp3": Sound1,
-  "02_all_my_life.mp3": Sound2,
-  "03_all_star.mp3": Sound3,
-  "04_britney.mp3": Sound4,
-  "05_nirvana.mp3": Sound5,
-  "07_californiacation.mp3": Sound6,
-  "08_whitney.mp3": Sound7,
-  "06_mumford.mp3": Sound8,
-  "09_taylor.mp3": Sound9,
-  "10_mgmt.mp3": Sound10,
 };
 
 const GameCard = ({ clue, index, round }: Props) => {
@@ -278,10 +253,13 @@ const GameCard = ({ clue, index, round }: Props) => {
               )}
               <p className="ClueModal-text">
                 {clue.text.trim().endsWith("mp3") ? (
-                  <audio controls>
-                    <source src={soundMap[clue.text]} type="audio/mpeg" />
+                  <audio controls className="max-w-full">
+                    <source src={clue.text} type="audio/mpeg" />
                   </audio>
-                ) : clue.text.trim().endsWith("gif") ? (
+                ) : clue.text.trim().endsWith("gif") ||
+                  clue.text.trim().endsWith("jpg") ||
+                  clue.text.trim().endsWith("jpeg") ||
+                  clue.text.trim().endsWith("png") ? (
                   <div
                     className="flex justify-center items-center w-[50vw] h-[50vh]"
                     style={{
@@ -304,11 +282,6 @@ const GameCard = ({ clue, index, round }: Props) => {
       </button>
       {isFlipped && (
         <div className="fixed z-10 bottom-0 left-0 right-0 flex justify-center align-center p-5 gap-x-8">
-          <pre>buzzedInPlayer {JSON.stringify(buzzedInPlayer, null, 2)}</pre>
-          <pre>
-            showDailyDoubleScreen
-            {JSON.stringify(showDailyDoubleScreen.toString(), null, 2)}
-          </pre>
           {Boolean(gameState?.activePlayer || gameState?.dailyDoubleAmount) && (
             <>
               {seconds > 0 && (

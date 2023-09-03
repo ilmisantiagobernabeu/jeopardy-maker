@@ -1,132 +1,128 @@
 const data = [
   {
-    category: "Song Mashups",
+    category: "Pop Culture",
     clues: [
       {
-        text: "01_hot_in_here.mp3",
-        answer: "Nelly - Hot in Here + Bee gee's - Stayin' Alive",
+        text: `Finish this quote from The Office: “I’m not superstitious, but I am a _____ _____."`,
+        answer: "little stitious",
       },
       {
-        text: "02_all_my_life.mp3",
-        answer: "Lion King - Circle of Life + Foo Fighters - All My Life",
+        text: "What day do Star Wars fans celebrate “National Star Wars Day”?",
+        answer: "May 4th",
       },
       {
-        text: "03_all_star.mp3",
-        answer: "The Chainsmokers - Closer + Smashmouth - All Star",
+        text: "Which ‘Real Housewives’ star was sentenced to serve six and a half years in prison for defrauding the elderly?",
+        answer: "Jen Shah of The Real Housewives of Salt Lake City.",
         isDailyDouble: true,
       },
       {
-        text: "04_britney.mp3",
-        answer: "Billy Joel - We Didn't Start The Fire + Any Way You Want It",
+        text: "In 2011, Kim Kardashian attempted to become a singer. This is the name of her first and only musical release",
+        answer: "Jam (Turn It Up)",
       },
       {
-        text: "05_nirvana.mp3",
-        answer:
-          "Nirvana - Smells Like Teen Spirit + Rick Astley - Never Gonna Give You Up",
-      },
-    ],
-  },
-  {
-    category: "Song Mashups 2",
-    clues: [
-      {
-        text: "07_californiacation.mp3",
-        answer:
-          "EAGLES - HOTEL CALIFORNIA + Red Hot Chilli Peppers - CALIFORNICATION",
-      },
-      {
-        text: "08_whitney.mp3",
-        answer:
-          "WHITNEY HOUSTON – HOW WILL I KNOW + JOURNEY – DON’T STOP BELIEVING",
-      },
-      {
-        text: "06_mumford.mp3",
-        answer:
-          "MUMFORD AND SONS - LITTLE LION MAN + MILEY CYRUS - WRECKING BALL",
-      },
-      {
-        text: "09_taylor.mp3",
-        answer: "MARSHMELLOW BASTILLE - HAPPIER + TAYLOR SWIFT - BLANK SPACE",
-      },
-      {
-        text: "10_mgmt.mp3",
-        answer: "MGMT - KIDS VS EARTH WIND AND FIRE - SEPTEMBER",
+        text: "What is the name of Jennifer Coolidge’s character on White Lotus?",
+        answer: "Tanya McQuoid",
       },
     ],
   },
   {
-    category: "2000s",
+    category: "Pop Culture 2",
     clues: [
       {
-        text: "This social media platform allowed users to choose their Top 8 friends.",
-        answer: "MySpace",
+        text: "Tom Brady has won this many superbowls",
+        answer: "6",
       },
       {
-        text: "In which year was the first Saw film released",
-        answer: "2004",
+        text: "On what gameshow was Meghan Markle once cast as a “briefcase girl”?",
+        answer: "Deal or No Deal",
       },
       {
-        text: "This is what the 'TY' tag on a Beanie Baby stands for",
-        answer: "Ty Warner",
+        text: "Who wrote the script for the 2004 teen comedy, Mean Girls?",
+        answer: "Tina Fey",
       },
       {
-        text: "The movie with this quote: “Exercise Gives You Endorphins. Endorphins Make You Happy. Happy People Just Don’t Shoot Their Husbands. They Just Don’t”",
-        answer: "Legally Blonde",
+        text: "This is the name of the coffee shop in the sitcom Friends",
+        answer: "Central Perk",
       },
       {
-        text: "The biggest selling artist of the 2000s",
-        answer: "Eminem",
+        text: `The Word “Simba” is derived from what language, which translates to "Lion"?`,
+        answer: "Swahili",
       },
     ],
   },
   {
-    category: "Movie Quotes",
+    category: "Celebrities' Real Names",
     clues: [
       {
-        text: "Well, that esclated quickly",
-        answer: "Anchorman",
+        text: "Peter Gene Hernandez",
+        answer: "Bruno Mars",
       },
       {
-        text: "My mama always said life was like a box of chocolates",
+        text: "Katheryn Hudson",
+        answer: "Katy Perry",
+      },
+      {
+        text: "Olivia Cockburn",
+        answer: "Olivia Wilde",
+      },
+      {
+        text: "Neta-Lee Hershlag",
+        answer: "Natalie Portman",
+      },
+      {
+        text: "Eric Marlon Bishop",
+        answer: "Jamie Foxx",
+      },
+    ],
+  },
+  {
+    category: "State Capitals",
+    clues: [
+      {
+        text: "California",
+        answer: "Sacramento",
+      },
+      {
+        text: "Louisiana",
         answer: "Forrest Gump",
       },
       {
-        text: "I'm gonna make him an offer he can't refuse",
-        answer: "The Godfather",
+        text: "New Hampshire",
+        answer: "Concord",
       },
       {
-        text: "Do you prefer 'fashion victim' or 'ensemble-y challenged?",
-        answer: "Clueless",
+        text: "Maryland",
+        answer: "Annapoilis",
       },
       {
-        text: "You know, I've always wanted a child. And now I think I'll have one on toast!",
-        answer: "Hocus Pocus",
+        text: "Pennsylvania",
+        answer: "Harrisburg",
         isDailyDouble: true,
       },
     ],
   },
   {
-    category: "Older Celebrities",
+    category: "First lines from a book",
     clues: [
       {
-        text: "This actress played the Mom in Mrs. Doubtfire",
-        answer: "Sally Field",
+        text: "Once there were four children whose names were Peter, Susan, Edmund, and Lucy. This story is about something that happened to them when they were sent away from London during the war because of the air-raids.",
+        answer: "The Lion, The Witch and The Wardrobe",
       },
       {
-        text: "This actor voiced the character of Darth Vader in Star Wars",
-        answer: "James Earl Jones",
+        text: "It was a pleasure to burn.",
+        answer: "Fahrenheit 451",
       },
       {
-        text: "On the big screen in 2004, this actor stole the Declaration of Independence",
-        answer: "Nicholas Cage",
+        text: "In my younger and more vulnerable years my father gave me some advice that I've been turning over in my mind ever since.",
+        answer: "The Great Gatsby",
       },
       {
-        text: "The actress that plays the mom in Home Alone",
-        answer: "Catherine O'Hara",
+        text: "It was a bright cold day in April, and the clocks were striking thirteen",
+        answer: "1984",
       },
       {
-        text: "The character Arthur Herbert Fonzarelli in the show Happy Days is played by this actor",
-        answer: "Henry Winkler",
+        text: "You better not never tell nobody but God. It’d kill your mammy.",
+        answer: "The Color Purple",
       },
     ],
   },
@@ -134,148 +130,164 @@ const data = [
     category: "Sports",
     clues: [
       {
-        text: "Gisele Bundchen's ex-husband'",
-        answer: "Thomas Brady",
+        text: "How long is a mile?",
+        answer: "26.2",
       },
       {
-        text: "The New England Patriots were trailing the Atlanta Falcons by up to this amount before winning Superbowl 51",
-        answer: "25",
+        text: "This is what the rings in the Olympics represent",
+        answer: "The continents of the world",
       },
       {
-        text: "Tthe only team in the NFL to neither host nor play in the Super Bowl",
-        answer: "Cleveland Browns",
+        text: "Which NFL team has a lightning bolt on the players’ helmet",
+        answer: "Los Angeles Chargers",
       },
       {
-        text: "The national sport of Canada",
-        answer: "Lacrosee",
+        text: "Which American Football team won the first two Super Bowls (in 1967 and 1968)?",
+        answer: "Green Bay Packers",
       },
       {
-        text: "The boxer that beat Muhammad Ali",
-        answer: "Joe Frazier",
+        text: "What NHL team emerges onto the ice from the giant jaws of a sea beast at home games?",
+        answer: "San Jose Sharks",
       },
     ],
   },
-]
+];
 
 const dataRoundTwo = [
   {
-    category: "Geography",
+    category: "Name That Flower",
     clues: [
       {
-        text: "The longest river in the world at 4,132 miles long",
-        answer: "The Nile River",
+        text: "hosta.jpg",
+        answer: "Hosta",
       },
       {
-        text: "Mount Everest exists in this mountain range in Nepal",
-        answer: "The Himalayas",
+        text: "peonies.jpg",
+        answer: "Peonies",
       },
       {
-        text: "The only continent that exists in all four hempispheres (North, East, South, and West)",
-        answer: "Africa",
+        text: "hydrangea.jpg",
+        answer: "Hydrangea",
+      },
+      {
+        text: "orchid.jpg",
+        answer: "Orchid",
+      },
+      {
+        text: "salvias.jpeg",
+        answer: "Salvias (Sage)",
+      },
+    ],
+  },
+  {
+    category: "Facebook Status Authors",
+    clues: [
+      {
+        text: "Fuck yeah, Obamacare!! (June 2012)",
+        answer: "Nicole Morell",
+      },
+      {
+        text: "Excited for the butcher shop tonight 🙂 (February 2010)",
+        answer: "Sarah",
+        // isDailyDouble: true,
+      },
+      {
+        text: "NYC! This place serves warm nuts! (January 2015)",
+        answer: "Jeff",
+      },
+      {
+        text: "Brian and I have a dirty little secret...it's called egg salad",
+        answer: "Sam",
+      },
+      {
+        text: "Where's Count Chocula??? I'm seriously pissed about this. (October 2009)",
+        answer: "Mandy",
+      },
+    ],
+  },
+  {
+    category: "Before & After",
+    clues: [
+      {
+        text: "A landmark Louisiana area featuring Bourbon Street and a classic burger from McDonald's",
+        answer: "French Quarter Pounder",
+      },
+      {
+        text: "Luxury auto from the Ford Motor Company that also served as Washington's fighting force",
+        answer: "Lincoln Continental Army",
+      },
+      {
+        text: "Bridesmaids & SNL star who guided Santa's Sleigh",
+        answer: "Maya Rudolph The Red-Nosed Reindeer",
+      },
+      {
+        text: "I'll have a vodka & tomato juice drink with a Julie Andrews movie chaser",
+        answer: "Bloody Mary Poppins",
         isDailyDouble: true,
       },
       {
-        text: "This specific body of water separates Southern England from Northern France",
-        answer: "The English Channel",
-      },
-      {
-        text: "The country of Greenland is technically part of the Kingdom of this small European country",
-        answer: "Denmark",
+        text: "Black Rock Nevada annual festival that's used as a football strategy where one player matches up with another",
+        answer: "Burning Man-To-Man",
       },
     ],
   },
   {
-    category: "Movie GIFs",
+    category: "Disney Movies in Emojis",
+    clues: [
+      { text: "🔍🐟", answer: "Finding Nemo" },
+      { text: "👸🏻🌹👹", answer: "Beauty and the Beast" },
+      { text: "🐒🪔🧞‍♂️", answer: "Aladdin" },
+      { text: "👩🏻🐉🗡", answer: "Mulan", isDailyDouble: true },
+      { text: "🧸📖", answer: "Toy Story" },
+    ],
+  },
+  {
+    category: "Synonym Movie",
     clues: [
       {
-        text: "napoleon.gif",
-        answer: "Napoleon Dynamite",
+        text: "Awe Lady",
+        answer: "Wonder Woman",
       },
       {
-        text: "braveheart.gif",
-        answer: "Braveheart",
+        text: "Unkind Women",
+        answer: "Mean Girls",
       },
       {
-        text: "wizardofoz.gif",
-        answer: "Charlie and the Chocolate Factory",
+        text: "Assignment Unmanageable",
+        answer: "Mission Impossible",
       },
       {
-        text: "indianajones.gif",
-        answer: "Indiana Jones: Raiders of the Lost Ark",
+        text: "Speedy And Enraged",
+        answer: "Fast & Furious",
       },
       {
-        text: "the_outsiders.gif",
-        answer: "The Outsiders",
+        text: "Oil",
+        answer: "Grease",
       },
     ],
   },
   {
-    category: "Also Known As",
+    category: "Guess That Song",
     clues: [
-      { text: "Norma Jeane Mortenson", answer: "Marilyn Monroe" },
-      { text: "Stefani Germanotta ", answer: "Lady Gaga" },
-      { text: "Carlos Esteves", answer: "Charlie Sheen" },
-      { text: "Mark Sinclair", answer: "Vin Diesel" },
-      { text: "Aubrey Graham", answer: "Drake" },
-    ],
-  },
-  {
-    category: "Dead, Canadian, Both, or Neither",
-    clues: [
-      { text: "Paul Walker", answer: "Dead" },
-      { text: "Sarah McLachlan", answer: "Canadian" },
-      { text: "Norm Macdonald", answer: "Both" },
-      { text: "Keanu Reeves", answer: "Canadian", isDailyDouble: true },
-      { text: "Robin Williams", answer: "Dead" },
-    ],
-  },
-  {
-    category: "Fill in the lyric",
-    clues: [
+      { text: "hero.mp3", answer: "Hero - Mariah Carey" },
       {
-        text: "Just a city boy, born and raised in ______ ______",
-        answer: "South Detroit",
+        text: "sunday-bloody-sunday.mp3",
+        answer: "Sunday Bloody Sunday - U2",
       },
       {
-        text: "Cause this is thriller, thriller night, and no one’s gonna save you from the ______ about to strike",
-        answer: "Beast",
+        text: "tubthumping.mp3",
+        answer: "Tubthumping - Chumbawamba",
       },
       {
-        text: "This hit, that ice cold, Michelle Pfeiffer, that ______ ______",
-        answer: "White Gold",
+        text: "waterfalls.mp3",
+        answer: "Waterfalls - TLC",
       },
       {
-        text: "Oh my God, look at that face, you look like my ______ ______",
-        answer: "Next Mistake",
-      },
-      {
-        text: "I’m through with standin’ in lines to clubs I’ll never get in, it’s like the bottom of the ninth and I’m _____ _____ _____",
-        answer: "Never gonna win",
+        text: "you-make-my-dreams.mp3",
+        answer: "You Make My Dreams - Hall & Oates",
       },
     ],
   },
-  {
-    category: "Random",
-    clues: [
-      { text: "Name the band: 🚫👂🐆", answer: "Def Leppard" },
-      {
-        text: "This color outfit that Jacqueline Kennedy wearing in public on Nov 22, 1963",
-        answer: "Pink",
-      },
-      {
-        text: "The name of a country which ends with the letter L",
-        answer: "Brazil, Portugal, Senegal, Israel or Nepal",
-      },
-      {
-        text: "The westernmost city of the following cities: Las Vegas, Reno, San Diego, Los Angeles",
-        answer: "Reno",
-      },
-      {
-        text: "The number you get when you multiply all the numbers on a roulette wheel",
-        answer: "0",
-      },
-    ],
-  },
-]
+];
 
-module.exports = { data, dataRoundTwo }
+module.exports = { data, dataRoundTwo };
