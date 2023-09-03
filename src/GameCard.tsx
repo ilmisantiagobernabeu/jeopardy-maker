@@ -1,8 +1,8 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import cx from "classnames";
-import { useLocation } from "react-router-dom";
 import { useGlobalState } from "./GlobalStateProvider";
 import NobodyKnowsButton from "./NobodyKnowsButton";
+import useCountDown from "react-better-countdown-hook";
 import rightAnswerSound from "./rightanswer.mp3";
 import wrongAnswerSound from "./wronganswer.mp3";
 import dailyDoubleSound from "./dailydouble.mp3";
@@ -20,6 +20,8 @@ import Sound7 from "./08_whitney.mp3";
 import Sound8 from "./06_mumford.mp3";
 import Sound9 from "./09_taylor.mp3";
 import Sound10 from "./10_mgmt.mp3";
+
+const COUNTDOWN_SECONDS = 25;
 
 type Clue = {
   text: string;
@@ -62,9 +64,20 @@ const GameCard = ({ clue, index, round }: Props) => {
   const [dailyDoubleAmount, setDailyDoubleAmount] = useState(0);
   const [showDailyDoubleScreen, setShowDailyDoubleScreen] = useState(false);
 
-  // const { search } = useLocation();
-
-  // const searchParams = new URLSearchParams(search);
+  const [{ seconds }, { start, reset }] = useCountDown({
+    // Start time in milliseconds
+    startTimeMilliseconds: COUNTDOWN_SECONDS * 1000,
+    // Decrement to update the timer with
+    interval: 1000,
+    // Callback triggered when the timer reaches 0
+    onCountDownEnd: () => {
+      // this will run for every game card instance
+      // so we only want to mark incorrect for the currently flipped one
+      if (isFlipped) {
+        handleIncorrect();
+      }
+    },
+  });
 
   useLayoutEffect(() => {
     if (isFlipped && buttonRef.current) {
@@ -123,6 +136,34 @@ const GameCard = ({ clue, index, round }: Props) => {
 
   const { socket, gameState } = useGlobalState() || {};
 
+  useEffect(() => {
+    // if buzzed in user exists
+    if (Boolean(gameState?.activePlayer || gameState?.dailyDoubleAmount)) {
+      start();
+    } else {
+      reset();
+    }
+  }, [gameState]);
+
+  const handleIncorrect = () => {
+    const audio = new Audio(wrongAnswerSound);
+    audio.play();
+    socket?.emit("A player answers the clue", {
+      value: gameState?.dailyDoubleAmount
+        ? gameState.dailyDoubleAmount * -1
+        : value * -1,
+      arrayIndex: index % 6,
+      clueText: clue.text,
+    });
+
+    // Only show answer if this is the last incorrect guess
+    const numOfPlayers =
+      Object.values(gameState?.players || {}).filter((x) => x.name).length || 0;
+    if (gameState?.incorrectGuesses.length === numOfPlayers - 1) {
+      setShowAnswer(true);
+    }
+  };
+
   const handleCorrect = () => {
     // 2. close the clue everywhere
     setResetStyles(undefined);
@@ -138,31 +179,6 @@ const GameCard = ({ clue, index, round }: Props) => {
     const audio = new Audio(rightAnswerSound);
     audio.play();
     setShowAnswer(true);
-  };
-
-  const handleIncorrect = () => {
-    const audio = new Audio(wrongAnswerSound);
-    audio.play();
-    console.log(
-      "wtf bruh",
-      gameState?.dailyDoubleAmount
-        ? gameState.dailyDoubleAmount * -1
-        : value * -1
-    );
-    socket?.emit("A player answers the clue", {
-      value: gameState?.dailyDoubleAmount
-        ? gameState.dailyDoubleAmount * -1
-        : value * -1,
-      arrayIndex: index % 6,
-      clueText: clue.text,
-    });
-
-    // Only show answer if this is the last incorrect guess
-    const numOfPlayers =
-      Object.values(gameState?.players || {}).filter((x) => x.name).length || 0;
-    if (gameState?.incorrectGuesses.length === numOfPlayers - 1) {
-      setShowAnswer(true);
-    }
   };
 
   const handleBuzzerToggle = () => {
@@ -215,6 +231,8 @@ const GameCard = ({ clue, index, round }: Props) => {
     setShowDailyDoubleScreen(false);
     setDailyDoubleAmount(0);
   };
+
+  const buzzedInPlayer = gameState?.players[gameState?.activePlayer]?.name;
 
   return (
     <>
@@ -286,13 +304,29 @@ const GameCard = ({ clue, index, round }: Props) => {
       </button>
       {isFlipped && (
         <div className="fixed z-10 bottom-0 left-0 right-0 flex justify-center align-center p-5 gap-x-8">
-          {gameState?.players[gameState?.activePlayer]?.name && (
-            <p className="fixed top-4 w-full text-center text-6xl text-white">
-              Buzzed In:{" "}
-              <span className="text-green-500">
-                Team {gameState?.players[gameState?.activePlayer]?.name}
-              </span>
-            </p>
+          <pre>buzzedInPlayer {JSON.stringify(buzzedInPlayer, null, 2)}</pre>
+          <pre>
+            showDailyDoubleScreen
+            {JSON.stringify(showDailyDoubleScreen.toString(), null, 2)}
+          </pre>
+          {Boolean(gameState?.activePlayer || gameState?.dailyDoubleAmount) && (
+            <>
+              {seconds > 0 && (
+                <div
+                  className={cx(
+                    "fixed top-0 right-0 w-full h-24 bg-red-500 text-white",
+                    { "animate-pulse": seconds <= 10 }
+                  )}
+                  style={{ width: `${(seconds / COUNTDOWN_SECONDS) * 100}%` }}
+                >
+                  {seconds}
+                </div>
+              )}
+              <p className="fixed top-4 w-full text-center text-6xl text-white">
+                Buzzed In:{" "}
+                <span className="text-green-500">Team {buzzedInPlayer}</span>
+              </p>
+            </>
           )}
           {Boolean(gameState?.activePlayer || gameState?.dailyDoubleAmount) && (
             <>
