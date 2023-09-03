@@ -28,6 +28,9 @@ const PlayerJoin = () => {
       socket.on("player successfully added to game", () => {
         navigate("/buzzer");
       });
+      socket.on("existing player returned", () => {
+        navigate("/buzzer");
+      });
     }
   }, [socket]);
 

@@ -64,6 +64,7 @@ io.on("connect", function (socket) {
     );
     if (returnedPlayer) {
       gameState.players[socket.id] = returnedPlayer;
+      io.emit("existing player returned");
     }
     io.emit("gameState updated", gameState);
   });

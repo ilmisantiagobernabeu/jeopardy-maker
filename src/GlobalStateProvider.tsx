@@ -11,6 +11,7 @@ interface ServerToClientEvents {
   ["play correct sound"]: () => void;
   ["play incorrect sound"]: () => void;
   ["player successfully added to game"]: () => void;
+  ["existing player returned"]: () => void;
 }
 
 type DailyDoubleObject = {

@@ -1,26 +1,18 @@
-import { Routes, Route } from "react-router-dom"
-import App from "./App"
-import { useGlobalState } from "./GlobalStateProvider"
-import Scoreboard from "./Scoreboard"
-import PlayerJoin from "./PlayerJoin"
-import Homepage from "./Homepage"
-import Buzzer from "./Buzzer"
-import HostControls from "./HostControls"
-import QRImage from "./qr.png"
+import { Routes, Route } from "react-router-dom";
+import App from "./App";
+import { useGlobalState } from "./GlobalStateProvider";
+import Scoreboard from "./Scoreboard";
+import PlayerJoin from "./PlayerJoin";
+import Homepage from "./Homepage";
+import Buzzer from "./Buzzer";
+import HostControls from "./HostControls";
+import { QRCode } from "./QR";
 
 const Debug = () => {
-  const { gameState } = useGlobalState()
+  const { gameState } = useGlobalState();
 
-  return <div className="text-white">{JSON.stringify(gameState)}</div>
-}
-
-const Qr = () => {
-  return (
-    <div className="flex justify-center items-center w-full h-full">
-      <img className="h-full max-w-full" src={QRImage} />
-    </div>
-  )
-}
+  return <div className="text-white">{JSON.stringify(gameState)}</div>;
+};
 
 const AppContainer = () => {
   return (
@@ -39,10 +31,10 @@ const AppContainer = () => {
         <Route path="/join" element={<PlayerJoin />} />
         <Route path="/buzzer" element={<Buzzer />} />
         <Route path="/debug" element={<Debug />} />
-        <Route path="/qr" element={<Qr />} />
+        <Route path="/qr" element={<QRCode />} />
       </Routes>
     </>
-  )
-}
+  );
+};
 
-export default AppContainer
+export default AppContainer;
