@@ -84,7 +84,7 @@ const data = [
       },
       {
         text: "Louisiana",
-        answer: "Forrest Gump",
+        answer: "Baton Rouge",
       },
       {
         text: "New Hampshire",
@@ -130,7 +130,7 @@ const data = [
     category: "Sports",
     clues: [
       {
-        text: "How long is a mile?",
+        text: "How long is a marathon in miles?",
         answer: "26.2",
       },
       {
@@ -189,7 +189,6 @@ const dataRoundTwo = [
       {
         text: "Excited for the butcher shop tonight 🙂 (February 2010)",
         answer: "Sarah",
-        // isDailyDouble: true,
       },
       {
         text: "NYC! This place serves warm nuts! (January 2015)",

@@ -47,7 +47,8 @@ const PlayerJoin = () => {
         type="text"
         placeholder="Team Name"
         className="w-full max-w-lg p-4"
-        value={playerName || localStorage.getItem("dt-playerName") || undefined}
+        defaultValue={localStorage.getItem("dt-playerName") || ""}
+        value={playerName || undefined}
         onChange={handleChange}
       />
       <div className="flex gap-4 mt-4">
