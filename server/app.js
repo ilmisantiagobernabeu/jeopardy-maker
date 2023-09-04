@@ -3,17 +3,19 @@ const { on } = require("nodemon");
 const { data, dataRoundTwo } = require("./data");
 const fs = require("fs");
 const { formatCSVToJSON } = require("./convert");
+const { v4: uuidv4 } = require("uuid");
 
 const { networkInterfaces } = require("os");
 const nets = networkInterfaces();
 
-const localIP = "192.168.0.18";
+const localIP = "10.0.0.18";
 
 const io = require("socket.io")(5000, {
   cors: {
     origin: `http://${localIP}:3000`,
     methods: ["GET", "POST"],
   },
+  pingInterval: 10000,
   pingTimeout: 300000,
   "sync disconnect on unload": false,
 });
@@ -22,6 +24,7 @@ const io = require("socket.io")(5000, {
 
 // the game state
 let gameState = {
+  guid: uuidv4(),
   isBuzzerActive: false,
   activePlayer: null,
   lastActivePlayer: null,
@@ -30,6 +33,7 @@ let gameState = {
   players: {},
   gameBoard: data,
   incorrectGuesses: [],
+  history: [],
 };
 
 const rounds = [data, dataRoundTwo];
@@ -64,9 +68,7 @@ io.on("connect", function (socket) {
     );
     if (returnedPlayer) {
       gameState.players[socket.id] = returnedPlayer;
-      if (returnedPlayer.score > 0) {
-        io.emit("existing player returned");
-      }
+      io.emit("existing player returned");
     }
     io.emit("gameState updated", gameState);
   });
@@ -134,17 +136,52 @@ io.on("connect", function (socket) {
       const firstActivePlayer = Object.keys(gameState.players).find(
         (playerId) => gameState.players[playerId]?.name
       );
-      console.log("what the heck", firstActivePlayer);
+
+      const updatedScore = gameState.dailyDoubleAmount || score;
       gameState.players[
         gameState.activePlayer ||
           gameState.lastActivePlayer ||
           firstActivePlayer
-      ].score += gameState.dailyDoubleAmount || score;
+      ].score += updatedScore;
+
+      const player =
+        gameState.players[
+          gameState.activePlayer ||
+            gameState.lastActivePlayer ||
+            firstActivePlayer
+        ];
+      gameState.history.push({
+        ...player,
+        socket:
+          gameState.activePlayer ||
+          gameState.lastActivePlayer ||
+          firstActivePlayer,
+        score: updatedScore,
+        totalScore: player.score,
+        answer: updatedScore > 0 ? "correct" : "incorrect",
+        timeStamp: new Date(),
+      });
       gameState.dailyDoubleAmount = 0;
       gameState.activePlayer = null;
       io.emit("gameState updated", gameState);
     }
   );
+
+  socket.on("Host modifies the score", (player) => {
+    // player.socket, player.score
+    if (!gameState.players[player.socket]) {
+      return;
+    }
+    gameState.players[player.socket].score += player.score;
+    gameState.history.push({
+      name: player.name,
+      score: player.score,
+      totalScore: gameState.players[player.socket].score,
+      answer: player.score > 0 ? "correct" : "incorrect",
+      timeStamp: new Date(),
+    });
+    io.emit("gameState updated", gameState);
+  });
 
   socket.on("Host selects a clue", (activeClue) => {
     gameState.activeClue = activeClue;
@@ -188,9 +225,10 @@ io.on("connect", function (socket) {
   });
 
   socket.on("a player disconnected", () => {
-    // if they had a name and left, let them rejoin with old score
+    // if they had a name and a score (>0) and left, let them rejoin with old score
     if (
       gameState.players[socket.id]?.name &&
+      gameState.players[socket.id]?.score &&
       !playersThatLeft.includes(gameState.players[socket.id]?.name)
     ) {
       playersThatLeft.push(gameState.players[socket.id]);

@@ -31,6 +31,11 @@ interface ClientToServerEvents {
     arrayIndex: number;
     clueText?: string;
   }) => void;
+  ["Host modifies the score"]: (playerObject: {
+    socket: string;
+    name: string;
+    score: number;
+  }) => void;
   ["Host activates the buzzers"]: () => void;
   ["A player hits the buzzer"]: () => void;
   ["No player knows the answer"]: (clueObject: {
@@ -68,7 +73,7 @@ const GlobalStateProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     // connect to the socket server
-    setSocket(io("ws://192.168.0.18:5000"));
+    setSocket(io("ws://10.0.0.18:5000"));
   }, []);
 
   useEffect(() => {
@@ -79,7 +84,10 @@ const GlobalStateProvider = ({ children }: { children: React.ReactNode }) => {
     });
 
     socket?.on("connect", () => {
-      socket?.emit("new player joined", localStorage.getItem("dt-playerName"));
+      socket?.emit(
+        "new player joined",
+        localStorage.getItem(`dt-${gameState?.guid}-playerName`)
+      );
     });
 
     socket?.on("disconnect", () => {

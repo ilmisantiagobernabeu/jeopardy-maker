@@ -24,7 +24,17 @@ interface Players {
   [key: string]: PlayerObject;
 }
 
+export type HistoryPlayer = {
+  socket: string;
+  name: string;
+  score: number;
+  totalScore: number;
+  answer: "correct" | "incorrect";
+  timeStamp: Date;
+};
+
 export interface GameState {
+  guid: string;
   players: Players;
   count: number;
   score: number;
@@ -35,4 +45,5 @@ export interface GameState {
   gameBoard: GameBoard[];
   activeClue: Clue;
   dailyDoubleAmount?: number;
+  history: HistoryPlayer[];
 }

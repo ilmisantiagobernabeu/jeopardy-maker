@@ -1,23 +1,23 @@
-import React, { useEffect } from "react"
-import { useParams } from "react-router-dom"
-import { useGlobalState } from "./GlobalStateProvider"
-import cx from "classnames"
-import { GameState } from "../stateTypes"
-import useNoSleep from "use-no-sleep"
+import React, { useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { useGlobalState } from "./GlobalStateProvider";
+import cx from "classnames";
+import { GameState } from "../stateTypes";
+import useNoSleep from "use-no-sleep";
 
 function formatScore(score: number) {
   if (score < 0) {
-    return `-$${Math.abs(score)}`
+    return `-$${Math.abs(score)}`;
   }
 
-  return `$${score}`
+  return `$${score}`;
 }
 
 const Scoreboard = () => {
-  const { gameState } = useGlobalState() || {}
-  const { name } = useParams()
+  const { gameState } = useGlobalState() || {};
+  const { name } = useParams();
 
-  useNoSleep(true)
+  useNoSleep(true);
 
   // if a user goes to /scoreboard/[team name], let's show just their score
   const singlePlayerStats =
@@ -25,7 +25,7 @@ const Scoreboard = () => {
     gameState?.players &&
     Object.values(gameState.players).filter(
       ({ name: playerName }) => name === playerName
-    )[0]
+    )[0];
 
   return (
     <div
@@ -38,6 +38,14 @@ const Scoreboard = () => {
           className="GameCard-front text-center flex gap-20 flex-wrap"
           key={name}
         >
+          <div className="fixed top-0 left-0 w-full p-4">
+            First Player:{" "}
+            {
+              Object.values(gameState?.players || {}).find(
+                (player) => player.name
+              )?.name
+            }
+          </div>
           {!singlePlayerStats &&
             gameState?.players &&
             Object.values(gameState.players)
@@ -75,7 +83,7 @@ const Scoreboard = () => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default Scoreboard
+export default Scoreboard;
