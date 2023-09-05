@@ -51,7 +51,7 @@ const Buzzer = () => {
         disabled={disabled}
         onClick={handleClick}
       >
-        {!isActivePlayer && "×"}
+        {disabled && !isActivePlayer && "×"}
       </button>
       <div className="fixed top-0 w-full left-0 text-center pt-10 text-6xl pointer-events-none">
         <p className="text-6xl uppercase font-semibold">
