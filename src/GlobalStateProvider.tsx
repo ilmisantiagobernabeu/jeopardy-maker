@@ -47,6 +47,7 @@ interface ClientToServerEvents {
   ["A player sets daily double wager"]: (
     dailyDoubleObject: DailyDoubleObject
   ) => void;
+  ["Host loads the game board for the first time"]: (game: string) => void;
 }
 
 export type ContextType = {
@@ -73,7 +74,7 @@ const GlobalStateProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     // connect to the socket server
-    setSocket(io("ws://10.0.0.18:5000"));
+    setSocket(io(`ws://${import.meta.env.VITE_STATIC_IP}:5000`));
   }, []);
 
   useEffect(() => {

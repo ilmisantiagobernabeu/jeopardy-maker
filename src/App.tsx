@@ -2,13 +2,18 @@ import { useEffect, useState } from "react";
 import GameCard from "./GameCard";
 import "./App.scss";
 import { useGlobalState } from "./GlobalStateProvider";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 function App({ round }: { round: number }) {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const game = queryParams.get("game") || "";
   const { gameState, socket } = useGlobalState();
   const [roundOver, setRoundOver] = useState(false);
 
-  const navigate = useNavigate();
+  useEffect(() => {
+    socket?.emit("Host loads the game board for the first time", game);
+  }, [socket, location, game]);
 
   useEffect(() => {
     socket?.emit("Host navigates to another round", round);

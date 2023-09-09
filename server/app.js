@@ -1,18 +1,15 @@
+require("dotenv").config(); // Load .env file
+
 // import { GameState } from "../stateTypes";
 const { on } = require("nodemon");
-const { data, dataRoundTwo } = require("./data");
+const { data, dataRoundTwo, games } = require("./data");
 const fs = require("fs");
 const { formatCSVToJSON } = require("./convert");
 const { v4: uuidv4 } = require("uuid");
 
-const { networkInterfaces } = require("os");
-const nets = networkInterfaces();
-
-const localIP = "10.0.0.18";
-
 const io = require("socket.io")(5000, {
   cors: {
-    origin: `http://${localIP}:3000`,
+    origin: `http://${process.env.VITE_STATIC_IP}:3000`,
     methods: ["GET", "POST"],
   },
   pingInterval: 10000,
@@ -24,6 +21,7 @@ const io = require("socket.io")(5000, {
 
 // the game state
 let gameState = {
+  name: games[0].name,
   guid: uuidv4(),
   isBuzzerActive: false,
   activePlayer: null,
@@ -36,12 +34,10 @@ let gameState = {
   history: [],
 };
 
-const rounds = [data, dataRoundTwo];
-
 const playersThatLeft = [];
 
 io.on("connect", function (socket) {
-  console.log("A new client has joined", socket.id);
+  // console.log("A new client has joined", socket.id);
 
   // new player joined
   gameState.players[socket.id] = {};
@@ -195,6 +191,19 @@ io.on("connect", function (socket) {
     }
   );
 
+  socket.on(
+    "Host loads the game board for the first time",
+    (gameName = "steveo") => {
+      console.log("Host loads the game board for the first time");
+      const gameIndex = games.findIndex((game) => {
+        return game.name === gameName;
+      });
+      gameState.name = gameName;
+      gameState.gameBoard = games[Math.max(0, gameIndex)].rounds[0];
+      io.emit("gameState updated", gameState);
+    }
+  );
+
   socket.on("Host activates the buzzers", () => {
     gameState.isBuzzerActive = !gameState.isBuzzerActive;
     io.emit("gameState updated", gameState);
@@ -209,8 +218,12 @@ io.on("connect", function (socket) {
   });
 
   socket.on("Host navigates to another round", (round) => {
-    console.log("navigate 1st round", data);
-    gameState.gameBoard = rounds[round - 1];
+    console.log("Host navigates to another round");
+    // console.log("navigate 1st round", data);
+    const gameIndex = games.findIndex((game) => {
+      return game.name === gameState.name;
+    });
+    gameState.gameBoard = games[Math.max(0, gameIndex)].rounds[round - 1];
     io.emit("gameState updated", gameState);
   });
 

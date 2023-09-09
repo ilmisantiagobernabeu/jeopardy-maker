@@ -1,5 +1,5 @@
 import io from "socket.io-client";
 
-export const socket = io("ws://10.0.0.18:5000", {
+export const socket = io(`ws://${import.meta.env.VITE_STATIC_IP}:5000`, {
   transports: ["websocket"],
 });

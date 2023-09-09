@@ -4,10 +4,11 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon app.js"
+    "start": "node ../getStaticIp.js && nodemon app.js"
   },
   "dependencies": {
     "convert-csv-to-json": "^1.3.3",
+    "dotenv": "^16.3.1",
     "socket.io": "^4.5.2",
     "uuid": "^9.0.0"
   },
