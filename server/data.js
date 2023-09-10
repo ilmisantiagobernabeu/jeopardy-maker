@@ -1,4 +1,4 @@
-const data = [
+const dataRoundOne = [
   {
     category: "Pop Culture",
     clues: [
@@ -428,7 +428,7 @@ const dataRoundThree = [
 const games = [
   {
     name: "steves-awesome-game",
-    rounds: [data, dataRoundTwo],
+    rounds: [dataRoundOne, dataRoundTwo],
   },
   {
     name: "steveo",
@@ -436,4 +436,4 @@ const games = [
   },
 ];
 
-module.exports = { data, dataRoundTwo, games };
+module.exports = { dataRoundOne, dataRoundTwo, games };

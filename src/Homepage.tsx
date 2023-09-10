@@ -41,6 +41,7 @@ const Homepage = () => {
                   <li className="list-item" key={game}>
                     <Link
                       to={`/game?game=${game}`}
+                      target="_blank"
                       className="hover:text-gold focus:text-gold font-semibold transition-colors duration-200"
                     >
                       {game}

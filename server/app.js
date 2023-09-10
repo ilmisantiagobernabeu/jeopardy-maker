@@ -1,10 +1,6 @@
 require("dotenv").config(); // Load .env file
 
-// import { GameState } from "../stateTypes";
-const { on } = require("nodemon");
-const { data, dataRoundTwo, games } = require("./data");
-const fs = require("fs");
-const { formatCSVToJSON } = require("./convert");
+const { dataRoundOne, games } = require("./data");
 const { v4: uuidv4 } = require("uuid");
 
 const io = require("socket.io")(5000, {
@@ -17,10 +13,7 @@ const io = require("socket.io")(5000, {
   "sync disconnect on unload": false,
 });
 
-// const data = formatCSVToJSON("example.csv")
-
-// the game state
-let gameState = {
+const createDefaultGameState = () => ({
   name: games[0].name,
   games: games.map((game) => game.name),
   guid: uuidv4(),
@@ -30,12 +23,15 @@ let gameState = {
   dailyDoubleAmount: 0,
   activeClue: null,
   players: {},
-  gameBoard: data,
+  gameBoard: JSON.parse(JSON.stringify(dataRoundOne)),
   incorrectGuesses: [],
   history: [],
-};
+});
 
-const playersThatLeft = [];
+// the game state
+let gameState = createDefaultGameState();
+
+let playersThatLeft = [];
 
 io.on("connect", function (socket) {
   // console.log("A new client has joined", socket.id);
@@ -48,12 +44,10 @@ io.on("connect", function (socket) {
   // emit to the newly connected client the existing count
   socket.emit("gameState updated", gameState);
 
-  // we listen for this event from the clients
-  socket.on("counter clicked", (socketId) => {
-    gameState.players[socketId].count += 1;
-    // console.log("clicked!", socketId, gameState);
-
-    // emit to EVERYONE the update game state
+  socket.on("Host restarts the game", () => {
+    gameState = createDefaultGameState();
+    playersThatLeft = [];
+    io.emit("restarted game from server", gameState);
     io.emit("gameState updated", gameState);
   });
 

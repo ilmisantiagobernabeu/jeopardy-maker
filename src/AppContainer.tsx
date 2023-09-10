@@ -12,7 +12,11 @@ import { QRCode } from "./QR";
 const Debug = () => {
   const { gameState } = useGlobalState();
 
-  return <div className="text-white">{JSON.stringify(gameState)}</div>;
+  return (
+    <pre className="text-white">
+      {JSON.stringify(gameState?.gameBoard, null, 2)}
+    </pre>
+  );
 };
 
 const AppContainer = () => {

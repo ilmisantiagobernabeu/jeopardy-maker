@@ -4,9 +4,11 @@ import { Link } from "react-router-dom";
 import CloseIcon from "./icons/CloseIcon";
 import cx from "classnames";
 import WarningIcon from "./icons/WarningIcon";
+import { useGlobalState } from "./GlobalStateProvider";
 
 export const HamburgerMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { socket } = useGlobalState();
   return (
     <div className="text-white relative z-50">
       <div
@@ -39,8 +41,20 @@ export const HamburgerMenu = () => {
             <li>
               <Link to="/answer" className="flex gap-2">
                 {" "}
-                <WarningIcon width={16} className="text-red-500" /> Answer
+                <WarningIcon width={16} className="text-red-500" /> Show Answer
               </Link>
+            </li>
+            <li>
+              <button
+                onClick={() => {
+                  socket?.emit("Host restarts the game");
+                }}
+              >
+                <span className="flex gap-2">
+                  <WarningIcon width={16} className="text-red-500" /> Restart
+                  Game
+                </span>
+              </button>
             </li>
           </ul>
         </div>

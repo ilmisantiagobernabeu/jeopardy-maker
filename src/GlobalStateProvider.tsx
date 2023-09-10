@@ -21,7 +21,6 @@ type DailyDoubleObject = {
 };
 
 interface ClientToServerEvents {
-  ["counter clicked"]: (socketId: string) => void;
   ["new player joined"]: (playerName?: string | null) => void;
   ["a player disconnected"]: () => void;
   ["give updated game state"]: () => void;
@@ -48,6 +47,7 @@ interface ClientToServerEvents {
     dailyDoubleObject: DailyDoubleObject
   ) => void;
   ["Host loads the game board for the first time"]: (game: string) => void;
+  ["Host restarts the game"]: () => void;
 }
 
 export type ContextType = {
