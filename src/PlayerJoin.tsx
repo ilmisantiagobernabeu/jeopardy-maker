@@ -18,7 +18,15 @@ const PlayerJoin = () => {
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    handleSubmission(playerName);
+
+    const otherPlayerNames = Object.values(gameState?.players || {})
+      ?.filter((player) => player.name)
+      ?.map((player) => player.name);
+    if (otherPlayerNames.includes(playerName)) {
+      alert("Team name already exists, please pick a new name");
+    } else {
+      handleSubmission(playerName);
+    }
   }
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -47,19 +55,34 @@ const PlayerJoin = () => {
       onSubmit={handleSubmit}
       className="fixed inset-0 w-full h-full flex-col flex items-center justify-center p-8"
     >
-      <label htmlFor="playerJoin" className="text-white mb-2 text-3xl">
-        Select a team name
-      </label>
-      <input
-        id="playerJoin"
-        type="text"
-        placeholder="Team Name"
-        className="w-full max-w-lg p-4"
-        value={playerName}
-        onChange={handleChange}
-      />
+      <style>
+        {`body {
+          background-color: #060ce9;
+        }`}
+      </style>
+      <div className="flex flex-col gap-4 items-center">
+        <label
+          htmlFor="playerJoin"
+          className="flex items-center gap-2 font-bold text-2xl leading-none text-white"
+        >
+          Select a team name
+        </label>
+        <input
+          id="playerJoin"
+          type="text"
+          placeholder="Team Name"
+          className="w-full max-w-lg px-4 py-2"
+          value={playerName}
+          onChange={handleChange}
+        />
+      </div>
       <div className="flex gap-4 mt-4">
-        <button className="bg-white p-1 appearance-none">Join Game</button>
+        <button
+          className="primary-btn disabled:opacity-40"
+          disabled={!playerName.trim()}
+        >
+          Join Game
+        </button>
       </div>
     </form>
   );

@@ -13,7 +13,7 @@ const History = () => {
     socket?.emit("Host modifies the score", {
       name: player.name,
       socket: player.socket,
-      score: player.score * -1,
+      score: player.score * (player.answer === "correct" ? -2 : 2),
     });
   };
 
