@@ -1,19 +1,19 @@
-import React, { EventHandler, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useGlobalState } from "./GlobalStateProvider";
-import { io, Socket } from "socket.io-client";
-import { GameState } from "../stateTypes";
 import { useNavigate } from "react-router-dom";
-// import { socket } from "./socket";
 
 const PlayerJoin = () => {
-  const { gameState, setGameState, socket, setSocket } = useGlobalState();
-  const [playerName, setPlayerName] = useState("");
+  const { gameState, socket } = useGlobalState();
+  const [playerName, setPlayerName] = useState(
+    localStorage.getItem("dt-playerName") || ""
+  );
 
   const navigate = useNavigate();
 
   function handleSubmission(localPlayerName: string) {
     socket?.emit("player signed up", localPlayerName);
     localStorage.setItem(`dt-${gameState?.guid}-playerName`, localPlayerName);
+    localStorage.setItem(`dt-playerName`, localPlayerName);
   }
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {

@@ -1,6 +1,6 @@
 require("dotenv").config(); // Load .env file
 
-const { dataRoundOne, games } = require("./data");
+const { games } = require("./data");
 const { v4: uuidv4 } = require("uuid");
 
 const io = require("socket.io")(5000, {
@@ -13,20 +13,27 @@ const io = require("socket.io")(5000, {
   "sync disconnect on unload": false,
 });
 
-const createDefaultGameState = () => ({
-  name: games[0].name,
-  games: games.map((game) => game.name),
-  guid: uuidv4(),
-  isBuzzerActive: false,
-  activePlayer: null,
-  lastActivePlayer: null,
-  dailyDoubleAmount: 0,
-  activeClue: null,
-  players: {},
-  gameBoard: JSON.parse(JSON.stringify(dataRoundOne)),
-  incorrectGuesses: [],
-  history: [],
-});
+let previousGameId = "";
+
+const createDefaultGameState = (newGameId = true) => {
+  const newGames = JSON.parse(JSON.stringify(games));
+  const gameId = newGameId ? uuidv4() : previousGameId;
+  previousGameId = gameId;
+  return {
+    name: newGames[0].name,
+    games: JSON.parse(JSON.stringify(games)),
+    guid: gameId,
+    isBuzzerActive: false,
+    activePlayer: null,
+    lastActivePlayer: null,
+    dailyDoubleAmount: 0,
+    activeClue: null,
+    players: {},
+    gameBoard: newGames[0].rounds[0],
+    incorrectGuesses: [],
+    history: [],
+  };
+};
 
 // the game state
 let gameState = createDefaultGameState();
@@ -45,7 +52,16 @@ io.on("connect", function (socket) {
   socket.emit("gameState updated", gameState);
 
   socket.on("Host restarts the game", () => {
+    console.log("Host restarts the game");
     gameState = createDefaultGameState();
+    playersThatLeft = [];
+    io.emit("restarted game from server", gameState);
+    io.emit("gameState updated", gameState);
+  });
+
+  socket.on("Host changes the game", () => {
+    console.log("Host changes up the game");
+    gameState = createDefaultGameState(false);
     playersThatLeft = [];
     io.emit("restarted game from server", gameState);
     io.emit("gameState updated", gameState);
@@ -82,7 +98,6 @@ io.on("connect", function (socket) {
   });
 
   socket.on("give updated game state", () => {
-    // console.log("wtfwtfwtf");
     io.emit("gameState updated", gameState);
   });
 
@@ -101,7 +116,6 @@ io.on("connect", function (socket) {
           gameState.incorrectGuesses.length === activePlayers.length ||
           gameState.dailyDoubleAmount
         ) {
-          console.log("wtf", { arrayIndex });
           const clueIndex = gameState.gameBoard[arrayIndex].clues.findIndex(
             (clue) => clue.text === clueText
           );
@@ -190,11 +204,11 @@ io.on("connect", function (socket) {
     "Host loads the game board for the first time",
     (gameName = "steveo") => {
       console.log("Host loads the game board for the first time");
-      const gameIndex = games.findIndex((game) => {
+      const gameIndex = gameState.games.findIndex((game) => {
         return game.name === gameName;
       });
       gameState.name = gameName;
-      gameState.gameBoard = games[Math.max(0, gameIndex)].rounds[0];
+      gameState.gameBoard = gameState.games[Math.max(0, gameIndex)].rounds[0];
       io.emit("gameState updated", gameState);
     }
   );
@@ -215,10 +229,11 @@ io.on("connect", function (socket) {
   socket.on("Host navigates to another round", (round) => {
     console.log("Host navigates to another round");
     // console.log("navigate 1st round", data);
-    const gameIndex = games.findIndex((game) => {
+    const gameIndex = gameState.games.findIndex((game) => {
       return game.name === gameState.name;
     });
-    gameState.gameBoard = games[Math.max(0, gameIndex)].rounds[round - 1];
+    gameState.gameBoard =
+      gameState.games[Math.max(0, gameIndex)].rounds[round - 1];
     io.emit("gameState updated", gameState);
   });
 

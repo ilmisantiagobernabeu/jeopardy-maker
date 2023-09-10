@@ -38,14 +38,16 @@ const Homepage = () => {
             <>
               <ul className="flex flex-col gap-2 list-disc list-inside max-h-52 overflow-auto">
                 {gameState?.games.map((game) => (
-                  <li className="list-item" key={game}>
-                    <Link
-                      to={`/game?game=${game}`}
-                      target="_blank"
+                  <li key={game.name} className="list-item">
+                    <button
+                      onClick={() => {
+                        socket?.emit("Host changes the game");
+                        window.open(`/game?game=${game.name}`, "_blank");
+                      }}
                       className="hover:text-gold focus:text-gold font-semibold transition-colors duration-200"
                     >
-                      {game}
-                    </Link>
+                      {game.name}
+                    </button>
                   </li>
                 ))}
               </ul>
@@ -74,7 +76,7 @@ const Homepage = () => {
             {Object.entries(gameState?.players || {})
               ?.filter(([_, player]) => player.name)
               .map(([_, player]) => (
-                <div className="flex items-center gap-2">
+                <div key={player.name} className="flex items-center gap-2">
                   <PhoneIcon width={15} />
                   {player.name}
                 </div>

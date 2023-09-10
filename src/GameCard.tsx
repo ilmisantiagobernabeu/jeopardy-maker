@@ -230,7 +230,7 @@ const GameCard = ({ clue, index, round }: Props) => {
             >
               {showDailyDoubleScreen && clue.isDailyDouble && (
                 <div className="absolute top-0 w-full h-full flex flex-col justify-center items-center z-20 bg-[#060ce9]">
-                  It's a daily double bitches
+                  It's a daily double!
                   <label htmlFor="wager">
                     How much would you like to wager?
                   </label>

@@ -33,9 +33,14 @@ export type HistoryPlayer = {
   timeStamp: Date;
 };
 
+export type Game = {
+  name: string;
+  rounds: GameBoard[];
+};
+
 export interface GameState {
   guid: string;
-  games: string[];
+  games: Game[];
   players: Players;
   count: number;
   score: number;
