@@ -47,7 +47,13 @@ export const HamburgerMenu = () => {
             <li>
               <button
                 onClick={() => {
-                  socket?.emit("Host restarts the game");
+                  const response = confirm(
+                    "Are you sure you want to restart the game?"
+                  );
+
+                  if (response) {
+                    socket?.emit("Host restarts the game");
+                  }
                 }}
               >
                 <span className="flex gap-2">
