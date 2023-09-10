@@ -9,11 +9,10 @@ const History = () => {
   const { name } = useParams();
 
   const handleUndo = (player: HistoryPlayer) => {
-    console.log("ahhhh", player);
     socket?.emit("Host modifies the score", {
       name: player.name,
       socket: player.socket,
-      score: player.score * (player.answer === "correct" ? -2 : 2),
+      score: player.score * -2,
     });
   };
 

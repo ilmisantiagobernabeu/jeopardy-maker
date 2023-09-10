@@ -173,10 +173,6 @@ io.on("connect", function (socket) {
   );
 
   socket.on("Host modifies the score", (player) => {
-    // player.socket, player.score
-    if (!gameState.players[player.socket]) {
-      return;
-    }
     gameState.players[player.socket].score += player.score;
     gameState.history.push({
       name: player.name,
@@ -184,6 +180,7 @@ io.on("connect", function (socket) {
       totalScore: gameState.players[player.socket].score,
       answer: player.score > 0 ? "correct" : "incorrect",
       timeStamp: new Date(),
+      socket: player.socket,
     });
     io.emit("gameState updated", gameState);
   });

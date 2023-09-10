@@ -26,3 +26,6 @@
     border-color: #fff;
     color: #fff;
 }
+.primary-btn:disabled {
+    opacity: .5;
+}

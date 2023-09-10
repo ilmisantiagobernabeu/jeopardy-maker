@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useGlobalState } from "./GlobalStateProvider";
 import { useNavigate } from "react-router-dom";
 
 const PlayerJoin = () => {
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const { gameState, socket } = useGlobalState();
   const [playerName, setPlayerName] = useState(
     localStorage.getItem("dt-playerName") || ""
@@ -50,6 +51,10 @@ const PlayerJoin = () => {
     }
   }, [socket]);
 
+  useEffect(() => {
+    inputRef?.current?.focus();
+  }, []);
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -74,6 +79,8 @@ const PlayerJoin = () => {
           className="w-full max-w-lg px-4 py-2"
           value={playerName}
           onChange={handleChange}
+          ref={inputRef}
+          autoFocus
         />
       </div>
       <div className="flex gap-4 mt-4">
