@@ -22,6 +22,7 @@ const io = require("socket.io")(5000, {
 // the game state
 let gameState = {
   name: games[0].name,
+  games: games.map((game) => game.name),
   guid: uuidv4(),
   isBuzzerActive: false,
   activePlayer: null,

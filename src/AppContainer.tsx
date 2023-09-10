@@ -32,7 +32,7 @@ const AppContainer = () => {
         <Route path="/join" element={<PlayerJoin />} />
         <Route path="/buzzer" element={<Buzzer />} />
         <Route path="/debug" element={<Debug />} />
-        <Route path="/qr" element={<QRCode />} />
+        <Route path="/qr" element={<QRCode className="p-12 w-full h-full" />} />
       </Routes>
     </>
   );

@@ -1,7 +1,12 @@
 import QRCodeLib from "react-qr-code";
+import cx from "classnames";
 
-export const QRCode = () => (
-  <div className="w-full h-full flex justify-center items-center p-12">
+export const QRCode = ({ className = "" }: { className?: string }) => (
+  <div
+    className={cx("flex justify-center items-center", {
+      [className]: className,
+    })}
+  >
     <QRCodeLib
       value={`http://${import.meta.env.VITE_STATIC_IP}:3000/join`}
       className="w-full h-full max-w-fit"

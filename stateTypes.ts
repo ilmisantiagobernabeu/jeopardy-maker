@@ -35,6 +35,7 @@ export type HistoryPlayer = {
 
 export interface GameState {
   guid: string;
+  games: string[];
   players: Players;
   count: number;
   score: number;
