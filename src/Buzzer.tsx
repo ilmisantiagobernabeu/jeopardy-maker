@@ -63,7 +63,7 @@ const Buzzer = () => {
           .filter(([s, player]) => player.name)
           .sort((a, b) => (a[1].score > b[1].score ? -1 : 1))
           .map(([s, { name, score }], index) => (
-            <li className="flex justify-between w-full">
+            <li key={name} className="flex justify-between w-full">
               <span>
                 {name} {index === 0 ? "👑" : ""}
               </span>{" "}

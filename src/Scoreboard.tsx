@@ -4,6 +4,7 @@ import { useGlobalState } from "./GlobalStateProvider";
 import cx from "classnames";
 import { GameState } from "../stateTypes";
 import useNoSleep from "use-no-sleep";
+import { HamburgerMenu } from "./HamburgerMenu";
 
 function formatScore(score: number) {
   if (score < 0) {
@@ -33,6 +34,7 @@ const Scoreboard = () => {
         "flex w-full h-full fixed top-0 left-0 justify-center items-center flex-col bg-[#060ce9]"
       )}
     >
+      <HamburgerMenu />
       <div className="GameCard">
         <div
           className="GameCard-front text-center flex gap-20 flex-wrap"

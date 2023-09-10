@@ -7,16 +7,18 @@ import { useNavigate } from "react-router-dom";
 
 const PlayerJoin = () => {
   const { gameState, setGameState, socket, setSocket } = useGlobalState();
-  const [playerName, setPlayerName] = useState(
-    localStorage.getItem("dt-playerName") || ""
-  );
+  const [playerName, setPlayerName] = useState("");
 
   const navigate = useNavigate();
 
+  function handleSubmission(localPlayerName: string) {
+    socket?.emit("player signed up", localPlayerName);
+    localStorage.setItem(`dt-${gameState?.guid}-playerName`, localPlayerName);
+  }
+
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    socket?.emit("player signed up", playerName);
-    localStorage.setItem("dt-playerName", playerName);
+    handleSubmission(playerName);
   }
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -24,11 +26,17 @@ const PlayerJoin = () => {
   }
 
   useEffect(() => {
+    const localName = localStorage.getItem(`dt-${gameState?.guid}-playerName`);
+
+    if (localName) {
+      setPlayerName(localName);
+      handleSubmission(localName);
+    }
+  }, [gameState?.guid]);
+
+  useEffect(() => {
     if (socket) {
       socket.on("player successfully added to game", () => {
-        navigate("/buzzer");
-      });
-      socket.on("existing player returned", () => {
         navigate("/buzzer");
       });
     }
@@ -47,15 +55,11 @@ const PlayerJoin = () => {
         type="text"
         placeholder="Team Name"
         className="w-full max-w-lg p-4"
-        defaultValue={localStorage.getItem("dt-playerName") || ""}
-        value={playerName || undefined}
+        value={playerName}
         onChange={handleChange}
       />
       <div className="flex gap-4 mt-4">
         <button className="bg-white p-1 appearance-none">Join Game</button>
-        {/* <button onClick={handleClick} className="bg-white p-1 appearance-none">
-          State: {JSON.stringify(gameState)}
-        </button> */}
       </div>
     </form>
   );

@@ -3,6 +3,7 @@ const PhoneIcon = (props: any) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="24.5 7.58 47 80.84"
+    fill="currentColor"
     {...props}
   >
     <path

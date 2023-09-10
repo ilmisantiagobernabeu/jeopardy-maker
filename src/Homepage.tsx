@@ -4,11 +4,13 @@ import { QRCode } from "./QR";
 import { useGlobalState } from "./GlobalStateProvider";
 import PhoneIcon from "./icons/PhoneIcon";
 import DesktopIcon from "./icons/DesktopIcon";
+import { HamburgerMenu } from "./HamburgerMenu";
 
 const Homepage = () => {
   const { gameState, socket } = useGlobalState();
   return (
     <div className="p-8 w-full h-full flex flex-col justify-center items-center gap-y-12 bg-[#060ce9] text-white">
+      <HamburgerMenu />
       <style>
         {`body {
           background-color: #060ce9;
@@ -18,7 +20,7 @@ const Homepage = () => {
       <div className="flex gap-12 items-start max-w-4xl">
         <div className="flex flex-col gap-4">
           <h2 className="flex items-center gap-2 font-bold text-2xl leading-none">
-            <PhoneIcon width={16} className=" fill-white" /> Teams join here
+            <PhoneIcon width={15} className=" fill-white" /> Teams join here
           </h2>
           <Link to="/qr" target="_blank">
             <QRCode />
@@ -62,6 +64,23 @@ const Homepage = () => {
           </p>
         </div>
       </div>
+      {Object.entries(gameState?.players || {})?.filter(
+        ([_, player]) => player.name
+      ).length > 0 && (
+        <div className="flex flex-col gap-8 text-center">
+          <h2 className="font-bold text-2xl leading-none">Teams ready to go</h2>
+          <div className="flex justify-center gap-6">
+            {Object.entries(gameState?.players || {})
+              ?.filter(([_, player]) => player.name)
+              .map(([_, player]) => (
+                <div className="flex items-center gap-2">
+                  <PhoneIcon width={15} />
+                  {player.name}
+                </div>
+              ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

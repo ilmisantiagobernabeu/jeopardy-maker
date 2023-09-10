@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import { useGlobalState } from "./GlobalStateProvider";
 import cx from "classnames";
 import { HistoryPlayer } from "../stateTypes";
+import { HamburgerMenu } from "./HamburgerMenu";
 
 const History = () => {
   const { gameState, socket } = useGlobalState() || {};
@@ -22,7 +23,11 @@ const History = () => {
         "flex w-full h-full fixed top-0 left-0 justify-center items-center flex-col bg-[#060ce9]"
       )}
     >
+      <HamburgerMenu />
       <div className="GameCard">
+        <h2 className="font-bold text-2xl leading-none text-center normal-case mb-2">
+          History
+        </h2>
         <div className=" text-center flex gap-20 flex-wrap" key={name}>
           <table className="text-left text-xl" cellPadding={10}>
             <thead className="border-b">
