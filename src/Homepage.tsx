@@ -6,6 +6,17 @@ import PhoneIcon from "./icons/PhoneIcon";
 import DesktopIcon from "./icons/DesktopIcon";
 import { HamburgerMenu } from "./HamburgerMenu";
 
+function generateRandomString(length = 5) {
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let randomString = "";
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    randomString += characters.charAt(randomIndex);
+  }
+  return randomString;
+}
+
 const Homepage = () => {
   const { gameState, socket } = useGlobalState();
   return (
@@ -37,11 +48,12 @@ const Homepage = () => {
           ) : (
             <>
               <ul className="flex flex-col gap-2 list-disc list-inside max-h-52 overflow-auto">
-                {gameState?.games.map((game) => (
+                {Object.values(gameState?.games || {}).map((game) => (
                   <li key={game.name} className="list-item">
                     <button
                       onClick={() => {
                         socket?.emit("Host changes the game");
+                        localStorage.setItem("dt-gameName", game.name);
                         window.open(`/game?game=${game.name}`, "_blank");
                       }}
                       className="hover:text-gold focus:text-gold font-semibold transition-colors duration-200"
@@ -61,7 +73,10 @@ const Homepage = () => {
           )}
 
           <p>
-            <Link to="/create" className="primary-btn">
+            <Link
+              to={`/create?name=default-game-${generateRandomString()}`}
+              className="primary-btn"
+            >
               Create new game
             </Link>
           </p>

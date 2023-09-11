@@ -12,7 +12,15 @@ function App({ round }: { round: number }) {
   const [roundOver, setRoundOver] = useState(false);
 
   useEffect(() => {
-    socket?.emit("Host loads the game board for the first time", game);
+    if (
+      localStorage.getItem("dt-gameName") &&
+      game === localStorage.getItem("dt-gameName")
+    ) {
+      socket?.emit("Host loads the game board for the first time", game);
+    } else if (localStorage.getItem("dt-gameName") && socket) {
+      localStorage.setItem("dt-gameName", game);
+      socket?.emit("Host changes the game");
+    }
   }, [socket, location, game]);
 
   useEffect(() => {

@@ -29,3 +29,7 @@
 .primary-btn:disabled {
     opacity: .5;
 }
+
+.dark-text-shadow {
+    text-shadow: rgb(0, 0, 0) 0.08em 0.08em;
+}

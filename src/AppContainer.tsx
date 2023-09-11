@@ -8,6 +8,7 @@ import Homepage from "./Homepage";
 import Buzzer from "./Buzzer";
 import HostControls from "./HostControls";
 import { QRCode } from "./QR";
+import CreateGame from "./CreateGame";
 
 const Debug = () => {
   const { gameState } = useGlobalState();
@@ -25,6 +26,7 @@ const AppContainer = () => {
       <Routes>
         <Route path="/" element={<Homepage />} />
         <Route path="/answer" element={<HostControls />} />
+        <Route path="/create" element={<CreateGame />} />
         <Route path="/game" element={<App round={1} />} />
         <Route
           path="/game2"

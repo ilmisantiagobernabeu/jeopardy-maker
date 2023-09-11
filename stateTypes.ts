@@ -2,9 +2,10 @@ export interface Clue {
   text: string;
   answer: string;
   alreadyPlayed?: boolean;
+  isDailyDouble?: boolean;
 }
 
-interface GameBoard {
+export interface GameBoard {
   category: string;
   clues: Clue[];
 }
@@ -35,7 +36,7 @@ export type HistoryPlayer = {
 
 export type Game = {
   name: string;
-  rounds: GameBoard[];
+  rounds: GameBoard[][];
 };
 
 export interface GameState {
