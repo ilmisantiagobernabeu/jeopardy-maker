@@ -19,7 +19,7 @@ function App({ round }: { round: number }) {
       socket?.emit("Host loads the game board for the first time", game);
     } else if (localStorage.getItem("dt-gameName") && socket) {
       localStorage.setItem("dt-gameName", game);
-      socket?.emit("Host changes the game");
+      socket?.emit("Host changes the game", game);
     }
   }, [socket, location, game]);
 

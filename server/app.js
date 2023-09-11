@@ -39,12 +39,12 @@ const io = require("socket.io")(5000, {
 
 let previousGameId = "";
 
-const createDefaultGameState = (newGameId = true) => {
+const createDefaultGameState = (newGameId = true, specificGameName) => {
   const newGames = JSON.parse(JSON.stringify(games));
   const gameId = newGameId ? uuidv4() : previousGameId;
   previousGameId = gameId;
   return {
-    name: newGames[Object.keys(newGames)[0]].name,
+    name: specificGameName || newGames[Object.keys(newGames)[0]].name,
     games: JSON.parse(JSON.stringify(games)),
     guid: gameId,
     isBuzzerActive: false,
@@ -79,15 +79,13 @@ io.on("connect", function (socket) {
     console.log("Host restarts the game");
     gameState = createDefaultGameState();
     playersThatLeft = [];
-    io.emit("restarted game from server", gameState);
     io.emit("gameState updated", gameState);
   });
 
-  socket.on("Host changes the game", () => {
+  socket.on("Host changes the game", (gameName) => {
     console.log("Host changes up the game");
-    gameState = createDefaultGameState(false);
+    gameState = createDefaultGameState(false, gameName);
     playersThatLeft = [];
-    io.emit("restarted game from server", gameState);
     io.emit("gameState updated", gameState);
   });
 

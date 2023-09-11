@@ -48,7 +48,7 @@ interface ClientToServerEvents {
   ) => void;
   ["Host loads the game board for the first time"]: (game: string) => void;
   ["Host restarts the game"]: () => void;
-  ["Host changes the game"]: () => void;
+  ["Host changes the game"]: (gameName: string) => void;
 }
 
 export type ContextType = {
