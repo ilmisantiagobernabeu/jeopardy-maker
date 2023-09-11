@@ -1,10 +1,11 @@
 import "./App.scss";
 import { useGlobalState } from "./GlobalStateProvider";
 import GameCardStatic from "./GameCardStatic";
-import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Game } from "../stateTypes";
 import EditIcon from "./icons/EditIcon";
+import { useCreateGameMutation } from "./api/createGame";
 
 const getInitialGameState = (gameName: string) => ({
   name: gameName,
@@ -189,10 +190,14 @@ const getInitialGameState = (gameName: string) => ({
 });
 
 function CreateGame() {
+  const createGame = useCreateGameMutation();
+  const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const round = Number(queryParams.get("round") || 1);
   const gameName = queryParams.get("name") || "";
+
+  const { gameState: globalGameState } = useGlobalState();
 
   const [gameState, setGameState] = useState(getInitialGameState(gameName));
   const [isEditGameName, setIsEditGameName] = useState(false);
@@ -211,6 +216,29 @@ function CreateGame() {
       return newArr;
     }, []);
 
+  // check name query param
+  // if that already exists as a game name in global state
+  // load up that info in local gameState
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const gameName = queryParams.get("name");
+
+    const existingGame = Object.values(globalGameState?.games || {})?.find(
+      (game) => game.name === gameName
+    );
+
+    if (existingGame) {
+      setGameState(existingGame);
+    }
+  }, [globalGameState, location]);
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    queryParams.set("name", gameState.name);
+
+    navigate(`${location.pathname}?${queryParams.toString()}`);
+  }, [gameState.name]);
+
   return (
     <>
       <div className="Game">
@@ -226,7 +254,7 @@ function CreateGame() {
                 onChange={(e) => {
                   setGameState((prevGameState) => ({
                     ...prevGameState,
-                    name: e.target.value,
+                    name: e.target.value.replace(" ", "-"),
                   }));
                 }}
                 onBlur={() => {
@@ -268,7 +296,24 @@ function CreateGame() {
                 Round 2
               </Link>
             </p>
-            <button className="primary-btn">Save Game</button>
+            <button
+              className="primary-btn"
+              onClick={() => {
+                createGame.mutate(gameState, {
+                  onSuccess() {
+                    console.log("Created new game file succesfully!");
+                  },
+                  onError(err) {
+                    console.log(
+                      "Failed to create new game file succesfully!",
+                      err
+                    );
+                  },
+                });
+              }}
+            >
+              Save Game
+            </button>
           </div>
         </div>
         <div className="Game-grid">
@@ -312,6 +357,11 @@ const EditTitle = ({
 }: EditTitleProps) => {
   const [newTitle, setNewTitle] = useState(title);
   const [isEditing, setIsEditing] = useState(false);
+
+  useEffect(() => {
+    setNewTitle(title);
+  }, [title]);
+
   return (
     <div className="Game-category" key={title}>
       {isEditing ? (
@@ -331,9 +381,17 @@ const EditTitle = ({
               return newGameState;
             });
           }}
+          autoFocus
         />
       ) : (
-        newTitle
+        <button
+          onClick={() => {
+            setIsEditing(true);
+          }}
+          className="uppercase"
+        >
+          {newTitle}
+        </button>
       )}
     </div>
   );

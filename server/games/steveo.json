@@ -3,7 +3,7 @@
   "rounds": [
     [
       {
-        "category": "first first first",
+        "category": "testing if this works",
         "clues": [
           {
             "text": "hosta.jpg",
@@ -81,11 +81,27 @@
       {
         "category": "Disney Movies in Emojis",
         "clues": [
-          { "text": "🔍🐟", "answer": "Finding Nemo" },
-          { "text": "👸🏻🌹👹", "answer": "Beauty and the Beast" },
-          { "text": "🐒🪔🧞‍♂️", "answer": "Aladdin" },
-          { "text": "👩🏻🐉🗡", "answer": "Mulan", "isDailyDouble": true },
-          { "text": "🧸📖", "answer": "Toy Story" }
+          {
+            "text": "🔍🐟",
+            "answer": "Finding Nemo"
+          },
+          {
+            "text": "👸🏻🌹👹",
+            "answer": "Beauty and the Beast"
+          },
+          {
+            "text": "🐒🪔🧞‍♂️",
+            "answer": "Aladdin"
+          },
+          {
+            "text": "👩🏻🐉🗡",
+            "answer": "Mulan",
+            "isDailyDouble": true
+          },
+          {
+            "text": "🧸📖",
+            "answer": "Toy Story"
+          }
         ]
       },
       {
@@ -116,7 +132,10 @@
       {
         "category": "asdfasdf",
         "clues": [
-          { "text": "hero.mp3", "answer": "Hero - Mariah Carey" },
+          {
+            "text": "hero.mp3",
+            "answer": "Hero - Mariah Carey"
+          },
           {
             "text": "sunday-bloody-sunday.mp3",
             "answer": "Sunday Bloody Sunday - U2"

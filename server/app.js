@@ -1,3 +1,27 @@
+const express = require("express");
+const app = express();
+const port = process.env.PORT || 3001;
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const fs = require("fs");
+
+app.use(cors());
+app.use(bodyParser.json());
+
+app.post("/api/createGame", (req, res) => {
+  const receivedData = req.body;
+  console.log("Received JSON data:", receivedData);
+  res.json({ message: "JSON data received successfully" });
+  fs.writeFileSync(
+    `./games/${receivedData.name}.json`,
+    JSON.stringify(receivedData, null, 2)
+  );
+});
+
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
+
 require("dotenv").config(); // Load .env file
 
 const games = require("./games");

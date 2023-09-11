@@ -7,8 +7,10 @@
     "start": "node ../getStaticIp.js && nodemon app.js"
   },
   "dependencies": {
+    "axios": "^1.5.0",
     "convert-csv-to-json": "^1.3.3",
     "dotenv": "^16.3.1",
+    "express": "^4.18.2",
     "socket.io": "^4.5.2",
     "uuid": "^9.0.0"
   },

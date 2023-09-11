@@ -1,0 +1,181 @@
+{
+  "name": "testing-123",
+  "rounds": [
+    [
+      {
+        "category": "the testing game",
+        "clues": [
+          {
+            "text": "A - Clue 1",
+            "answer": "Answer 1"
+          },
+          {
+            "text": "A - Clue 2",
+            "answer": "Answer 2"
+          },
+          {
+            "text": "A - Clue 3",
+            "answer": "Answer 3"
+          },
+          {
+            "text": "A - Clue 4",
+            "answer": "Answer 3"
+          },
+          {
+            "text": "A - Clue 5",
+            "answer": "Answer 4"
+          },
+          {
+            "text": "A - Clue 6",
+            "answer": "Answer 5"
+          }
+        ]
+      },
+      {
+        "category": "Category B",
+        "clues": [
+          {
+            "text": "B - Clue 1",
+            "answer": "Answer 1"
+          },
+          {
+            "text": "B - Clue 2",
+            "answer": "Answer 2"
+          },
+          {
+            "text": "B - Clue 3",
+            "answer": "Answer 3"
+          },
+          {
+            "text": "B - Clue 4",
+            "answer": "Answer 3"
+          },
+          {
+            "text": "B - Clue 5",
+            "answer": "Answer 4"
+          },
+          {
+            "text": "B - Clue 6",
+            "answer": "Answer 5"
+          }
+        ]
+      },
+      {
+        "category": "Category C",
+        "clues": [
+          {
+            "text": "C - Clue 1",
+            "answer": "Answer 1"
+          },
+          {
+            "text": "C - Clue 2",
+            "answer": "Answer 2"
+          },
+          {
+            "text": "C - Clue 3",
+            "answer": "Answer 3"
+          },
+          {
+            "text": "C - Clue 4",
+            "answer": "Answer 3"
+          },
+          {
+            "text": "C - Clue 5",
+            "answer": "Answer 4"
+          },
+          {
+            "text": "C - Clue 6",
+            "answer": "Answer 5"
+          }
+        ]
+      },
+      {
+        "category": "Category D",
+        "clues": [
+          {
+            "text": "D - Clue 1",
+            "answer": "Answer 1"
+          },
+          {
+            "text": "D - Clue 2",
+            "answer": "Answer 2"
+          },
+          {
+            "text": "D - Clue 3",
+            "answer": "Answer 3"
+          },
+          {
+            "text": "D - Clue 4",
+            "answer": "Answer 3"
+          },
+          {
+            "text": "D - Clue 5",
+            "answer": "Answer 4"
+          },
+          {
+            "text": "D - Clue 6",
+            "answer": "Answer 5"
+          }
+        ]
+      },
+      {
+        "category": "Category E",
+        "clues": [
+          {
+            "text": "E - Clue 1",
+            "answer": "Answer 1"
+          },
+          {
+            "text": "E - Clue 2",
+            "answer": "Answer 2"
+          },
+          {
+            "text": "E - Clue 3",
+            "answer": "Answer 3"
+          },
+          {
+            "text": "E - Clue 4",
+            "answer": "Answer 3"
+          },
+          {
+            "text": "E - Clue 5",
+            "answer": "Answer 4"
+          },
+          {
+            "text": "E - Clue 6",
+            "answer": "Answer 5"
+          }
+        ]
+      },
+      {
+        "category": "Category F",
+        "clues": [
+          {
+            "text": "F - Clue 1",
+            "answer": "Answer 1"
+          },
+          {
+            "text": "F - Clue 2",
+            "answer": "Answer 2"
+          },
+          {
+            "text": "F - Clue 3",
+            "answer": "Answer 3"
+          },
+          {
+            "text": "F - Clue 4",
+            "answer": "Answer 3"
+          },
+          {
+            "text": "F - Clue 5",
+            "answer": "Answer 4"
+          },
+          {
+            "text": "F - Clue 6",
+            "answer": "Answer 5"
+          }
+        ]
+      }
+    ]
+  ]
+}
