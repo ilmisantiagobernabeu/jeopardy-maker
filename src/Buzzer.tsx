@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useGlobalState } from "./GlobalStateProvider";
 import cx from "classnames";
-import buzzerSound from "./buzzer.mp3";
+import buzzerSound from "./sounds/buzzer.mp3";
 import useNoSleep from "use-no-sleep";
 import { useNavigate } from "react-router-dom";
 import CloseIcon from "./icons/CloseIcon";
