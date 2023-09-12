@@ -52,7 +52,7 @@ const Homepage = () => {
                   <li key={game.name} className="list-item">
                     <button
                       onClick={() => {
-                        socket?.emit("Host changes the game");
+                        socket?.emit("Host changes the game", game.name);
                         localStorage.setItem("dt-gameName", game.name);
                         window.open(`/game?game=${game.name}`, "_blank");
                       }}
