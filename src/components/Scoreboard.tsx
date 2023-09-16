@@ -38,14 +38,6 @@ const Scoreboard = () => {
           className="GameCard-front text-center flex gap-20 flex-wrap"
           key={name}
         >
-          <div className="fixed top-0 left-0 w-full p-4">
-            First Player:{" "}
-            {
-              Object.values(gameState?.players || {}).find(
-                (player) => player.name
-              )?.name
-            }
-          </div>
           {!singlePlayerStats &&
             gameState?.players &&
             Object.values(gameState.players)

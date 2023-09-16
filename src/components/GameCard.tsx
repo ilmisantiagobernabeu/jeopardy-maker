@@ -291,9 +291,7 @@ const GameCard = ({ clue, index, round }: Props) => {
                     { "animate-pulse": seconds <= 10 }
                   )}
                   style={{ width: `${(seconds / COUNTDOWN_SECONDS) * 100}%` }}
-                >
-                  {seconds}
-                </div>
+                ></div>
               )}
               <p className="fixed top-4 w-full text-center text-6xl text-white">
                 Buzzed In:{" "}
