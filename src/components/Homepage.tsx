@@ -2,8 +2,8 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { QRCode } from "./QR";
 import { useGlobalState } from "./GlobalStateProvider";
-import PhoneIcon from "./icons/PhoneIcon";
-import DesktopIcon from "./icons/DesktopIcon";
+import PhoneIcon from "../icons/PhoneIcon";
+import DesktopIcon from "../icons/DesktopIcon";
 import { HamburgerMenu } from "./HamburgerMenu";
 
 function generateRandomString(length = 5) {

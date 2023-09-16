@@ -3,10 +3,10 @@ import cx from "classnames";
 import { useGlobalState } from "./GlobalStateProvider";
 import NobodyKnowsButton from "./NobodyKnowsButton";
 import useCountDown from "react-better-countdown-hook";
-import rightAnswerSound from "./sounds/rightanswer.mp3";
-import wrongAnswerSound from "./sounds/wronganswer.mp3";
-import dailyDoubleSound from "./sounds/dailydouble.mp3";
-import hahaSound from "./sounds/haha.mp3";
+import rightAnswerSound from "../sounds/rightanswer.mp3";
+import wrongAnswerSound from "../sounds/wronganswer.mp3";
+import dailyDoubleSound from "../sounds/dailydouble.mp3";
+import hahaSound from "../sounds/haha.mp3";
 import Answer from "./Answer";
 
 const COUNTDOWN_SECONDS = 25;

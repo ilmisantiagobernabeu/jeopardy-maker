@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import cx from "classnames";
-import Answer from "./Answer";
-import CloseIcon from "./icons/CloseIcon";
-import { Game } from "../stateTypes";
+import CloseIcon from "../icons/CloseIcon";
+import { Game } from "../../stateTypes";
 
 type Clue = {
   text: string;

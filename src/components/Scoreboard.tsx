@@ -1,8 +1,6 @@
-import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useGlobalState } from "./GlobalStateProvider";
 import cx from "classnames";
-import { GameState } from "../stateTypes";
 import useNoSleep from "use-no-sleep";
 import { HamburgerMenu } from "./HamburgerMenu";
 

@@ -1,9 +1,9 @@
 import { useState } from "react";
-import MenuIcon from "./icons/MenuIcon";
+import MenuIcon from "../icons/MenuIcon";
 import { Link } from "react-router-dom";
-import CloseIcon from "./icons/CloseIcon";
+import CloseIcon from "../icons/CloseIcon";
 import cx from "classnames";
-import WarningIcon from "./icons/WarningIcon";
+import WarningIcon from "../icons/WarningIcon";
 import { useGlobalState } from "./GlobalStateProvider";
 
 export const HamburgerMenu = () => {

@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useGlobalState } from "./GlobalStateProvider";
 import cx from "classnames";
-import { HistoryPlayer } from "../stateTypes";
+import { HistoryPlayer } from "../../stateTypes";
 import { HamburgerMenu } from "./HamburgerMenu";
 
 const History = () => {

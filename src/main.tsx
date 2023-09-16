@@ -2,8 +2,8 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import { BrowserRouter } from "react-router-dom";
-import AppContainer from "./AppContainer";
-import GlobalStateProvider from "./GlobalStateProvider";
+import AppContainer from "./components/AppContainer";
+import GlobalStateProvider from "./components/GlobalStateProvider";
 import { QueryClient, QueryClientProvider } from "react-query";
 
 const client = new QueryClient();

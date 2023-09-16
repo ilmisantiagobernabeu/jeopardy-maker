@@ -3,9 +3,9 @@ import { useGlobalState } from "./GlobalStateProvider";
 import GameCardStatic from "./GameCardStatic";
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Game } from "../stateTypes";
-import EditIcon from "./icons/EditIcon";
-import { useCreateGameMutation } from "./api/createGame";
+import { Game } from "../../stateTypes";
+import EditIcon from "../icons/EditIcon";
+import { useCreateGameMutation } from "../api/createGame";
 
 const getInitialGameState = (gameName: string) => ({
   name: gameName,

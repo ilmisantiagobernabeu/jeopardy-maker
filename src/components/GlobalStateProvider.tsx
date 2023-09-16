@@ -1,10 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
-import { Clue, GameState } from "../stateTypes";
-
-interface Player {
-  [name: string]: number;
-}
+import { Clue, GameState } from "../../stateTypes";
 
 interface ServerToClientEvents {
   ["gameState updated"]: (gameStateFromServer: GameState) => void;
