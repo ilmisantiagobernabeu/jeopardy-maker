@@ -29,7 +29,7 @@ const { v4: uuidv4 } = require("uuid");
 
 const io = require("socket.io")(5000, {
   cors: {
-    origin: `http://${process.env.VITE_STATIC_IP}:3000`,
+    origin: `*`,
     methods: ["GET", "POST"],
   },
   pingInterval: 10000,

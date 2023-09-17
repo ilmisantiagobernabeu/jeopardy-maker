@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import GameCard from "./GameCard";
 import "./App.scss";
 import { useGlobalState } from "./GlobalStateProvider";
 import { Link, useLocation } from "react-router-dom";
+import { HamburgerMenu } from "./HamburgerMenu";
 
 function App({ round }: { round: number }) {
   const location = useLocation();
@@ -10,6 +11,8 @@ function App({ round }: { round: number }) {
   const game = queryParams.get("game") || "";
   const { gameState, socket } = useGlobalState();
   const [roundOver, setRoundOver] = useState(false);
+  const [pointerOver, setPointerOver] = useState(false);
+  const timeout = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (
@@ -59,6 +62,15 @@ function App({ round }: { round: number }) {
   return (
     <>
       <div className="Game">
+        <HamburgerMenu
+          isVisible={pointerOver}
+          onPointerOver={() => {
+            setPointerOver(true);
+            if (timeout.current) {
+              clearTimeout(timeout.current);
+            }
+          }}
+        />
         {roundOver ? (
           <div className="h-screen flex justify-center items-center h-full">
             <Link
@@ -70,8 +82,26 @@ function App({ round }: { round: number }) {
           </div>
         ) : (
           <div className="Game-grid">
-            {catTitles?.map((title) => (
-              <div className="Game-category" key={title}>
+            {catTitles?.map((title, index) => (
+              <div
+                className="Game-category"
+                key={title}
+                onPointerOver={() => {
+                  if (index < 2) {
+                    setPointerOver(true);
+                    if (timeout.current) {
+                      clearTimeout(timeout.current);
+                    }
+                  }
+                }}
+                onPointerLeave={() => {
+                  if (index < 2) {
+                    timeout.current = setTimeout(() => {
+                      setPointerOver(false);
+                    }, 3000);
+                  }
+                }}
+              >
                 {title}
               </div>
             ))}

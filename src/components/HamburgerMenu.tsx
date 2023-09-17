@@ -6,7 +6,15 @@ import cx from "classnames";
 import WarningIcon from "../icons/WarningIcon";
 import { useGlobalState } from "./GlobalStateProvider";
 
-export const HamburgerMenu = () => {
+type HamburgerMenuProps = {
+  isVisible?: boolean;
+  onPointerOver?: () => void;
+};
+
+export const HamburgerMenu = ({
+  isVisible = true,
+  onPointerOver,
+}: HamburgerMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const { socket } = useGlobalState();
   return (
@@ -67,10 +75,17 @@ export const HamburgerMenu = () => {
       </div>
       {!isOpen && (
         <button
-          className="fixed top-0 left-0 p-8 font-lg font-bold flex gap-2 items-center"
+          className={cx(
+            "fixed top-0 left-0 p-8 font-lg font-bold flex gap-2 items-center transition-transform bg-[#060ce9] bg-opacity-80",
+            {
+              "translate-x-0": isVisible,
+              "-translate-x-full": !isVisible,
+            }
+          )}
           onClick={() => {
             setIsOpen(true);
           }}
+          onPointerOver={onPointerOver}
         >
           {" "}
           <MenuIcon width={20} /> MENU
