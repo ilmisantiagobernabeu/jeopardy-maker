@@ -1,6 +1,6 @@
 import { useState } from "react";
 import MenuIcon from "../icons/MenuIcon";
-import { Link } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import CloseIcon from "../icons/CloseIcon";
 import cx from "classnames";
 import WarningIcon from "../icons/WarningIcon";
@@ -16,41 +16,94 @@ export const HamburgerMenu = ({
   onPointerOver,
 }: HamburgerMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { socket } = useGlobalState();
+  const { gameState, socket } = useGlobalState();
+  const navigate = useNavigate();
   return (
     <div className="text-white relative z-50">
       <div
         className={cx(
-          "fixed top-0 left-0 h-full min-w-fit py-8 px-8 pr-12 bg-[#020555] transition-transform",
+          "fixed top-0 left-0 h-full min-w-fit py-8 pr-12 bg-[#020555] transition-transform",
           {
             "-translate-x-full": !isOpen,
             "translate-x-0": isOpen,
           }
         )}
       >
-        <div className="flex items-start gap-8">
+        <div className="flex items-start gap-2">
           <button
             onClick={() => {
               setIsOpen(false);
             }}
+            className="p-8 -mt-8"
           >
             <CloseIcon width={20} />
           </button>
           <ul className="flex flex-col gap-4">
             <li>
-              <Link to="/">Home</Link>
+              <NavLink
+                to="/"
+                className={({ isActive }) =>
+                  isActive
+                    ? "text-gold hover:underline focus:underline"
+                    : "hover:underline focus:underline"
+                }
+              >
+                Home
+              </NavLink>
             </li>
             <li>
-              <Link to="/scoreboard">Scoreboard</Link>
+              <NavLink
+                to={`/board${gameState?.name ? `?game=${gameState.name}` : ""}`}
+                className={({ isActive }) =>
+                  isActive
+                    ? "text-gold hover:underline focus:underline"
+                    : "hover:underline focus:underline"
+                }
+              >
+                Active Game
+              </NavLink>
             </li>
             <li>
-              <Link to="/history">History</Link>
+              <NavLink
+                to="/scoreboard"
+                className={({ isActive }) =>
+                  isActive
+                    ? "text-gold hover:underline focus:underline"
+                    : "hover:underline focus:underline"
+                }
+              >
+                Scores
+              </NavLink>
             </li>
             <li>
-              <Link to="/answer" className="flex gap-2">
-                {" "}
-                <WarningIcon width={16} className="text-red-500" /> Show Answer
-              </Link>
+              <NavLink
+                to="/history"
+                className={({ isActive }) =>
+                  isActive
+                    ? "text-gold hover:underline focus:underline"
+                    : "hover:underline focus:underline"
+                }
+              >
+                History
+              </NavLink>
+            </li>
+            <li>
+              <button
+                onClick={() => {
+                  const response = confirm(
+                    "Are you sure you want to reveal the answer to everyone?"
+                  );
+
+                  if (response) {
+                    navigate("/answer");
+                  }
+                }}
+              >
+                <span className="flex gap-2">
+                  <WarningIcon width={16} className="text-red-500" /> Show
+                  Answer
+                </span>
+              </button>
             </li>
             <li>
               <button

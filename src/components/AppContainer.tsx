@@ -13,11 +13,7 @@ import CreateGame from "./CreateGame";
 const Debug = () => {
   const { gameState } = useGlobalState();
 
-  return (
-    <pre className="text-white">
-      {JSON.stringify(gameState?.gameBoard, null, 2)}
-    </pre>
-  );
+  return <pre className="text-white">{JSON.stringify(gameState, null, 2)}</pre>;
 };
 
 const AppContainer = () => {
@@ -27,9 +23,9 @@ const AppContainer = () => {
         <Route path="/" element={<Homepage />} />
         <Route path="/answer" element={<HostControls />} />
         <Route path="/create" element={<CreateGame />} />
-        <Route path="/game" element={<App round={1} />} />
+        <Route path="/board" element={<App round={1} />} />
         <Route
-          path="/game2"
+          path="/board2"
           element={<App round={2} key={window.location.pathname} />}
         />
         <Route path="/scoreboard" element={<Scoreboard />} />

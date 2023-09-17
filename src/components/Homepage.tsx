@@ -54,7 +54,7 @@ const Homepage = () => {
                       onClick={() => {
                         socket?.emit("Host changes the game", game.name);
                         localStorage.setItem("dt-gameName", game.name);
-                        window.open(`/game?game=${game.name}`, "_blank");
+                        window.open(`/board?game=${game.name}`, "_blank");
                       }}
                       className="hover:text-gold focus:text-gold font-semibold transition-colors duration-200"
                     >

@@ -19,7 +19,7 @@ const History = () => {
   return (
     <div
       className={cx(
-        "flex w-full h-full fixed top-0 left-0 justify-center items-center flex-col bg-[#060ce9]"
+        "flex w-full h-full fixed top-0 left-0 items-center flex-col bg-[#060ce9] p-8 overflow-y-auto"
       )}
     >
       <HamburgerMenu />

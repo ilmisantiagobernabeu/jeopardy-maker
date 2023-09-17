@@ -40,6 +40,7 @@ export type Game = {
 };
 
 export interface GameState {
+  name: string;
   guid: string;
   games: Game[];
   players: Players;

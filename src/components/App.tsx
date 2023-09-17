@@ -75,7 +75,7 @@ function App({ round }: { round: number }) {
           <div className="h-screen flex justify-center items-center h-full">
             <Link
               className="text-white h-full w-full flex justify-center items-center text-9xl bg-[#060ce9]"
-              to={`/game${round + 1}`}
+              to={`/board${round + 1}`}
             >
               Double Jeopardy Round Next
             </Link>
