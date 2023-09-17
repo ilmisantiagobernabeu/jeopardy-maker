@@ -9,6 +9,9 @@ import Buzzer from "./Buzzer";
 import HostControls from "./HostControls";
 import { QRCode } from "./QR";
 import CreateGame from "./CreateGame";
+import { useEffect } from "react";
+import Teams from "./Teams";
+import { ButtonColor } from "../../stateTypes";
 
 const Debug = () => {
   const { gameState } = useGlobalState();
@@ -17,6 +20,65 @@ const Debug = () => {
 };
 
 const AppContainer = () => {
+  const { gameState, socket } = useGlobalState();
+
+  useEffect(() => {
+    // Disable the button if:
+    // 1. the buzzer hasn't been activated by the host
+    // 2. the buzzer HAS been activated, but it's not the current player.
+    const isDisabled = (color: ButtonColor) => {
+      const isActivePlayer =
+        gameState?.activePlayer && gameState?.activePlayer === color;
+
+      return Boolean(
+        !gameState?.isBuzzerActive ||
+          (gameState?.isBuzzerActive && isActivePlayer) ||
+          gameState?.incorrectGuesses.includes(color)
+      );
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (
+        !isDisabled("green") &&
+        event.shiftKey &&
+        event.ctrlKey &&
+        event.code === "Digit1"
+      ) {
+        console.log("Shift + Ctrl + 1");
+
+        socket?.emit("A player with a button hits the buzzer", "green");
+        return;
+      }
+
+      if (
+        !isDisabled("yellow") &&
+        event.shiftKey &&
+        event.ctrlKey &&
+        event.code === "Digit2"
+      ) {
+        console.log("Shift + Ctrl + 2");
+        socket?.emit("A player with a button hits the buzzer", "yellow");
+        return;
+      }
+
+      if (
+        !isDisabled("red") &&
+        event.shiftKey &&
+        event.ctrlKey &&
+        event.code === "Digit3"
+      ) {
+        console.log("Shift + Ctrl + 3");
+        socket?.emit("A player with a button hits the buzzer", "red");
+        return;
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [gameState, socket]);
+
   return (
     <>
       <Routes>
@@ -31,6 +93,7 @@ const AppContainer = () => {
         <Route path="/scoreboard" element={<Scoreboard />} />
         <Route path="/scoreboard/:name" element={<Scoreboard />} />
         <Route path="/history" element={<History />} />
+        <Route path="/teams" element={<Teams />} />
         <Route path="/join" element={<PlayerJoin />} />
         <Route path="/buzzer" element={<Buzzer />} />
         <Route path="/debug" element={<Debug />} />

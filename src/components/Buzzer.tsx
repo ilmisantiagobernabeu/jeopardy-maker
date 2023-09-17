@@ -12,7 +12,6 @@ const Buzzer = () => {
   useNoSleep(true);
 
   const handleClick = () => {
-    console.log("wtf handle click broooo", socket);
     const sound = new Audio(buzzerSound);
     sound.play();
     socket?.emit("A player hits the buzzer");

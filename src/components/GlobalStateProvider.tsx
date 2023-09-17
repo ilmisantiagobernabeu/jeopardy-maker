@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
-import { Clue, GameState } from "../../stateTypes";
+import { ButtonColor, Clue, GameState } from "../../stateTypes";
 
 interface ServerToClientEvents {
   ["gameState updated"]: (gameStateFromServer: GameState) => void;
@@ -33,6 +33,7 @@ interface ClientToServerEvents {
   }) => void;
   ["Host activates the buzzers"]: () => void;
   ["A player hits the buzzer"]: () => void;
+  ["A player with a button hits the buzzer"]: (color: ButtonColor) => void;
   ["No player knows the answer"]: (clueObject: {
     arrayIndex: number;
     clueText: string;
@@ -45,6 +46,10 @@ interface ClientToServerEvents {
   ["Host loads the game board for the first time"]: (game: string) => void;
   ["Host restarts the game"]: () => void;
   ["Host changes the game"]: (gameName: string) => void;
+  ["Host adds a team with a button"]: (teamObject: {
+    playerName: string;
+    color: ButtonColor | "";
+  }) => void;
 }
 
 export type ContextType = {

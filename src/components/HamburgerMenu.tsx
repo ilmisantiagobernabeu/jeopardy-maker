@@ -88,6 +88,18 @@ export const HamburgerMenu = ({
               </NavLink>
             </li>
             <li>
+              <NavLink
+                to="/teams"
+                className={({ isActive }) =>
+                  isActive
+                    ? "text-gold hover:underline focus:underline"
+                    : "hover:underline focus:underline"
+                }
+              >
+                Add Teams
+              </NavLink>
+            </li>
+            <li>
               <button
                 onClick={() => {
                   const response = confirm(

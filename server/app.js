@@ -242,6 +242,14 @@ io.on("connect", function (socket) {
     io.emit("gameState updated", gameState);
   });
 
+  socket.on("A player with a button hits the buzzer", (color) => {
+    if (gameState.activePlayer) return;
+    gameState.activePlayer = color;
+    gameState.lastActivePlayer = color;
+    gameState.isBuzzerActive = false;
+    io.emit("gameState updated", gameState);
+  });
+
   socket.on("Host navigates to another round", (round) => {
     console.log("Host navigates to another round");
     // console.log("navigate 1st round", data);
@@ -269,6 +277,16 @@ io.on("connect", function (socket) {
       playersThatLeft.push(gameState.players[socket.id]);
     }
     delete gameState.players[socket.id];
+    // emit to EVERYONE the update game state
+    io.emit("gameState updated", gameState);
+  });
+
+  socket.on("Host adds a team with a button", ({ playerName, color }) => {
+    gameState.players[color] = {
+      name: playerName,
+      color,
+      score: 0,
+    };
     // emit to EVERYONE the update game state
     io.emit("gameState updated", gameState);
   });

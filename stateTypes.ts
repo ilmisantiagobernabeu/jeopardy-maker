@@ -15,10 +15,13 @@ export interface GameObject {
   gameBoard: GameBoard[];
 }
 
+export type ButtonColor = "green" | "yellow" | "red";
+
 interface PlayerObject {
   score: number;
   count: number;
   name: string;
+  color?: ButtonColor;
 }
 
 interface Players {
