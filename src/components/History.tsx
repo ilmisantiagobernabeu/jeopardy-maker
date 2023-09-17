@@ -3,6 +3,7 @@ import { useGlobalState } from "./GlobalStateProvider";
 import cx from "classnames";
 import { HistoryPlayer } from "../../stateTypes";
 import { HamburgerMenu } from "./HamburgerMenu";
+import { PageWrapper } from "./PageWrapper";
 
 const History = () => {
   const { gameState, socket } = useGlobalState() || {};
@@ -16,32 +17,30 @@ const History = () => {
     });
   };
 
+  const teamHistory = gameState?.history.sort((a, b) =>
+    a.timeStamp > b.timeStamp ? -1 : 1
+  );
+
   return (
-    <div
-      className={cx(
-        "flex w-full h-full fixed top-0 left-0 items-center flex-col bg-[#060ce9] p-8 overflow-y-auto"
-      )}
-    >
-      <HamburgerMenu />
+    <PageWrapper>
       <div className="GameCard">
         <h2 className="font-bold text-2xl leading-none text-center normal-case mb-2">
           History
         </h2>
-        <div className=" text-center flex gap-20 flex-wrap" key={name}>
-          <table className="text-left text-xl" cellPadding={10}>
-            <thead className="border-b">
-              <tr>
-                <th>Player</th>
-                <th>Money</th>
-                <th>Answer</th>
-                <th>Total</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {gameState?.history
-                .sort((a, b) => (a.timeStamp > b.timeStamp ? -1 : 1))
-                .map((player, index) => (
+        {teamHistory?.length ? (
+          <div className="text-center flex gap-20 flex-wrap" key={name}>
+            <table className="text-left text-xl" cellPadding={10}>
+              <thead className="border-b">
+                <tr>
+                  <th>Player</th>
+                  <th>Money</th>
+                  <th>Answer</th>
+                  <th>Total</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {teamHistory?.map((player, index) => (
                   <tr
                     key={player.timeStamp.toString()}
                     className="even:bg-gray-900 even:!bg-opacity-30 "
@@ -66,11 +65,16 @@ const History = () => {
                     </td>
                   </tr>
                 ))}
-            </tbody>
-          </table>
-        </div>
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p className="normal-case text-lg">
+            A play-by-play of team scores will appear once a game has begun.
+          </p>
+        )}
       </div>
-    </div>
+    </PageWrapper>
   );
 };
 

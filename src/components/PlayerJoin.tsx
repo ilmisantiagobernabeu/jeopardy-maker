@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useGlobalState } from "./GlobalStateProvider";
 import { useNavigate } from "react-router-dom";
+import { PageWrapper } from "./PageWrapper";
 
 const PlayerJoin = () => {
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -56,42 +57,41 @@ const PlayerJoin = () => {
   }, []);
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="fixed inset-0 w-full h-full flex-col flex items-center justify-center p-8"
-    >
-      <style>
-        {`body {
+    <PageWrapper hideMenu>
+      <form onSubmit={handleSubmit}>
+        <style>
+          {`body {
           background-color: #060ce9;
         }`}
-      </style>
-      <div className="flex flex-col gap-4 items-center">
-        <label
-          htmlFor="playerJoin"
-          className="flex items-center gap-2 font-bold text-2xl leading-none text-white"
-        >
-          Select a team name
-        </label>
-        <input
-          id="playerJoin"
-          type="text"
-          placeholder="Team Name"
-          className="w-full max-w-lg px-4 py-2"
-          value={playerName}
-          onChange={handleChange}
-          ref={inputRef}
-          autoFocus
-        />
-      </div>
-      <div className="flex gap-4 mt-4">
-        <button
-          className="primary-btn disabled:opacity-40"
-          disabled={!playerName.trim()}
-        >
-          Join Game
-        </button>
-      </div>
-    </form>
+        </style>
+        <div className="flex flex-col gap-4 items-center">
+          <label
+            htmlFor="playerJoin"
+            className="font-bold text-2xl leading-none text-center normal-case"
+          >
+            Select a team name
+          </label>
+          <input
+            id="playerJoin"
+            type="text"
+            placeholder="Team Name"
+            className="w-full max-w-lg px-4 py-2 text-black"
+            value={playerName}
+            onChange={handleChange}
+            ref={inputRef}
+            autoFocus
+          />
+        </div>
+        <div className="flex gap-4 mt-4">
+          <button
+            className="primary-btn disabled:opacity-40"
+            disabled={!playerName.trim()}
+          >
+            Join Game
+          </button>
+        </div>
+      </form>
+    </PageWrapper>
   );
 };
 

@@ -16,12 +16,15 @@ import { ButtonColor } from "../../stateTypes";
 const Debug = () => {
   const { gameState } = useGlobalState();
 
-  return <pre className="text-white">{JSON.stringify(gameState, null, 2)}</pre>;
+  const { games, gameBoard, ...rest } = gameState || {};
+
+  return <pre className="text-white">{JSON.stringify(rest, null, 2)}</pre>;
 };
 
 const AppContainer = () => {
   const { gameState, socket } = useGlobalState();
 
+  // Logic for physical buttons
   useEffect(() => {
     // Disable the button if:
     // 1. the buzzer hasn't been activated by the host
@@ -39,6 +42,7 @@ const AppContainer = () => {
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (
+        Object.keys(gameState?.players || {}).includes("green") &&
         !isDisabled("green") &&
         event.shiftKey &&
         event.ctrlKey &&
@@ -51,6 +55,7 @@ const AppContainer = () => {
       }
 
       if (
+        Object.keys(gameState?.players || {}).includes("yellow") &&
         !isDisabled("yellow") &&
         event.shiftKey &&
         event.ctrlKey &&
@@ -62,6 +67,7 @@ const AppContainer = () => {
       }
 
       if (
+        Object.keys(gameState?.players || {}).includes("red") &&
         !isDisabled("red") &&
         event.shiftKey &&
         event.ctrlKey &&

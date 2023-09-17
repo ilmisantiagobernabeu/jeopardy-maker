@@ -4,6 +4,7 @@ import cx from "classnames";
 import { HamburgerMenu } from "./HamburgerMenu";
 import { useState } from "react";
 import { ButtonColor } from "../../stateTypes";
+import { PageWrapper } from "./PageWrapper";
 
 const Teams = () => {
   const { gameState, socket } = useGlobalState() || {};
@@ -27,12 +28,7 @@ const Teams = () => {
   };
 
   return (
-    <div
-      className={cx(
-        "flex w-full h-full fixed top-0 left-0 items-center flex-col bg-[#060ce9] p-8 overflow-y-auto"
-      )}
-    >
-      <HamburgerMenu />
+    <PageWrapper>
       <div className="GameCard flex flex-col gap-4">
         <h2 className="font-bold text-2xl leading-none text-center normal-case mb-2">
           Add Teams with Physical Buttons
@@ -105,29 +101,31 @@ const Teams = () => {
             Add
           </button>
         </div>
-        <div className=" text-center flex flex-wrap" key={name}>
-          <table className="text-left text-xl w-full" cellPadding={10}>
-            <thead className="border-b">
-              <tr>
-                <th>Name</th>
-                <th>Color</th>
-              </tr>
-            </thead>
-            <tbody>
-              {playersWithButtons.map((player) => (
-                <tr
-                  key={player.name.toString()}
-                  className="even:bg-gray-900 even:!bg-opacity-30 "
-                >
-                  <td>{player.name}</td>
-                  <td>{player.color || "No color"}</td>
+        {playersWithButtons.length > 0 && (
+          <div className=" text-center flex flex-wrap" key={name}>
+            <table className="text-left text-xl w-full" cellPadding={10}>
+              <thead className="border-b">
+                <tr>
+                  <th>Name</th>
+                  <th>Color</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {playersWithButtons.map((player) => (
+                  <tr
+                    key={player.name.toString()}
+                    className="even:bg-gray-900 even:!bg-opacity-30 "
+                  >
+                    <td>{player.name}</td>
+                    <td>{player.color || "No color"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
-    </div>
+    </PageWrapper>
   );
 };
 

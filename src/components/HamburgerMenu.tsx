@@ -153,7 +153,8 @@ export const HamburgerMenu = ({
           onPointerOver={onPointerOver}
         >
           {" "}
-          <MenuIcon width={20} /> MENU
+          <MenuIcon width={20} />
+          <span className="hidden sm:block"> MENU</span>
         </button>
       )}
     </div>

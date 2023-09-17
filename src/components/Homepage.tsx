@@ -5,6 +5,7 @@ import { useGlobalState } from "./GlobalStateProvider";
 import PhoneIcon from "../icons/PhoneIcon";
 import DesktopIcon from "../icons/DesktopIcon";
 import { HamburgerMenu } from "./HamburgerMenu";
+import { PageWrapper } from "./PageWrapper";
 
 function generateRandomString(length = 5) {
   const characters =
@@ -20,15 +21,9 @@ function generateRandomString(length = 5) {
 const Homepage = () => {
   const { gameState, socket } = useGlobalState();
   return (
-    <div className="p-8 w-full h-full flex flex-col justify-center items-center gap-y-12 bg-[#060ce9] text-white">
-      <HamburgerMenu />
-      <style>
-        {`body {
-          background-color: #060ce9;
-        }`}
-      </style>
+    <PageWrapper>
       <h1 className="text-7xl font-bold font-korinna gold-text">BUZZINGA</h1>
-      <div className="flex gap-12 items-start max-w-4xl">
+      <div className="flex gap-12 items-start max-w-4xl flex-col sm:flex-row">
         <div className="flex flex-col gap-4">
           <h2 className="flex items-center gap-2 font-bold text-2xl leading-none">
             <PhoneIcon width={15} className=" fill-white" /> Teams join here
@@ -37,7 +32,7 @@ const Homepage = () => {
             <QRCode />
           </Link>
         </div>
-        <hr className="border-l h-full border-white" />
+        <hr className="border-l h-full border-white hidden sm:block" />
         <div className="flex flex-col gap-4">
           <h2 className="flex items-center gap-2 font-bold text-2xl leading-none">
             <DesktopIcon width={22} className="fill-white" />
@@ -99,7 +94,7 @@ const Homepage = () => {
           </div>
         </div>
       )}
-    </div>
+    </PageWrapper>
   );
 };
 

@@ -3,6 +3,7 @@ import { useGlobalState } from "./GlobalStateProvider";
 import cx from "classnames";
 import useNoSleep from "use-no-sleep";
 import { HamburgerMenu } from "./HamburgerMenu";
+import { PageWrapper } from "./PageWrapper";
 
 function formatScore(score: number) {
   if (score < 0) {
@@ -27,36 +28,40 @@ const Scoreboard = () => {
     )[0];
 
   return (
-    <div
-      className={cx(
-        "flex w-full h-full fixed top-0 left-0 justify-center items-center flex-col bg-[#060ce9]"
-      )}
-    >
-      <HamburgerMenu />
+    <PageWrapper>
       <div className="GameCard">
-        <div
-          className="GameCard-front text-center flex gap-20 flex-wrap"
-          key={name}
-        >
-          {!singlePlayerStats &&
-            gameState?.players &&
-            Object.values(gameState.players)
-              .filter(({ name }) => name)
-              .map(({ score, name }, index) => (
-                <div key={name + index}>
-                  <p className="text-7xl text-white my-4 border-b-4 line-clamp-2">
-                    {name}
-                  </p>
-                  <p
-                    className={cx("text-9xl text-white my-4", {
-                      "text-red-500": score < 0,
-                    })}
-                  >
-                    {formatScore(score)}
-                  </p>
-                </div>
-              ))}
-        </div>
+        <h2 className="font-bold text-2xl leading-none text-center normal-case mb-2">
+          Scores
+        </h2>
+        {Object.values(gameState?.players || {}).filter((player) => player.name)
+          .length > 0 ? (
+          <div
+            className="GameCard-front text-center flex gap-20 flex-wrap"
+            key={name}
+          >
+            {!singlePlayerStats &&
+              Object.values(gameState?.players || {})
+                .filter(({ name }) => name)
+                .map(({ score, name }, index) => (
+                  <div key={name + index}>
+                    <p className="text-7xl text-white my-4 border-b-4 line-clamp-2">
+                      {name}
+                    </p>
+                    <p
+                      className={cx("text-9xl text-white my-4", {
+                        "text-red-500": score < 0,
+                      })}
+                    >
+                      {formatScore(score)}
+                    </p>
+                  </div>
+                ))}
+          </div>
+        ) : (
+          <p className="normal-case text-lg">
+            Scores will appear once the teams have joined the game.
+          </p>
+        )}
       </div>
       {singlePlayerStats && (
         <div className="GameCard">
@@ -74,7 +79,7 @@ const Scoreboard = () => {
           </div>
         </div>
       )}
-    </div>
+    </PageWrapper>
   );
 };
 
