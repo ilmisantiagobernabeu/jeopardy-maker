@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MenuIcon from "../icons/MenuIcon";
 import { NavLink, useNavigate } from "react-router-dom";
 import CloseIcon from "../icons/CloseIcon";
@@ -16,8 +16,19 @@ export const HamburgerMenu = ({
   onPointerOver,
 }: HamburgerMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isVisibleLocal, setIsVisibleLocal] = useState(isVisible);
   const { gameState, socket } = useGlobalState();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isVisible) {
+      setIsVisibleLocal(true);
+      setTimeout(() => {
+        setIsVisibleLocal(false);
+      }, 3000);
+    }
+  }, [isVisible]);
+
   return (
     <div className="text-white relative z-50">
       <div
@@ -143,8 +154,8 @@ export const HamburgerMenu = ({
           className={cx(
             "fixed top-0 left-0 p-8 font-lg font-bold flex gap-2 items-center transition-transform bg-[#060ce9] bg-opacity-80",
             {
-              "translate-x-0": isVisible,
-              "-translate-x-full": !isVisible,
+              "translate-x-0": isVisibleLocal,
+              "-translate-x-full": !isVisibleLocal,
             }
           )}
           onClick={() => {
