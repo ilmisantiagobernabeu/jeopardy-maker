@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import MenuIcon from "../icons/MenuIcon";
 import { NavLink, useNavigate } from "react-router-dom";
 import CloseIcon from "../icons/CloseIcon";
@@ -21,6 +21,7 @@ export const HamburgerMenu = ({
   const navigate = useNavigate();
 
   useEffect(() => {
+    setIsVisibleLocal(isVisible);
     if (!isVisible) {
       setIsVisibleLocal(true);
       setTimeout(() => {
