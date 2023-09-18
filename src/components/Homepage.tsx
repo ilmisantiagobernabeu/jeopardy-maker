@@ -23,7 +23,7 @@ const Homepage = () => {
   return (
     <PageWrapper>
       <h1 className="text-7xl font-bold font-korinna gold-text">BUZZINGA</h1>
-      <div className="flex gap-12 items-start max-w-4xl flex-col sm:flex-row">
+      <div className="flex gap-16 items-start max-w-4xl flex-col sm:flex-row">
         <div className="flex flex-col gap-4">
           <h2 className="flex items-center gap-2 font-bold text-2xl leading-none">
             <PhoneIcon width={15} className=" fill-white" /> Teams join here
@@ -32,7 +32,6 @@ const Homepage = () => {
             <QRCode />
           </Link>
         </div>
-        <hr className="border-l h-full border-white hidden sm:block" />
         <div className="flex flex-col gap-4">
           <h2 className="flex items-center gap-2 font-bold text-2xl leading-none">
             <DesktopIcon width={22} className="fill-white" />
