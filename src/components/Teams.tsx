@@ -42,6 +42,7 @@ const Teams = () => {
             onChange={(e) => {
               setPlayerName(e.target.value);
             }}
+            disabled={playersWithButtons.length === 3}
           />
           <div className="flex gap-1 text-xl">
             <button
@@ -57,6 +58,7 @@ const Teams = () => {
                   "border-2": color === "green",
                 }
               )}
+              title="Shift+Ctrl+1"
             >
               🟢
             </button>
@@ -73,6 +75,7 @@ const Teams = () => {
                   "border-2": color === "yellow",
                 }
               )}
+              title="Shift+Ctrl+2"
             >
               🟡
             </button>
@@ -89,6 +92,7 @@ const Teams = () => {
                   "border-2": color === "red",
                 }
               )}
+              title="Shift+Ctrl+3"
             >
               🔴
             </button>
