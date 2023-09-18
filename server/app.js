@@ -215,6 +215,7 @@ io.on("connect", function (socket) {
   });
 
   socket.on("Host deselects a clue", () => {
+    gameState.isBuzzerActive = false;
     gameState.activeClue = gameState.previousClue;
     io.emit("gameState updated", gameState);
   });
