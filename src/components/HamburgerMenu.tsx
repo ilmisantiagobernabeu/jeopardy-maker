@@ -34,7 +34,7 @@ export const HamburgerMenu = ({
     <div className="text-white relative z-50">
       <div
         className={cx(
-          "fixed top-0 left-0 h-full min-w-fit py-8 pr-12 bg-[#020555] transition-transform",
+          "fixed top-0 left-0 h-full min-w-fit py-8 pr-12 bg-[#020555] transition-transform z-10",
           {
             "-translate-x-full": !isOpen,
             "translate-x-0": isOpen,
