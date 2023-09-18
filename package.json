@@ -5,7 +5,7 @@
   "scripts": {
     "ipCheck": "node getStaticIp.js",
     "dev": "node getStaticIp.js && vite --host",
-    "start": "vite --host",
+    "start": "node getStaticIp.js && vite --host",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "format": "prettier --write"
