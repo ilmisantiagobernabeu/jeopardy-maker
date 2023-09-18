@@ -39,6 +39,7 @@ interface ClientToServerEvents {
     clueText: string;
   }) => void;
   ["Host selects a clue"]: (clueObject: Clue) => void;
+  ["Host deselects a clue"]: () => void;
   ["Host navigates to another round"]: (round: number) => void;
   ["A player sets daily double wager"]: (
     dailyDoubleObject: DailyDoubleObject

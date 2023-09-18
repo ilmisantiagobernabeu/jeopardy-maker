@@ -97,6 +97,7 @@ const GameCard = ({ clue, index, round }: Props) => {
         setResetStyles(undefined);
         setStyles(undefined);
         setIsFlipped(false);
+        socket?.emit("Host deselects a clue");
       }
     };
 

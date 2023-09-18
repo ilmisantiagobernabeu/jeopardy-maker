@@ -51,6 +51,7 @@ const createDefaultGameState = (newGameId = true, specificGameName) => {
     activePlayer: null,
     lastActivePlayer: null,
     dailyDoubleAmount: 0,
+    previousClue: null,
     activeClue: null,
     players: {},
     gameBoard: newGames[Object.keys(newGames)[0]].rounds[0],
@@ -208,7 +209,13 @@ io.on("connect", function (socket) {
   });
 
   socket.on("Host selects a clue", (activeClue) => {
+    gameState.previousClue = gameState.activeClue;
     gameState.activeClue = activeClue;
+    io.emit("gameState updated", gameState);
+  });
+
+  socket.on("Host deselects a clue", () => {
+    gameState.activeClue = gameState.previousClue;
     io.emit("gameState updated", gameState);
   });
 

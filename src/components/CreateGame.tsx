@@ -34,10 +34,6 @@ const getInitialGameState = (gameName: string) => ({
             text: "A - Clue 5",
             answer: "Answer 4",
           },
-          {
-            text: "A - Clue 6",
-            answer: "Answer 5",
-          },
         ],
       },
       {
@@ -62,10 +58,6 @@ const getInitialGameState = (gameName: string) => ({
           {
             text: "B - Clue 5",
             answer: "Answer 4",
-          },
-          {
-            text: "B - Clue 6",
-            answer: "Answer 5",
           },
         ],
       },
@@ -92,10 +84,6 @@ const getInitialGameState = (gameName: string) => ({
             text: "C - Clue 5",
             answer: "Answer 4",
           },
-          {
-            text: "C - Clue 6",
-            answer: "Answer 5",
-          },
         ],
       },
       {
@@ -120,10 +108,6 @@ const getInitialGameState = (gameName: string) => ({
           {
             text: "D - Clue 5",
             answer: "Answer 4",
-          },
-          {
-            text: "D - Clue 6",
-            answer: "Answer 5",
           },
         ],
       },
@@ -150,10 +134,6 @@ const getInitialGameState = (gameName: string) => ({
             text: "E - Clue 5",
             answer: "Answer 4",
           },
-          {
-            text: "E - Clue 6",
-            answer: "Answer 5",
-          },
         ],
       },
       {
@@ -178,10 +158,6 @@ const getInitialGameState = (gameName: string) => ({
           {
             text: "F - Clue 5",
             answer: "Answer 4",
-          },
-          {
-            text: "F - Clue 6",
-            answer: "Answer 5",
           },
         ],
       },
