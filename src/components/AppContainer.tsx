@@ -12,6 +12,7 @@ import CreateGame from "./CreateGame";
 import { useEffect } from "react";
 import Teams from "./Teams";
 import { ButtonColor } from "../../stateTypes";
+import buzzerSound from "../sounds/buzzer.mp3";
 
 const Debug = () => {
   const { gameState } = useGlobalState();
@@ -49,7 +50,8 @@ const AppContainer = () => {
         event.code === "Digit1"
       ) {
         console.log("Shift + Ctrl + 1");
-
+        const sound = new Audio(buzzerSound);
+        sound.play();
         socket?.emit("A player with a button hits the buzzer", "green");
         return;
       }
@@ -62,6 +64,8 @@ const AppContainer = () => {
         event.code === "Digit2"
       ) {
         console.log("Shift + Ctrl + 2");
+        const sound = new Audio(buzzerSound);
+        sound.play();
         socket?.emit("A player with a button hits the buzzer", "yellow");
         return;
       }
@@ -74,6 +78,8 @@ const AppContainer = () => {
         event.code === "Digit3"
       ) {
         console.log("Shift + Ctrl + 3");
+        const sound = new Audio(buzzerSound);
+        sound.play();
         socket?.emit("A player with a button hits the buzzer", "red");
         return;
       }
@@ -92,10 +98,7 @@ const AppContainer = () => {
         <Route path="/answer" element={<HostControls />} />
         <Route path="/create" element={<CreateGame />} />
         <Route path="/board" element={<App round={1} />} />
-        <Route
-          path="/board2"
-          element={<App round={2} key={window.location.pathname} />}
-        />
+        <Route path="/board2" element={<App round={2} />} />
         <Route path="/scoreboard" element={<Scoreboard />} />
         <Route path="/scoreboard/:name" element={<Scoreboard />} />
         <Route path="/history" element={<History />} />

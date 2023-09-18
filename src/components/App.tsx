@@ -76,6 +76,9 @@ function App({ round }: { round: number }) {
             <Link
               className="text-white h-full w-full flex justify-center items-center text-9xl bg-[#060ce9]"
               to={`/board${round + 1}`}
+              onClick={() => {
+                setRoundOver(false);
+              }}
             >
               Double Jeopardy Round Next
             </Link>
