@@ -296,7 +296,14 @@ const GameCard = ({ clue, index, round }: Props) => {
               )}
               <p className="fixed top-4 w-full text-center text-6xl text-white">
                 Buzzed In:{" "}
-                <span className="text-green-500">Team {buzzedInPlayer}</span>
+                <span className="text-green-500">
+                  Team{" "}
+                  {buzzedInPlayer ||
+                    gameState?.lastActivePlayer ||
+                    Object.values(gameState?.players || {}).find(
+                      (player) => player.name
+                    )?.name}
+                </span>
               </p>
             </>
           )}
