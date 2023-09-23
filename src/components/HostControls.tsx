@@ -1,5 +1,4 @@
 import { useGlobalState } from "./GlobalStateProvider";
-import { HamburgerMenu } from "./HamburgerMenu";
 import { PageWrapper } from "./PageWrapper";
 
 const HostControls = () => {

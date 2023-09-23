@@ -3,7 +3,7 @@ import { useGlobalState } from "./GlobalStateProvider";
 import GameCardStatic from "./GameCardStatic";
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Game } from "../../stateTypes";
+import { Game, SingleGame } from "../../stateTypes";
 import EditIcon from "../icons/EditIcon";
 import { useCreateGameMutation } from "../api/createGame";
 
@@ -175,7 +175,9 @@ function CreateGame() {
 
   const { gameState: globalGameState } = useGlobalState();
 
-  const [gameState, setGameState] = useState(getInitialGameState(gameName));
+  const [gameState, setGameState] = useState<SingleGame>(
+    getInitialGameState(gameName)
+  );
   const [isEditGameName, setIsEditGameName] = useState(false);
 
   const catTitles = gameState.rounds[round - 1]?.map((round) => round.category);
@@ -320,7 +322,7 @@ function CreateGame() {
 
 type EditTitleProps = {
   title: string;
-  setGameState: React.Dispatch<React.SetStateAction<Game>>;
+  setGameState: React.Dispatch<React.SetStateAction<SingleGame>>;
   round: number;
   catIndex: number;
 };

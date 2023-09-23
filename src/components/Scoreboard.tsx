@@ -2,7 +2,6 @@ import { useParams } from "react-router-dom";
 import { useGlobalState } from "./GlobalStateProvider";
 import cx from "classnames";
 import useNoSleep from "use-no-sleep";
-import { HamburgerMenu } from "./HamburgerMenu";
 import { PageWrapper } from "./PageWrapper";
 
 function formatScore(score: number) {
@@ -43,7 +42,7 @@ const Scoreboard = () => {
               Object.values(gameState?.players || {})
                 .filter(({ name }) => name)
                 .map(({ score, name }, index) => (
-                  <div key={name + index}>
+                  <div key={name! + index}>
                     <p className="text-7xl text-white my-4 border-b-4 line-clamp-2">
                       {name}
                     </p>

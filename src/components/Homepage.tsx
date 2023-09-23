@@ -37,7 +37,7 @@ const Homepage = () => {
             <DesktopIcon width={22} className="fill-white" />
             Start a game
           </h2>
-          {gameState?.games.length === 0 ? (
+          {Object.keys(gameState?.games || {}).length === 0 ? (
             <p>No existing games found</p>
           ) : (
             <>

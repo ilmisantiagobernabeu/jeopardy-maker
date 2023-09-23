@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import cx from "classnames";
 import CloseIcon from "../icons/CloseIcon";
-import { Game } from "../../stateTypes";
+import { SingleGame } from "../../stateTypes";
 
 type Clue = {
   text: string;
@@ -13,7 +13,7 @@ type Props = {
   clue: Clue;
   index: number;
   round: number;
-  setGameState: React.Dispatch<React.SetStateAction<Game>>;
+  setGameState: React.Dispatch<React.SetStateAction<SingleGame>>;
 };
 
 const GameCardStatic = ({ clue, index, round, setGameState }: Props) => {
@@ -72,7 +72,7 @@ const GameCardStatic = ({ clue, index, round, setGameState }: Props) => {
 type EditModalProps = {
   setIsFlipped: React.Dispatch<React.SetStateAction<boolean>>;
   clue: Clue;
-  setGameState: React.Dispatch<React.SetStateAction<Game>>;
+  setGameState: React.Dispatch<React.SetStateAction<SingleGame>>;
   index: number;
   round: number;
 };

@@ -36,8 +36,10 @@ export type HistoryPlayer = {
   timeStamp: Date;
 };
 
+export type SingleGame = { name: string; rounds: GameBoard[][] };
+
 export type Game = {
-  [key: string]: { name: string; rounds: GameBoard[][] };
+  [key: string]: SingleGame;
 };
 
 export interface GameState {
