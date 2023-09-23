@@ -3,33 +3,56 @@
 @tailwind utilities;
 
 .gold-text {
-    color: rgb(214, 159, 76);
-    text-shadow: rgb(0, 0, 0) 0.08em 0.08em;
+  color: rgb(214, 159, 76);
+  text-shadow: rgb(0, 0, 0) 0.08em 0.08em;
 }
 
 .primary-btn {
-    border: 2px solid rgb(214, 159, 76);
-    color: rgb(214, 159, 76);
-    text-shadow: rgb(0, 0, 0) 0.08em 0.08em;
-    font: inherit;
-    border-radius: 4px;
-    padding: 8px 12px;
-    display: block;
-    text-align: center;
-    font-size: 1rem;
-    width: 100%;
-    font-weight: bold;
-    transition: border-color .2s, color .25s;
+  border: 2px solid rgb(214, 159, 76);
+  color: rgb(214, 159, 76);
+  text-shadow: rgb(0, 0, 0) 0.08em 0.08em;
+  font: inherit;
+  border-radius: 4px;
+  padding: 8px 12px;
+  display: block;
+  text-align: center;
+  font-size: 1rem;
+  width: 100%;
+  font-weight: bold;
+  transition: border-color 0.2s, color 0.25s;
 }
 .primary-btn:hover,
 .primary-btn:focus {
-    border-color: #fff;
-    color: #fff;
+  border-color: #fff;
+  color: #fff;
 }
 .primary-btn:disabled {
-    opacity: .5;
+  opacity: 0.5;
+}
+
+.secondary-btn {
+  border: 2px solid #fff;
+  color: #fff;
+  text-shadow: rgb(0, 0, 0) 0.08em 0.08em;
+  font: inherit;
+  border-radius: 4px;
+  padding: 8px 12px;
+  display: block;
+  text-align: center;
+  font-size: 1rem;
+  width: 100%;
+  font-weight: bold;
+  transition: border-color 0.2s, color 0.25s;
+}
+.secondary-btn:hover,
+.secondary-btn:focus {
+  border-color: rgb(214, 159, 76);
+  color: rgb(214, 159, 76);
+}
+.secondary-btn:disabled {
+  opacity: 0.5;
 }
 
 .dark-text-shadow {
-    text-shadow: rgb(0, 0, 0) 0.08em 0.08em;
+  text-shadow: rgb(0, 0, 0) 0.08em 0.08em;
 }

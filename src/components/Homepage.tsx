@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { QRCode } from "./QR";
 import { useGlobalState } from "./GlobalStateProvider";
 import PhoneIcon from "../icons/PhoneIcon";
@@ -21,6 +21,7 @@ function generateRandomString(length = 5) {
 }
 
 const Homepage = () => {
+  const navigate = useNavigate();
   const { gameState, setGameState, socket } = useGlobalState();
   const deleteGame = useDeleteGameMutation();
   return (
@@ -58,9 +59,12 @@ const Homepage = () => {
                       &bull; {game.name}
                     </button>
                     <div className="flex gap-3">
-                      <button className="flex justify-center items-center hover:text-gold focus:text-gold">
+                      <Link
+                        to={`/create?name=${game.name}`}
+                        className="flex justify-center items-center hover:text-gold focus:text-gold"
+                      >
                         <EditIcon width={16} height={16} />
-                      </button>
+                      </Link>
                       <button
                         className="flex justify-center items-center disabled:opacity-50 hover:text-gold focus:text-gold"
                         onClick={() => {
@@ -83,7 +87,7 @@ const Homepage = () => {
                             });
                           }
                         }}
-                        disabled={game.name === "simple-history"}
+                        disabled={game.name === "history-101"}
                       >
                         <DeleteIcon height={18} />
                       </button>

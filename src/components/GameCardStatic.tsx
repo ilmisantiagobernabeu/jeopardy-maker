@@ -106,19 +106,8 @@ const EditModal = ({
 
   return (
     <div className="ClueModal w-full h-full left-0 right-0 text-3xl">
-      <button
-        type="button"
-        className={cx(
-          "fixed font-bold top-0 left-0 p-8 leading-none appearance-none"
-        )}
-        onClick={() => {
-          setIsFlipped(false);
-        }}
-      >
-        <CloseIcon width={20} className="" />
-      </button>
       <div className="w-full max-w-3xl flex justify-center items-center flex-col gap-4">
-        <div className="grid grid-cols-2 gap-8 w-full">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 w-full">
           <div className="flex flex-col gap-1">
             <label htmlFor={`clue-${clue.text}`}>Clue</label>
             <textarea
@@ -156,41 +145,55 @@ const EditModal = ({
             }}
           />
         </div>
-        <button
-          className="primary-btn !text-3xl mt-4 !w-36"
-          onClick={() => {
-            setGameState((prevGameState) => {
-              const newGameState = structuredClone(prevGameState);
-              newGameState.rounds[round - 1][catIndex].clues[clueIndex].text =
-                clueText;
-              newGameState.rounds[round - 1][catIndex].clues[clueIndex].answer =
-                answer;
-              newGameState.rounds[round - 1][catIndex].clues[
-                clueIndex
-              ].isDailyDouble = isDailyDouble;
-              newGameState.rounds[round - 1][catIndex].clues[
-                clueIndex
-              ].alreadyPlayed = false;
+        <div className="flex flex-wrap gap-4">
+          <button
+            type="button"
+            className={cx("secondary-btn !text-3xl mt-4 !w-auto")}
+            onClick={() => {
+              setIsFlipped(false);
+            }}
+          >
+            <span className="flex gap-2">
+              <CloseIcon width={16} /> Close
+            </span>
+          </button>
+          <button
+            className="primary-btn !text-3xl mt-4 !w-36"
+            onClick={() => {
+              setGameState((prevGameState) => {
+                const newGameState = structuredClone(prevGameState);
+                newGameState.rounds[round - 1][catIndex].clues[clueIndex].text =
+                  clueText;
+                newGameState.rounds[round - 1][catIndex].clues[
+                  clueIndex
+                ].answer = answer;
+                newGameState.rounds[round - 1][catIndex].clues[
+                  clueIndex
+                ].isDailyDouble = isDailyDouble;
+                newGameState.rounds[round - 1][catIndex].clues[
+                  clueIndex
+                ].alreadyPlayed = false;
 
-              createGame.mutate(newGameState, {
-                onSuccess() {
-                  console.log("Created new game file succesfully!");
-                },
-                onError(err) {
-                  console.log(
-                    "Failed to create new game file succesfully!",
-                    err
-                  );
-                },
+                createGame.mutate(newGameState, {
+                  onSuccess() {
+                    console.log("Created new game file succesfully!");
+                  },
+                  onError(err) {
+                    console.log(
+                      "Failed to create new game file succesfully!",
+                      err
+                    );
+                  },
+                });
+
+                return newGameState;
               });
-
-              return newGameState;
-            });
-          }}
-          disabled={noChanges}
-        >
-          Save
-        </button>
+            }}
+            disabled={noChanges}
+          >
+            Save
+          </button>
+        </div>
       </div>
     </div>
   );

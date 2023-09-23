@@ -373,6 +373,7 @@ function CreateGame() {
 
   return (
     <>
+      <HamburgerMenu />
       <div className="Game">
         <div className="text-white text-center flex flex-col justify-center items-center bg-[#060ce9] p-4 gap-4">
           <div className="flex gap-2">

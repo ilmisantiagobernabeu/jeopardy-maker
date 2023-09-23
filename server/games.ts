@@ -6,9 +6,11 @@ const gamesDirectory = path.join(__dirname, "/games");
 function importAllJSONFiles(directoryPath: string) {
   const files = fs.readdirSync(directoryPath);
 
-  const jsonFiles = files.filter((file) => {
-    return path.extname(file) === ".json";
-  });
+  const jsonFiles = files
+    .filter((file) => {
+      return path.extname(file) === ".json";
+    })
+    .sort((a, b) => (a === "history-101" ? 1 : -1));
 
   const importedData: { [key: string]: any } = {};
 
