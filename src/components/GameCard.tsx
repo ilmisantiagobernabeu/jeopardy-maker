@@ -79,6 +79,7 @@ const GameCard = ({ clue, index, round }: Props) => {
       setShowDailyDoubleScreen(true);
       const audio = new Audio(dailyDoubleSound);
       audio.play();
+      socket?.emit("Team selects a daily double clue");
     }
   }, [isFlipped]);
 
@@ -208,7 +209,10 @@ const GameCard = ({ clue, index, round }: Props) => {
     setDailyDoubleAmount(0);
   };
 
-  const buzzedInPlayer = gameState?.players[gameState?.activePlayer]?.name;
+  const buzzedInPlayer =
+    gameState?.players[
+      gameState?.activePlayer || gameState.lastActivePlayer || ""
+    ]?.name;
 
   return (
     <>
@@ -243,8 +247,8 @@ const GameCard = ({ clue, index, round }: Props) => {
                     onChange={handleRangeChange}
                     value={dailyDoubleAmount}
                     max={Math.max(
-                      gameState?.players[gameState?.lastActivePlayer]?.score ||
-                        0,
+                      gameState?.players[gameState?.lastActivePlayer || ""]
+                        ?.score || 0,
                       1000
                     )}
                   />
@@ -296,14 +300,7 @@ const GameCard = ({ clue, index, round }: Props) => {
               )}
               <p className="fixed top-4 w-full text-center text-6xl text-white">
                 Buzzed In:{" "}
-                <span className="text-green-500">
-                  Team{" "}
-                  {buzzedInPlayer ||
-                    gameState?.lastActivePlayer ||
-                    Object.values(gameState?.players || {}).find(
-                      (player) => player.name
-                    )?.name}
-                </span>
+                <span className="text-green-500">Team {buzzedInPlayer}</span>
               </p>
             </>
           )}

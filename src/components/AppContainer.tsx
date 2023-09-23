@@ -13,14 +13,7 @@ import { useEffect } from "react";
 import Teams from "./Teams";
 import { ButtonColor } from "../../stateTypes";
 import buzzerSound from "../sounds/buzzer.mp3";
-
-const Debug = () => {
-  const { gameState } = useGlobalState();
-
-  const { games, gameBoard, ...rest } = gameState || {};
-
-  return <pre className="text-white">{JSON.stringify(rest, null, 2)}</pre>;
-};
+import { Debug } from "./Debug";
 
 const AppContainer = () => {
   const { gameState, socket } = useGlobalState();

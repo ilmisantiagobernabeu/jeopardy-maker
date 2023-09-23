@@ -1,7 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useGlobalState } from "./GlobalStateProvider";
 import cx from "classnames";
-import { HamburgerMenu } from "./HamburgerMenu";
 import { useState } from "react";
 import { ButtonColor } from "../../stateTypes";
 import { PageWrapper } from "./PageWrapper";
@@ -117,7 +116,7 @@ const Teams = () => {
               <tbody>
                 {playersWithButtons.map((player) => (
                   <tr
-                    key={player.name.toString()}
+                    key={player.name?.toString()}
                     className="even:bg-gray-900 even:!bg-opacity-30 "
                   >
                     <td>{player.name}</td>

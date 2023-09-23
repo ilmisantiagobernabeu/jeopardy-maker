@@ -4,7 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "node ../getStaticIp.js && nodemon app.js"
+    "start": "node ../getStaticIp.js && nodemon --exec ts-node app.ts",
+    "tsversion": "tsc --version"
   },
   "dependencies": {
     "axios": "^1.5.0",
@@ -15,7 +16,12 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.14",
+    "@types/express": "^4.17.17",
+    "@types/node": "^20.6.3",
+    "@types/uuid": "^9.0.4",
     "nodemon": "^2.0.19",
-    "ts-node": "^10.9.1"
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
   }
 }

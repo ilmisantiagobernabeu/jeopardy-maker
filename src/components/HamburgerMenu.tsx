@@ -129,24 +129,27 @@ export const HamburgerMenu = ({
                 </span>
               </button>
             </li>
-            <li>
-              <button
-                onClick={() => {
-                  const response = confirm(
-                    "Are you sure you want to restart the game?"
-                  );
+            {gameState?.name && (
+              <li>
+                <button
+                  onClick={() => {
+                    const response = confirm(
+                      "Are you sure you want to restart the game? " +
+                        gameState.name
+                    );
 
-                  if (response) {
-                    socket?.emit("Host restarts the game");
-                  }
-                }}
-              >
-                <span className="flex gap-2">
-                  <WarningIcon width={16} className="text-red-500" /> Restart
-                  Game
-                </span>
-              </button>
-            </li>
+                    if (response) {
+                      socket?.emit("Host restarts the game", gameState.name);
+                    }
+                  }}
+                >
+                  <span className="flex gap-2">
+                    <WarningIcon width={16} className="text-red-500" /> Restart
+                    Game
+                  </span>
+                </button>
+              </li>
+            )}
           </ul>
         </div>
       </div>
