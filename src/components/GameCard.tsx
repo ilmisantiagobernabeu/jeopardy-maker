@@ -48,7 +48,7 @@ const GameCard = ({ clue, index, round }: Props) => {
     onCountDownEnd: () => {
       // this will run for every game card instance
       // so we only want to mark incorrect for the currently flipped one
-      if (isFlipped) {
+      if (isFlipped && !clue.alreadyPlayed) {
         handleIncorrect();
       }
     },
