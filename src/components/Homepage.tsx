@@ -4,8 +4,10 @@ import { QRCode } from "./QR";
 import { useGlobalState } from "./GlobalStateProvider";
 import PhoneIcon from "../icons/PhoneIcon";
 import DesktopIcon from "../icons/DesktopIcon";
-import { HamburgerMenu } from "./HamburgerMenu";
 import { PageWrapper } from "./PageWrapper";
+import EditIcon from "../icons/EditIcon";
+import DeleteIcon from "../icons/DeleteIcon";
+import { useDeleteGameMutation } from "../api/deleteGame";
 
 function generateRandomString(length = 5) {
   const characters =
@@ -19,7 +21,8 @@ function generateRandomString(length = 5) {
 }
 
 const Homepage = () => {
-  const { gameState, socket } = useGlobalState();
+  const { gameState, setGameState, socket } = useGlobalState();
+  const deleteGame = useDeleteGameMutation();
   return (
     <PageWrapper>
       <h1 className="text-7xl font-bold font-korinna gold-text">BUZZINGA</h1>
@@ -42,18 +45,49 @@ const Homepage = () => {
           ) : (
             <>
               <ul className="flex flex-col gap-2 list-disc list-inside max-h-52 overflow-auto">
-                {Object.values(gameState?.games || {}).map((game) => (
-                  <li key={game.name} className="list-item">
+                {Object.values(gameState?.games || {}).map((game, index) => (
+                  <li key={game.name} className="flex gap-6">
                     <button
                       onClick={() => {
                         socket?.emit("Host changes the game", game.name);
                         localStorage.setItem("dt-gameName", game.name);
                         window.open(`/board?game=${game.name}`, "_blank");
                       }}
-                      className="hover:text-gold focus:text-gold font-semibold transition-colors duration-200"
+                      className="hover:text-gold focus:text-gold font-semibold transition-colors duration-200 text-left flex-grow"
                     >
-                      {game.name}
+                      &bull; {game.name}
                     </button>
+                    <div className="flex gap-3">
+                      <button className="flex justify-center items-center hover:text-gold focus:text-gold">
+                        <EditIcon width={16} height={16} />
+                      </button>
+                      <button
+                        className="flex justify-center items-center disabled:opacity-50 hover:text-gold focus:text-gold"
+                        onClick={() => {
+                          const response = confirm(
+                            `Are you sure you want to delete ${game.name}?`
+                          );
+
+                          if (response) {
+                            deleteGame.mutate(game.name || "", {
+                              onSuccess(newGameState) {
+                                console.log(
+                                  "Delete game file succesfully!",
+                                  newGameState
+                                );
+                                setGameState(newGameState);
+                              },
+                              onError(err) {
+                                console.log("Failed to delete game file.", err);
+                              },
+                            });
+                          }
+                        }}
+                        disabled={game.name === "simple-history"}
+                      >
+                        <DeleteIcon height={18} />
+                      </button>
+                    </div>
                   </li>
                 ))}
               </ul>

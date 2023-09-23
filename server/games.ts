@@ -28,5 +28,5 @@ function importAllJSONFiles(directoryPath: string) {
   return importedData;
 }
 
-const importedGames = importAllJSONFiles(gamesDirectory);
-module.exports = importedGames;
+const getImportedGames = () => importAllJSONFiles(gamesDirectory);
+module.exports = getImportedGames;

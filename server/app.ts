@@ -12,6 +12,7 @@ import {
   ServerToClientEvents,
 } from "../stateTypes";
 import { Server, Socket } from "socket.io";
+const getImportedGames: () => GamesFile = require("./games");
 
 dotenv.config();
 
@@ -23,12 +24,33 @@ app.use(bodyParser.json());
 
 app.post("/api/createGame", (req, res) => {
   const receivedData = req.body;
-  console.log("Received JSON data:", receivedData);
-  res.json({ message: "JSON data received successfully" });
+  const gameFileName = receivedData.name;
   fs.writeFileSync(
-    `./games/${receivedData.name}.json`,
+    `./games/${gameFileName}.json`,
     JSON.stringify(receivedData, null, 2)
   );
+  console.log("Created new game file: ", gameFileName + ".json");
+});
+
+app.post("/api/deleteGame", (req, res) => {
+  const receivedData = req.body;
+  const gameFileName = receivedData.name;
+
+  try {
+    fs.unlinkSync(`./games/${gameFileName}.json`);
+    const newGameState = { ...gameState };
+    const newGamesFile = getImportedGames();
+    newGameState.games = newGamesFile;
+    console.log("Deleted game file: ", gameFileName + ".json");
+    return res.json(newGameState);
+  } catch (err) {
+    console.log(
+      "Error: couldn't delete game file: ",
+      gameFileName + ".json",
+      err
+    );
+    return res.send(500);
+  }
 });
 
 app.listen(port, () => {
@@ -41,8 +63,6 @@ type GamesFile = {
     rounds: GameBoard[][];
   };
 };
-
-const games: GamesFile = require("./games");
 
 const io = new Server(5000, {
   cors: {
@@ -59,7 +79,7 @@ const createDefaultGameState = (
   newGameId = true,
   specificGameName?: string
 ): GameState => {
-  const newGames = JSON.parse(JSON.stringify(games));
+  const newGames = JSON.parse(JSON.stringify(getImportedGames()));
   const gameId = newGameId ? uuidv4() : previousGameId;
   previousGameId = gameId;
   return {
@@ -241,7 +261,7 @@ io.on(
     socket.on(
       "Host loads the game board for the first time",
       (gameName = "steveo") => {
-        console.log("Host loads the game board for the first time");
+        console.log("Host loads the game board for the first time", gameName);
         gameState.name = gameName;
         gameState.gameBoard = gameState.games[gameName].rounds[0];
         io.emit("gameState updated", gameState);

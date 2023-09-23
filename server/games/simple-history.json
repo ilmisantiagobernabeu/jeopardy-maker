@@ -3,308 +3,424 @@
   "rounds": [
     [
       {
-        "category": "Presidents",
+        "category": "black history",
         "clues": [
           {
-            "text": "Who is the first president of the United States",
-            "answer": "George Washington",
-            "isDailyDouble": false
+            "text": "Proclamation signed by Abraham Lincoln",
+            "answer": "Emancipation Proclamation",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "Items that were hard for runaway slaves to find",
+            "answer": "food and water",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "Who is the 16th president of the United States?",
-            "answer": "Abraham Lincoln",
-            "isDailyDouble": false
+            "text": "Group who tried to end slavery",
+            "answer": "Abolitionists",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "This outlawed Slavery",
+            "answer": "13th Amendment",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "Passageway used to help southern slaves escape",
+            "answer": "Underground Railroad",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           }
         ]
       },
       {
-        "category": "Category B",
+        "category": "American revolution",
         "clues": [
           {
-            "text": "",
-            "answer": ""
+            "text": "Ended with the signing of the Treaty of Paris",
+            "answer": "French and Indian War",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "Capital of France during the French and Indian War",
+            "answer": "Quebec",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "Leader of the Ottawa people",
+            "answer": "Pontiac",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "Forced the colonists to pay taxes on every piece of paper",
+            "answer": "Stamp Act",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "Rode his horse to warn that the British was coming",
+            "answer": "Paul Revere",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           }
         ]
       },
       {
-        "category": "Category C",
+        "category": "13 Colonies\n",
         "clues": [
           {
-            "text": "",
-            "answer": ""
+            "text": "Returned to Roanoke in July of 1587",
+            "answer": "John White",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "Number of original colonies",
+            "answer": "13",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "Commanded the 3 ships that sailed to Virginia with 100 men and boys",
+            "answer": "Christopher Newport",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "Held captive by Chief Powatan",
+            "answer": "Captain John Smith",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "Ship the Pilgrims travelled on",
+            "answer": "The Mayflower",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           }
         ]
       },
       {
-        "category": "Category D",
+        "category": "America the beautiful",
         "clues": [
           {
-            "text": "",
-            "answer": ""
+            "text": "People who built the Tower of Babel",
+            "answer": "Noah's Descendents",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "Called their god Ya ho waah",
+            "answer": "The Cherokee",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "When did Christopher Columbus land in what would later become the United States",
+            "answer": "He never did",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "The sea where Noah's descendants were believed to have come through",
+            "answer": "Bering Sea",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "The first successful English colony in America",
+            "answer": "Jamestown",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           }
         ]
       },
       {
-        "category": "Category E",
+        "category": "Vocabulary",
         "clues": [
           {
-            "text": "",
-            "answer": ""
+            "text": "someone who is related to a person or group of people who lived in the past",
+            "answer": "descendant",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "Able to reproduce",
+            "answer": "Fertile",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "A place for storing treasure",
+            "answer": "Cache",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "A scientist who deals with past human life",
+            "answer": "Archaeologist",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "To gain political control over",
+            "answer": "Colonize",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           }
         ]
       },
       {
-        "category": "Category F",
+        "category": "geography\n",
         "clues": [
           {
-            "text": "",
-            "answer": ""
+            "text": "This White Marble Building is in Agra, India. It is one of the 7 wonders of the world",
+            "answer": "Taj Mahal",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "The smallest country in Central America",
+            "answer": "El Salvador",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "This Country is the biggest in the world by land mass",
+            "answer": "Russia",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "This city is popular for the Golden Gate Bridge",
+            "answer": "San Francisco",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "The city where Pizza originated",
+            "answer": "Naples, Italy",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           }
         ]
       }
     ],
     [
       {
-        "category": "Category A",
+        "category": "U.s. Presidents",
         "clues": [
           {
-            "text": "",
-            "answer": ""
-          },
-          {
-            "text": "",
-            "answer": ""
-          },
-          {
-            "text": "",
-            "answer": ""
-          },
-          {
-            "text": "",
-            "answer": ""
-          },
-          {
-            "text": "",
-            "answer": ""
-          }
-        ]
-      },
-      {
-        "category": "Category B",
-        "clues": [
-          {
-            "text": "",
-            "answer": ""
-          },
-          {
-            "text": "The city with the first permanent English settlement in the Americas",
-            "answer": "Jamestown, Virginia",
+            "text": "The first president",
+            "answer": "George Washington",
             "isDailyDouble": false,
             "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "1999 Vice President",
+            "answer": "Al Gore",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "16th U.S. President",
+            "answer": "Abraham Lincoln",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "Name 5 of the 7 founding fathers",
+            "answer": "George Washington, Thomas Jefferson, John Adams, Benjamin Franklin, Alexander Hamilton, John Jay and James Madison",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
+          },
+          {
+            "text": "The four presidents on Mount Rushmore",
+            "answer": "Theodore Roosevelt Abraham Lincoln Thomas Jefferson George Washington",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           }
         ]
       },
       {
-        "category": "Category C",
+        "category": "City Nicknames",
         "clues": [
           {
-            "text": "",
-            "answer": ""
+            "text": "The Windy City",
+            "answer": "Chicago",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "The Emerald City",
+            "answer": "Seattle",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "The Music City",
+            "answer": "Nashville",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "The Rose City",
+            "answer": "Portland",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "The City of Lights",
+            "answer": "Paris",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           }
         ]
       },
       {
-        "category": "Category D",
+        "category": "historical figures",
         "clues": [
           {
-            "text": "",
-            "answer": ""
+            "text": "This philosopher wrote the famous \"The Republic\"",
+            "answer": "Plato",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "The first US President to declare war",
+            "answer": "James Madison. He signed a declaration on June 18 of 1812, beginning the war of 1812 against the British.",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "Inventor credited with inventing the telephone",
+            "answer": "Alexander Graham Bell",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "The first US President to be born in a Hospital",
+            "answer": "Jimmy Carter",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "This person famously stated in his speech \"Give me liberty, or give me death!\"",
+            "answer": "Patrick Henry",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           }
         ]
       },
       {
-        "category": "Category E",
+        "category": "Historical years",
         "clues": [
           {
-            "text": "",
-            "answer": ""
+            "text": "The Year the Model T was first introduced",
+            "answer": "1908",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "The years during the Civil War\n",
+            "answer": "1861-1865",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "Titanic Sinking",
+            "answer": "1912",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "The years during World War ll",
+            "answer": "1939-1945",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "Abolishment of Slavery",
+            "answer": "1863",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           }
         ]
       },
       {
-        "category": "Category F",
+        "category": "Capitals",
         "clues": [
           {
-            "text": "",
-            "answer": ""
+            "text": "capital of Florida",
+            "answer": "Tallahassee",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "capital of Alabama",
+            "answer": "Montgomery",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "Georgia",
+            "answer": "Atlanta",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "Tennessee",
+            "answer": "Nashville",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "Mississippi",
+            "answer": "Jackson",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
+          }
+        ]
+      },
+      {
+        "category": "Random\n",
+        "clues": [
+          {
+            "text": "Thomas Edison's invention",
+            "answer": "Light bulb",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
+          },
+          {
+            "text": "Inventors of flight",
+            "answer": "The Wright Brothers",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
+          },
+          {
+            "text": "What act of 1862 opened western lands for free settlement and gave each homesteader 160 acres",
+            "answer": "The Homestead Act",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
+          },
+          {
+            "text": "What caused America to join the Great War (WW1)",
+            "answer": "The Germans sunk the Lusitania, a passenger ship with American people on board",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
+          },
+          {
+            "text": "What was Franklin D. Roosevelt's plan to create new programs to \"jump start\" the economy during the Great Depression called?",
+            "answer": "The New Deal",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           }
         ]
       }

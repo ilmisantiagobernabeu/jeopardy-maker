@@ -7,6 +7,7 @@ import { SingleGame } from "../../stateTypes";
 import EditIcon from "../icons/EditIcon";
 import { useCreateGameMutation } from "../api/createGame";
 import { v4 as uuidv4 } from "uuid";
+import { HamburgerMenu } from "./HamburgerMenu";
 
 const getInitialGameState = (gameName: string) => ({
   name: gameName,
@@ -390,6 +391,18 @@ function CreateGame() {
                 }}
                 onBlur={() => {
                   setIsEditGameName(false);
+
+                  createGame.mutate(gameState, {
+                    onSuccess() {
+                      console.log("Created new game file succesfully!");
+                    },
+                    onError(err) {
+                      console.log(
+                        "Failed to create new game file succesfully!",
+                        err
+                      );
+                    },
+                  });
                 }}
               />
             ) : (
