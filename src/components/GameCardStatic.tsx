@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import cx from "classnames";
 import CloseIcon from "../icons/CloseIcon";
 import { SingleGame } from "../../stateTypes";
+import { useCreateGameMutation } from "../api/createGame";
 
 type Clue = {
   text: string;
@@ -88,6 +89,7 @@ const EditModal = ({
   index,
   round,
 }: EditModalProps) => {
+  const createGame = useCreateGameMutation();
   const [isDailyDouble, setIsDailyDouble] = useState(
     clue.isDailyDouble || false
   );
@@ -169,6 +171,19 @@ const EditModal = ({
               newGameState.rounds[round - 1][catIndex].clues[
                 clueIndex
               ].alreadyPlayed = false;
+
+              createGame.mutate(newGameState, {
+                onSuccess() {
+                  console.log("Created new game file succesfully!");
+                },
+                onError(err) {
+                  console.log(
+                    "Failed to create new game file succesfully!",
+                    err
+                  );
+                },
+              });
+
               return newGameState;
             });
           }}

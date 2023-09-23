@@ -413,7 +413,7 @@ function CreateGame() {
           <div className="flex gap-4">
             <p>
               <Link
-                to="/create?round=1"
+                to={`/create?name=${gameState.name}&round=1`}
                 className="block border rounded-md py-1 px-2"
               >
                 Round 1
@@ -421,30 +421,12 @@ function CreateGame() {
             </p>
             <p>
               <Link
-                to="/create?round=2"
+                to={`/create?name=${gameState.name}&round=2`}
                 className="block border rounded-md py-1 px-2"
               >
                 Round 2
               </Link>
             </p>
-            <button
-              className="primary-btn"
-              onClick={() => {
-                createGame.mutate(gameState, {
-                  onSuccess() {
-                    console.log("Created new game file succesfully!");
-                  },
-                  onError(err) {
-                    console.log(
-                      "Failed to create new game file succesfully!",
-                      err
-                    );
-                  },
-                });
-              }}
-            >
-              Save Game
-            </button>
           </div>
         </div>
         <div className="Game-grid">

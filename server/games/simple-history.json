@@ -189,8 +189,10 @@
             "answer": ""
           },
           {
-            "text": "",
-            "answer": ""
+            "text": "The city with the first permanent English settlement in the Americas",
+            "answer": "Jamestown, Virginia",
+            "isDailyDouble": false,
+            "alreadyPlayed": false
           },
           {
             "text": "",
