@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "ts-node ../getStaticIp.ts && nodemon --exec ts-node app.ts",
+    "start": "ts-node --project ../custom-tsconfig.json ../getStaticIp.ts && nodemon --exec ts-node app.ts",
     "tsversion": "tsc --version"
   },
   "dependencies": {

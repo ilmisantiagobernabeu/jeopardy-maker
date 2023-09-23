@@ -3,9 +3,10 @@ import { useGlobalState } from "./GlobalStateProvider";
 import GameCardStatic from "./GameCardStatic";
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Game, SingleGame } from "../../stateTypes";
+import { SingleGame } from "../../stateTypes";
 import EditIcon from "../icons/EditIcon";
 import { useCreateGameMutation } from "../api/createGame";
+import { v4 as uuidv4 } from "uuid";
 
 const getInitialGameState = (gameName: string) => ({
   name: gameName,
@@ -15,24 +16,24 @@ const getInitialGameState = (gameName: string) => ({
         category: "Category A",
         clues: [
           {
-            text: "A - Clue 1",
-            answer: "Answer 1",
+            text: "",
+            answer: "",
           },
           {
-            text: "A - Clue 2",
-            answer: "Answer 2",
+            text: "",
+            answer: "",
           },
           {
-            text: "A - Clue 3",
-            answer: "Answer 3",
+            text: "",
+            answer: "",
           },
           {
-            text: "A - Clue 4",
-            answer: "Answer 3",
+            text: "",
+            answer: "",
           },
           {
-            text: "A - Clue 5",
-            answer: "Answer 4",
+            text: "",
+            answer: "",
           },
         ],
       },
@@ -40,24 +41,24 @@ const getInitialGameState = (gameName: string) => ({
         category: "Category B",
         clues: [
           {
-            text: "B - Clue 1",
-            answer: "Answer 1",
+            text: "",
+            answer: "",
           },
           {
-            text: "B - Clue 2",
-            answer: "Answer 2",
+            text: "",
+            answer: "",
           },
           {
-            text: "B - Clue 3",
-            answer: "Answer 3",
+            text: "",
+            answer: "",
           },
           {
-            text: "B - Clue 4",
-            answer: "Answer 3",
+            text: "",
+            answer: "",
           },
           {
-            text: "B - Clue 5",
-            answer: "Answer 4",
+            text: "",
+            answer: "",
           },
         ],
       },
@@ -65,24 +66,24 @@ const getInitialGameState = (gameName: string) => ({
         category: "Category C",
         clues: [
           {
-            text: "C - Clue 1",
-            answer: "Answer 1",
+            text: "",
+            answer: "",
           },
           {
-            text: "C - Clue 2",
-            answer: "Answer 2",
+            text: "",
+            answer: "",
           },
           {
-            text: "C - Clue 3",
-            answer: "Answer 3",
+            text: "",
+            answer: "",
           },
           {
-            text: "C - Clue 4",
-            answer: "Answer 3",
+            text: "",
+            answer: "",
           },
           {
-            text: "C - Clue 5",
-            answer: "Answer 4",
+            text: "",
+            answer: "",
           },
         ],
       },
@@ -90,24 +91,24 @@ const getInitialGameState = (gameName: string) => ({
         category: "Category D",
         clues: [
           {
-            text: "D - Clue 1",
-            answer: "Answer 1",
+            text: "",
+            answer: "",
           },
           {
-            text: "D - Clue 2",
-            answer: "Answer 2",
+            text: "",
+            answer: "",
           },
           {
-            text: "D - Clue 3",
-            answer: "Answer 3",
+            text: "",
+            answer: "",
           },
           {
-            text: "D - Clue 4",
-            answer: "Answer 3",
+            text: "",
+            answer: "",
           },
           {
-            text: "D - Clue 5",
-            answer: "Answer 4",
+            text: "",
+            answer: "",
           },
         ],
       },
@@ -115,24 +116,24 @@ const getInitialGameState = (gameName: string) => ({
         category: "Category E",
         clues: [
           {
-            text: "E - Clue 1",
-            answer: "Answer 1",
+            text: "",
+            answer: "",
           },
           {
-            text: "E - Clue 2",
-            answer: "Answer 2",
+            text: "",
+            answer: "",
           },
           {
-            text: "E - Clue 3",
-            answer: "Answer 3",
+            text: "",
+            answer: "",
           },
           {
-            text: "E - Clue 4",
-            answer: "Answer 3",
+            text: "",
+            answer: "",
           },
           {
-            text: "E - Clue 5",
-            answer: "Answer 4",
+            text: "",
+            answer: "",
           },
         ],
       },
@@ -140,24 +141,176 @@ const getInitialGameState = (gameName: string) => ({
         category: "Category F",
         clues: [
           {
-            text: "F - Clue 1",
-            answer: "Answer 1",
+            text: "",
+            answer: "",
           },
           {
-            text: "F - Clue 2",
-            answer: "Answer 2",
+            text: "",
+            answer: "",
           },
           {
-            text: "F - Clue 3",
-            answer: "Answer 3",
+            text: "",
+            answer: "",
           },
           {
-            text: "F - Clue 4",
-            answer: "Answer 3",
+            text: "",
+            answer: "",
           },
           {
-            text: "F - Clue 5",
-            answer: "Answer 4",
+            text: "",
+            answer: "",
+          },
+        ],
+      },
+    ],
+    [
+      {
+        category: "Category A",
+        clues: [
+          {
+            text: "",
+            answer: "",
+          },
+          {
+            text: "",
+            answer: "",
+          },
+          {
+            text: "",
+            answer: "",
+          },
+          {
+            text: "",
+            answer: "",
+          },
+          {
+            text: "",
+            answer: "",
+          },
+        ],
+      },
+      {
+        category: "Category B",
+        clues: [
+          {
+            text: "",
+            answer: "",
+          },
+          {
+            text: "",
+            answer: "",
+          },
+          {
+            text: "",
+            answer: "",
+          },
+          {
+            text: "",
+            answer: "",
+          },
+          {
+            text: "",
+            answer: "",
+          },
+        ],
+      },
+      {
+        category: "Category C",
+        clues: [
+          {
+            text: "",
+            answer: "",
+          },
+          {
+            text: "",
+            answer: "",
+          },
+          {
+            text: "",
+            answer: "",
+          },
+          {
+            text: "",
+            answer: "",
+          },
+          {
+            text: "",
+            answer: "",
+          },
+        ],
+      },
+      {
+        category: "Category D",
+        clues: [
+          {
+            text: "",
+            answer: "",
+          },
+          {
+            text: "",
+            answer: "",
+          },
+          {
+            text: "",
+            answer: "",
+          },
+          {
+            text: "",
+            answer: "",
+          },
+          {
+            text: "",
+            answer: "",
+          },
+        ],
+      },
+      {
+        category: "Category E",
+        clues: [
+          {
+            text: "",
+            answer: "",
+          },
+          {
+            text: "",
+            answer: "",
+          },
+          {
+            text: "",
+            answer: "",
+          },
+          {
+            text: "",
+            answer: "",
+          },
+          {
+            text: "",
+            answer: "",
+          },
+        ],
+      },
+      {
+        category: "Category F",
+        clues: [
+          {
+            text: "",
+            answer: "",
+          },
+          {
+            text: "",
+            answer: "",
+          },
+          {
+            text: "",
+            answer: "",
+          },
+          {
+            text: "",
+            answer: "",
+          },
+          {
+            text: "",
+            answer: "",
           },
         ],
       },
@@ -297,6 +450,7 @@ function CreateGame() {
         <div className="Game-grid">
           {catTitles?.map((title, catIndex) => (
             <EditTitle
+              key={title}
               title={title}
               catIndex={catIndex}
               setGameState={setGameState}
@@ -306,7 +460,7 @@ function CreateGame() {
           {clues?.map((clue, index) => {
             return (
               <GameCardStatic
-                key={clue.text}
+                key={round + index}
                 clue={clue}
                 index={index}
                 round={round}

@@ -49,7 +49,11 @@ const GameCardStatic = ({ clue, index, round, setGameState }: Props) => {
         })}
         onClick={handleClick}
       >
-        <div className="GameCard-front">
+        <div
+          className={cx("GameCard-front", {
+            "opacity-50": !clue.text || !clue.answer,
+          })}
+        >
           <span className="GameCard-dollarSign">$</span>
           {value}
         </div>
@@ -162,6 +166,9 @@ const EditModal = ({
               newGameState.rounds[round - 1][catIndex].clues[
                 clueIndex
               ].isDailyDouble = isDailyDouble;
+              newGameState.rounds[round - 1][catIndex].clues[
+                clueIndex
+              ].alreadyPlayed = false;
               return newGameState;
             });
           }}

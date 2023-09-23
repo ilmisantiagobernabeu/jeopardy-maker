@@ -1,0 +1,311 @@
+{
+  "name": "simple-history",
+  "rounds": [
+    [
+      {
+        "category": "Presidents",
+        "clues": [
+          {
+            "text": "Who is the first president of the United States",
+            "answer": "George Washington",
+            "isDailyDouble": false
+          },
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "Who is the 16th president of the United States?",
+            "answer": "Abraham Lincoln",
+            "isDailyDouble": false
+          },
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          }
+        ]
+      },
+      {
+        "category": "Category B",
+        "clues": [
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          }
+        ]
+      },
+      {
+        "category": "Category C",
+        "clues": [
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          }
+        ]
+      },
+      {
+        "category": "Category D",
+        "clues": [
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          }
+        ]
+      },
+      {
+        "category": "Category E",
+        "clues": [
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          }
+        ]
+      },
+      {
+        "category": "Category F",
+        "clues": [
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "category": "Category A",
+        "clues": [
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          }
+        ]
+      },
+      {
+        "category": "Category B",
+        "clues": [
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          }
+        ]
+      },
+      {
+        "category": "Category C",
+        "clues": [
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          }
+        ]
+      },
+      {
+        "category": "Category D",
+        "clues": [
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          }
+        ]
+      },
+      {
+        "category": "Category E",
+        "clues": [
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          }
+        ]
+      },
+      {
+        "category": "Category F",
+        "clues": [
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          },
+          {
+            "text": "",
+            "answer": ""
+          }
+        ]
+      }
+    ]
+  ]
+}

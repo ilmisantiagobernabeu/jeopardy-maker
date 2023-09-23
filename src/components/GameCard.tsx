@@ -172,7 +172,7 @@ const GameCard = ({ clue, index, round }: Props) => {
     setShowAnswer(true);
   };
 
-  if (clue?.alreadyPlayed) {
+  if (clue?.alreadyPlayed || !clue.text || !clue.answer) {
     return (
       <>
         <div

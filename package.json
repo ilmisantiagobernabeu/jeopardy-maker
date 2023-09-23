@@ -3,9 +3,9 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "ipCheck": "ts-node getStaticIp.ts",
-    "dev": "ts-node getStaticIp.ts && vite --host",
-    "start": "ts-node getStaticIp.ts && vite --host",
+    "ipCheck": "ts-node --project custom-tsconfig.json getStaticIp.ts",
+    "dev": "ts-node --project custom-tsconfig.json getStaticIp.ts && vite --host",
+    "start": "ts-node --project custom-tsconfig.json getStaticIp.ts && vite --host",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "format": "prettier --write"
@@ -28,11 +28,13 @@
     "socket.io-client": "^4.5.2",
     "tailwind-merge": "^1.14.0",
     "tailwindcss-animate": "^1.0.7",
-    "use-no-sleep": "^0.3.1"
+    "use-no-sleep": "^0.3.1",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@types/react": "^17.0.33",
     "@types/react-dom": "^17.0.10",
+    "@types/uuid": "^9.0.4",
     "@vitejs/plugin-react": "^1.0.7",
     "autoprefixer": "^10.4.8",
     "postcss": "^8.4.16",

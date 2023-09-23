@@ -45,7 +45,11 @@ function App() {
       return newArr;
     }, []);
 
-  const isEveryCluePlayed = clues?.every((clue) => clue?.alreadyPlayed);
+  const isEveryCluePlayed = clues?.every(
+    (clue) => clue?.alreadyPlayed || !clue.text || !clue.answer
+  );
+
+  console.log("isEveryCluePlayed", isEveryCluePlayed);
 
   useEffect(() => {
     let timeout = 0;
@@ -58,7 +62,7 @@ function App() {
     return () => {
       clearTimeout(timeout);
     };
-  }, [isEveryCluePlayed]);
+  }, [round, isEveryCluePlayed]);
 
   return (
     <>
@@ -72,8 +76,20 @@ function App() {
             }
           }}
         />
-        {roundOver ? (
-          <div className="h-screen flex justify-center items-center h-full">
+        {roundOver && (gameState?.gameBoard.length || -1) >= round ? (
+          <div className="h-screen flex justify-center items-center">
+            <Link
+              className="text-white h-full w-full flex justify-center items-center text-9xl bg-[#060ce9]"
+              to={`/scoreboard`}
+              onClick={() => {
+                setRoundOver(false);
+              }}
+            >
+              Game Over
+            </Link>
+          </div>
+        ) : roundOver ? (
+          <div className="h-screen flex justify-center items-center">
             <Link
               className="text-white h-full w-full flex justify-center items-center text-9xl bg-[#060ce9]"
               to={`/board?game=${game}&round=${round + 1}`}
@@ -112,7 +128,7 @@ function App() {
             {clues?.map((clue, index) => {
               return (
                 <GameCard
-                  key={clue.text + index.toString()}
+                  key={round + index}
                   clue={clue}
                   index={index}
                   round={round}
