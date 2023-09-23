@@ -1,16 +1,16 @@
-const fs = require("fs");
-const path = require("path");
+import fs from "fs";
+import path from "path";
 
 const gamesDirectory = path.join(__dirname, "/games");
 
-function importAllJSONFiles(directoryPath) {
+function importAllJSONFiles(directoryPath: string) {
   const files = fs.readdirSync(directoryPath);
 
   const jsonFiles = files.filter((file) => {
     return path.extname(file) === ".json";
   });
 
-  const importedData = {};
+  const importedData: { [key: string]: any } = {};
 
   jsonFiles.forEach((file) => {
     const fileName = path.basename(file, ".json");

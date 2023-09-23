@@ -3,9 +3,9 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "ipCheck": "node getStaticIp.js",
-    "dev": "node getStaticIp.js && vite --host",
-    "start": "node getStaticIp.js && vite --host",
+    "ipCheck": "ts-node getStaticIp.ts",
+    "dev": "ts-node getStaticIp.ts && vite --host",
+    "start": "ts-node getStaticIp.ts && vite --host",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "format": "prettier --write"
@@ -39,6 +39,7 @@
     "prettier": "^2.7.1",
     "sass": "^1.49.10",
     "tailwindcss": "^3.1.8",
+    "ts-node": "^10.9.1",
     "typescript": "^4.5.4",
     "vite": "^2.9.0"
   },
