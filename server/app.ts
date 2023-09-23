@@ -270,7 +270,7 @@ io.on(
     });
 
     socket.on("Host navigates to another round", (round) => {
-      console.log("Host navigates to another round");
+      console.log("Host navigates to another round, round: ", round);
       // console.log("navigate 1st round", data);
       gameState.gameBoard = gameState.games[gameState.name].rounds[round - 1];
       io.emit("gameState updated", gameState);

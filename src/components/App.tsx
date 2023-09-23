@@ -5,10 +5,11 @@ import { useGlobalState } from "./GlobalStateProvider";
 import { Link, useLocation } from "react-router-dom";
 import { HamburgerMenu } from "./HamburgerMenu";
 
-function App({ round }: { round: number }) {
+function App() {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const game = queryParams.get("game") || "";
+  const round = Number(queryParams.get("round")) || 1;
   const { gameState, socket } = useGlobalState();
   const [roundOver, setRoundOver] = useState(false);
   const [pointerOver, setPointerOver] = useState(false);
@@ -75,7 +76,7 @@ function App({ round }: { round: number }) {
           <div className="h-screen flex justify-center items-center h-full">
             <Link
               className="text-white h-full w-full flex justify-center items-center text-9xl bg-[#060ce9]"
-              to={`/board${round + 1}`}
+              to={`/board?game=${game}&round=${round + 1}`}
               onClick={() => {
                 setRoundOver(false);
               }}
