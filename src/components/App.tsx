@@ -8,23 +8,23 @@ import { HamburgerMenu } from "./HamburgerMenu";
 function App({ round }: { round: number }) {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
+  const game = queryParams.get("game") || "";
   const { gameState, socket } = useGlobalState();
   const [roundOver, setRoundOver] = useState(false);
   const [pointerOver, setPointerOver] = useState(false);
   const timeout = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    const gameParam = queryParams.get("game") || "";
     if (
       localStorage.getItem("dt-gameName") &&
-      gameParam === localStorage.getItem("dt-gameName")
+      game === localStorage.getItem("dt-gameName")
     ) {
-      socket?.emit("Host loads the game board for the first time", gameParam);
+      socket?.emit("Host loads the game board for the first time", game);
     } else if (localStorage.getItem("dt-gameName") && socket) {
-      localStorage.setItem("dt-gameName", gameParam);
-      socket?.emit("Host changes the game", gameParam);
+      localStorage.setItem("dt-gameName", game);
+      socket?.emit("Host changes the game", game);
     }
-  }, [socket, location, gameState?.name]);
+  }, [socket, location, game]);
 
   useEffect(() => {
     socket?.emit("Host navigates to another round", round);
