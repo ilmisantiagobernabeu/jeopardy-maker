@@ -49,7 +49,7 @@ function App() {
     (clue) => clue?.alreadyPlayed || !clue.text || !clue.answer
   );
 
-  console.log("isEveryCluePlayed", isEveryCluePlayed);
+  const numOfRounds = gameState?.games[game].rounds.length || 0;
 
   useEffect(() => {
     let timeout = 0;
@@ -76,7 +76,7 @@ function App() {
             }
           }}
         />
-        {roundOver && (gameState?.gameBoard.length || -1) >= round ? (
+        {roundOver && isEveryCluePlayed && round === numOfRounds ? (
           <div className="h-screen flex justify-center items-center">
             <Link
               className="text-white h-full w-full flex justify-center items-center text-9xl bg-[#060ce9]"
