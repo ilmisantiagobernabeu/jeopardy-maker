@@ -153,7 +153,7 @@ export const HamburgerMenu = ({
           </ul>
         </div>
       </div>
-      {!isOpen && (
+      {!isOpen ? (
         <button
           className={cx(
             "fixed top-0 left-0 p-8 font-lg font-bold flex gap-2 items-center transition-transform bg-[#060ce9] bg-opacity-80",
@@ -171,6 +171,13 @@ export const HamburgerMenu = ({
           <MenuIcon width={20} />
           <span className="hidden sm:block"> MENU</span>
         </button>
+      ) : (
+        <button
+          className="fixed inset-0 w-full h-full bg-black bg-opacity-90"
+          onClick={() => {
+            setIsOpen(false);
+          }}
+        />
       )}
     </div>
   );
