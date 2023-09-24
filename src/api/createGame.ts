@@ -1,11 +1,10 @@
 import axios from "axios";
 import { SingleGame } from "../../stateTypes";
 import { useMutation } from "react-query";
-
-const API_URL = "http://localhost:3001/api";
+import { SERVER_URL } from "./constants";
 
 const createGame = async (game: SingleGame) => {
-  const response = await axios.post(`${API_URL}/createGame`, game);
+  const response = await axios.post(`${SERVER_URL}/createGame`, game);
   return response.data;
 };
 

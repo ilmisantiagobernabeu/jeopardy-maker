@@ -22,6 +22,10 @@ const port = process.env.PORT || 3001;
 app.use(cors());
 app.use(bodyParser.json());
 
+app.get("/api/healthCheck", (req, res) => {
+  return res.send("looking good!");
+});
+
 app.post("/api/createGame", (req, res) => {
   const receivedData = req.body;
   const gameFileName = receivedData.name;

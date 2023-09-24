@@ -1,10 +1,9 @@
 import axios from "axios";
 import { useMutation } from "react-query";
-
-const API_URL = "http://localhost:3001/api";
+import { SERVER_URL } from "./constants";
 
 const deleteGame = async (gameName: string) => {
-  const response = await axios.post(`${API_URL}/deleteGame`, {
+  const response = await axios.post(`${SERVER_URL}/deleteGame`, {
     name: gameName,
   });
   return response.data;
