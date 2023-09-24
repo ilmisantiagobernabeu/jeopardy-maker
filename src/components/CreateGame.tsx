@@ -331,9 +331,14 @@ function CreateGame() {
   );
   const [isEditGameName, setIsEditGameName] = useState(false);
 
-  const catTitles = gameState.rounds[round - 1]?.map((round) => round.category);
+  console.log(gameState);
+  console.log("global", globalGameState);
 
-  const clues = gameState.rounds[round - 1]
+  const catTitles = gameState.rounds?.[round - 1]?.map(
+    (round) => round.category
+  );
+
+  const clues = gameState.rounds?.[round - 1]
     ?.map((round) => round.clues)
     .reduce((newArr, _, index, ogArr) => {
       for (const cat in gameState?.rounds[round - 1]) {

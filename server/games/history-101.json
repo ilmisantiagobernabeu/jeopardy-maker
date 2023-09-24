@@ -288,7 +288,7 @@
         "category": "historical figures",
         "clues": [
           {
-            "text": "This philosopher wrote the famous \"The Republic\"",
+            "text": "This philosopher wrote the famous &quot;The Republic&quot;",
             "answer": "Plato",
             "isDailyDouble": false,
             "alreadyPlayed": false
@@ -312,7 +312,7 @@
             "alreadyPlayed": false
           },
           {
-            "text": "This person famously stated in his speech \"Give me liberty, or give me death!\"",
+            "text": "This person famously stated in his speech &quot;Give me liberty, or give me death!&quot;",
             "answer": "Patrick Henry",
             "isDailyDouble": false,
             "alreadyPlayed": false
@@ -417,7 +417,7 @@
             "alreadyPlayed": false
           },
           {
-            "text": "What was Franklin D. Roosevelt's plan to create new programs to \"jump start\" the economy during the Great Depression called?",
+            "text": "What was Franklin D. Roosevelt's plan to create new programs to &quot;jump start&quot; the economy during the Great Depression called?",
             "answer": "The New Deal",
             "isDailyDouble": false,
             "alreadyPlayed": false

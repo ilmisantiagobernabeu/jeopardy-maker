@@ -5,5 +5,5 @@ export const Debug = () => {
 
   const { games, gameBoard, ...rest } = gameState || {};
 
-  return <pre className="text-white">{JSON.stringify(rest, null, 2)}</pre>;
+  return <pre className="text-white">{JSON.stringify(games, null, 2)}</pre>;
 };
