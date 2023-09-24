@@ -108,4 +108,6 @@ export interface ClientToServerEvents {
     color: ButtonColor | "";
   }) => void;
   ["Team selects a daily double clue"]: () => void;
+  ["create a new game"]: (game: SingleGame) => void;
+  ["delete a game"]: (gameName: string) => void;
 }

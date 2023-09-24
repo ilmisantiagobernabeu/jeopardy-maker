@@ -5,8 +5,6 @@ import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { SingleGame } from "../../stateTypes";
 import EditIcon from "../icons/EditIcon";
-import { useCreateGameMutation } from "../api/createGame";
-import { v4 as uuidv4 } from "uuid";
 import { HamburgerMenu } from "./HamburgerMenu";
 
 const getInitialGameState = (gameName: string) => ({
@@ -320,14 +318,13 @@ const getInitialGameState = (gameName: string) => ({
 });
 
 function CreateGame() {
-  const createGame = useCreateGameMutation();
   const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const round = Number(queryParams.get("round") || 1);
   const gameName = queryParams.get("name") || "";
 
-  const { gameState: globalGameState } = useGlobalState();
+  const { socket, gameState: globalGameState } = useGlobalState();
 
   const [gameState, setGameState] = useState<SingleGame>(
     getInitialGameState(gameName)
@@ -393,17 +390,7 @@ function CreateGame() {
                 onBlur={() => {
                   setIsEditGameName(false);
 
-                  createGame.mutate(gameState, {
-                    onSuccess() {
-                      console.log("Created new game file succesfully!");
-                    },
-                    onError(err) {
-                      console.log(
-                        "Failed to create new game file succesfully!",
-                        err
-                      );
-                    },
-                  });
+                  socket?.emit("create a new game", gameState);
                 }}
               />
             ) : (

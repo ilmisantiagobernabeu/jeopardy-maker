@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import cx from "classnames";
 import CloseIcon from "../icons/CloseIcon";
 import { SingleGame } from "../../stateTypes";
-import { useCreateGameMutation } from "../api/createGame";
+import { useGlobalState } from "./GlobalStateProvider";
 
 type Clue = {
   text: string;
@@ -89,7 +89,7 @@ const EditModal = ({
   index,
   round,
 }: EditModalProps) => {
-  const createGame = useCreateGameMutation();
+  const { socket } = useGlobalState();
   const [isDailyDouble, setIsDailyDouble] = useState(
     clue.isDailyDouble || false
   );
@@ -174,17 +174,7 @@ const EditModal = ({
                   clueIndex
                 ].alreadyPlayed = false;
 
-                createGame.mutate(newGameState, {
-                  onSuccess() {
-                    console.log("Created new game file succesfully!");
-                  },
-                  onError(err) {
-                    console.log(
-                      "Failed to create new game file succesfully!",
-                      err
-                    );
-                  },
-                });
+                socket?.emit("create a new game", newGameState);
 
                 return newGameState;
               });

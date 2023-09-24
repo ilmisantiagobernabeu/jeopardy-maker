@@ -1,6 +1,3 @@
-import express from "express";
-import bodyParser from "body-parser";
-import cors from "cors";
 import fs from "fs";
 import dotenv from "dotenv";
 import { v4 as uuidv4 } from "uuid";
@@ -15,51 +12,6 @@ import { Server, Socket } from "socket.io";
 const getImportedGames: () => GamesFile = require("./games");
 
 dotenv.config();
-
-const app = express();
-const port = process.env.PORT || 3001;
-
-app.use(cors());
-app.use(bodyParser.json());
-
-app.get("/api/healthCheck", (req, res) => {
-  return res.send("looking good!");
-});
-
-app.post("/api/createGame", (req, res) => {
-  const receivedData = req.body;
-  const gameFileName = receivedData.name;
-  fs.writeFileSync(
-    `./games/${gameFileName}.json`,
-    JSON.stringify(receivedData, null, 2)
-  );
-  console.log("Created new game file: ", gameFileName + ".json");
-});
-
-app.post("/api/deleteGame", (req, res) => {
-  const receivedData = req.body;
-  const gameFileName = receivedData.name;
-
-  try {
-    fs.unlinkSync(`./games/${gameFileName}.json`);
-    const newGameState = { ...gameState };
-    const newGamesFile = getImportedGames();
-    newGameState.games = newGamesFile;
-    console.log("Deleted game file: ", gameFileName + ".json");
-    return res.json(newGameState);
-  } catch (err) {
-    console.log(
-      "Error: couldn't delete game file: ",
-      gameFileName + ".json",
-      err
-    );
-    return res.send(500);
-  }
-});
-
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
 
 type GamesFile = {
   [key: string]: {
@@ -356,6 +308,30 @@ io.on(
       delete gameState.players[socket.id];
       // emit to EVERYONE the update game state
       io.emit("gameState updated", gameState);
+    });
+
+    socket.on("create a new game", function (game) {
+      fs.writeFileSync(
+        `./games/${game.name}.json`,
+        JSON.stringify(game, null, 2)
+      );
+      console.log("Created new game file: ", game.name + ".json");
+    });
+
+    socket.on("delete a game", function (gameFileName) {
+      try {
+        fs.unlinkSync(`./games/${gameFileName}.json`);
+        const newGamesFile = getImportedGames();
+        gameState.games = newGamesFile;
+        console.log("Deleted game file: ", gameFileName + ".json");
+        io.emit("gameState updated", gameState);
+      } catch (err) {
+        console.log(
+          "Error: couldn't delete game file: ",
+          gameFileName + ".json",
+          err
+        );
+      }
     });
   }
 );

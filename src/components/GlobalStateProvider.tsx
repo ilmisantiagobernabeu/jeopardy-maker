@@ -1,13 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import {
-  ButtonColor,
   ClientToServerEvents,
-  Clue,
   GameState,
   ServerToClientEvents,
 } from "../../stateTypes";
-import { SERVER_URL, SOCKET_SERVER_URL } from "../api/constants";
+import { SOCKET_SERVER_URL } from "../api/constants";
 
 export type ContextType = {
   gameState: GameState | null;

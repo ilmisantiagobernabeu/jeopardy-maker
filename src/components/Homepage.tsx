@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { QRCode } from "./QR";
 import { useGlobalState } from "./GlobalStateProvider";
 import PhoneIcon from "../icons/PhoneIcon";
@@ -7,7 +7,6 @@ import DesktopIcon from "../icons/DesktopIcon";
 import { PageWrapper } from "./PageWrapper";
 import EditIcon from "../icons/EditIcon";
 import DeleteIcon from "../icons/DeleteIcon";
-import { useDeleteGameMutation } from "../api/deleteGame";
 
 function generateRandomString(length = 5) {
   const characters =
@@ -21,9 +20,7 @@ function generateRandomString(length = 5) {
 }
 
 const Homepage = () => {
-  const navigate = useNavigate();
   const { gameState, setGameState, socket } = useGlobalState();
-  const deleteGame = useDeleteGameMutation();
   return (
     <PageWrapper>
       <h1 className="text-7xl font-bold font-korinna gold-text">BUZZINGA</h1>
@@ -73,18 +70,7 @@ const Homepage = () => {
                           );
 
                           if (response) {
-                            deleteGame.mutate(game.name || "", {
-                              onSuccess(newGameState) {
-                                console.log(
-                                  "Delete game file succesfully!",
-                                  newGameState
-                                );
-                                setGameState(newGameState);
-                              },
-                              onError(err) {
-                                console.log("Failed to delete game file.", err);
-                              },
-                            });
+                            socket?.emit("delete a game", game.name);
                           }
                         }}
                         disabled={game.name === "history-101"}
