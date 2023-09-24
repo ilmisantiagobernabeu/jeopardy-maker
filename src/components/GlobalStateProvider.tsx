@@ -7,7 +7,7 @@ import {
   GameState,
   ServerToClientEvents,
 } from "../../stateTypes";
-import { SERVER_URL } from "../api/constants";
+import { SERVER_URL, SOCKET_SERVER_URL } from "../api/constants";
 
 export type ContextType = {
   gameState: GameState | null;
@@ -33,7 +33,7 @@ const GlobalStateProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     // connect to the socket server
-    setSocket(io(SERVER_URL));
+    setSocket(io(SOCKET_SERVER_URL));
   }, []);
 
   useEffect(() => {
