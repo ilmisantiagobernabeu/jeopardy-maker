@@ -13,17 +13,12 @@ dotenv.config();
 const {
   getPublicGames,
   createGame,
-  convertToObject,
   Game,
   updateGame,
   deleteGame,
 } = require("./models/game");
 
 import mongoose from "mongoose";
-mongoose
-  .connect(process.env.MONGO_URI!)
-  .then(() => console.log("Connected to MongoDB..."))
-  .catch((err) => console.error("Failed to connect to MongoDB...", err));
 
 const io = new Server(5000, {
   cors: {
@@ -35,6 +30,13 @@ const io = new Server(5000, {
 });
 
 async function app() {
+  try {
+    await mongoose.connect(process.env.MONGO_URI!);
+    console.log("Connected to MongoDB...");
+  } catch (err) {
+    console.error("Failed to connect to MongoDB...", err);
+  }
+
   let previousGameId = "";
 
   const createDefaultGameState = async (
@@ -42,13 +44,12 @@ async function app() {
     specificGameName?: string
   ): Promise<GameState> => {
     const publicGames = await getPublicGames();
-    const newGames = publicGames;
 
     const gameId = newGameId ? uuidv4() : previousGameId;
     previousGameId = gameId;
     return {
-      name: specificGameName || newGames[Object.keys(newGames)[0]].name,
-      games: newGames,
+      name: specificGameName || publicGames[Object.keys(publicGames)[0]].name,
+      games: publicGames,
       guid: gameId,
       isBuzzerActive: false,
       activePlayer: null,
@@ -58,7 +59,7 @@ async function app() {
       activeClue: null,
       players: {},
       gameBoard:
-        newGames[specificGameName || Object.keys(newGames)[0]].rounds[0],
+        publicGames[specificGameName || Object.keys(publicGames)[0]].rounds[0],
       incorrectGuesses: [],
       history: [],
     };

@@ -1,13 +1,6 @@
 import mongoose from "mongoose";
 import { GameBoard, SingleGame } from "../../stateTypes";
 
-type GamesFile = {
-  [key: string]: {
-    name: string;
-    rounds: GameBoard[][];
-  };
-};
-
 const gameSchema = new mongoose.Schema({
   name: { type: String, required: true },
   isPublic: { type: Boolean, default: false },
@@ -16,12 +9,6 @@ const gameSchema = new mongoose.Schema({
 
 // Game Class
 const Game = mongoose.model("Game", gameSchema);
-
-type SingleGameObject = {
-  name: string;
-  isPublic: boolean;
-  gameObject: any;
-};
 
 type GameInMongoose = (mongoose.Document<
   unknown,
