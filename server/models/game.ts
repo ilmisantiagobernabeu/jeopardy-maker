@@ -40,16 +40,18 @@ type GameInMongoose = (mongoose.Document<
 })[];
 
 function convertToObject(publicGames: GameInMongoose) {
-  return publicGames.reduce((obj, item) => {
-    const stringified = JSON.stringify(item.gameObject);
-    const actualObj = JSON.parse(stringified);
+  return publicGames
+    .sort((a, b) => (a.name === "history-101" ? -1 : 1))
+    .reduce((obj, item) => {
+      const stringified = JSON.stringify(item.gameObject);
+      const actualObj = JSON.parse(stringified);
 
-    obj[item.name] = {
-      name: item.name,
-      rounds: actualObj.rounds,
-    };
-    return obj;
-  }, {} as any);
+      obj[item.name] = {
+        name: item.name,
+        rounds: actualObj.rounds,
+      };
+      return obj;
+    }, {} as any);
 }
 
 async function getPublicGames(opts = {}) {

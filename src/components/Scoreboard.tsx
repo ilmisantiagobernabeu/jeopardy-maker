@@ -33,8 +33,7 @@ const Scoreboard = () => {
         <h2 className="font-bold text-2xl leading-none text-center normal-case mb-2">
           Scores
         </h2>
-        {Object.values(gameState?.players || {}).filter((player) => player.name)
-          .length > 0 ? (
+        {Object.values(gameState?.players || {}).length > 0 ? (
           <div
             className="GameCard-front text-center flex gap-20 flex-wrap"
             key={name}

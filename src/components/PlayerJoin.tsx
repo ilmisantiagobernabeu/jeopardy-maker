@@ -37,7 +37,6 @@ const PlayerJoin = () => {
     e.preventDefault();
 
     const otherPlayerNames = Object.values(gameState?.players || {})
-      ?.filter((player) => player.name)
       ?.map((player) => player.name);
     if (otherPlayerNames.includes(playerName)) {
       alert("Team name already exists, please pick a new name");

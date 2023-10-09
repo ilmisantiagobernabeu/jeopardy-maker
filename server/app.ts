@@ -276,7 +276,6 @@ async function app() {
           gameState.players[socket.id]?.name &&
           gameState.players[socket.id]?.score &&
           !playersThatLeft
-            .filter((player) => player.name)
             .map((player) => player.name)
             .includes(gameState.players[socket.id]?.name)
         ) {
