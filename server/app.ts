@@ -124,10 +124,6 @@ async function app() {
         io.emit("gameState updated", gameState);
       });
 
-      socket.on("give updated game state", () => {
-        io.emit("gameState updated", gameState);
-      });
-
       socket.on(
         "A player answers the clue",
         ({ value: score, clueText, arrayIndex }) => {
