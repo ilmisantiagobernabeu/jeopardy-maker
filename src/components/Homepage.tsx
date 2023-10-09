@@ -27,7 +27,7 @@ const Homepage = () => {
       <div className="flex gap-16 items-start max-w-4xl flex-col sm:flex-row">
         <div className="flex flex-col gap-4">
           <h2 className="flex items-center gap-2 font-bold text-2xl leading-none">
-            <PhoneIcon width={15} className=" fill-white" /> Teams join here
+            <PhoneIcon width={14} className=" fill-white" /> Teams join here
           </h2>
           <Link to="/qr" target="_blank">
             <QRCode />
@@ -110,7 +110,7 @@ const Homepage = () => {
               ?.filter(([_, player]) => player.name)
               .map(([_, player]) => (
                 <div key={player.name} className="flex items-center gap-2">
-                  <PhoneIcon width={15} />
+                  <PhoneIcon width={14} />
                   {player.name}
                 </div>
               ))}
