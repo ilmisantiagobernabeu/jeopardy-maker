@@ -61,8 +61,6 @@ export interface GameState {
 
 export interface ServerToClientEvents {
   ["gameState updated"]: (gameStateFromServer: GameState) => void;
-  ["play correct sound"]: () => void;
-  ["play incorrect sound"]: () => void;
   ["player successfully added to game"]: () => void;
   ["existing player returned"]: () => void;
 }
@@ -76,7 +74,6 @@ type DailyDoubleObject = {
 export interface ClientToServerEvents {
   ["new player joined"]: (playerName?: string | null) => void;
   ["a player disconnected"]: () => void;
-  ["give updated game state"]: () => void;
   ["player signed up"]: (playerName: string) => void;
   ["A player answers the clue"]: (clueObject: {
     value: number;
