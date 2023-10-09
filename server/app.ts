@@ -74,12 +74,6 @@ async function app() {
     function (socket: Socket<ClientToServerEvents, ServerToClientEvents>) {
       // console.log("A new client has joined", socket.id);
 
-      // new player joined
-      gameState.players[socket.id] = {
-        socketId: socket.id,
-        score: 0,
-      };
-
       // emit to the newly connected client the existing count
       socket.emit("gameState updated", gameState);
 

@@ -9,8 +9,23 @@ const PlayerJoin = () => {
   const [playerName, setPlayerName] = useState(
     localStorage.getItem("dt-playerName") || ""
   );
+  const previousGameGuid = useRef("");
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (gameState?.guid) {
+      // reload page when the game guid changes on the server
+      if (
+        previousGameGuid.current &&
+        previousGameGuid.current !== gameState.guid
+      ) {
+        location.reload();
+      } else {
+        previousGameGuid.current = gameState.guid;
+      }
+    }
+  }, [gameState?.guid]);
 
   function handleSubmission(localPlayerName: string) {
     socket?.emit("player signed up", localPlayerName);
