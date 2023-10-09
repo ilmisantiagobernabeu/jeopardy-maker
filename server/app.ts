@@ -110,6 +110,7 @@ async function app() {
       });
 
       socket.on("player signed up", (playerName) => {
+        console.log("A player has joined", playerName);
         const returnedPlayer = playersThatLeft.find(
           (player) => player?.name && player.name === playerName
         );
