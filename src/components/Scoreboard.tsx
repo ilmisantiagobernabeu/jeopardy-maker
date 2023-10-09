@@ -3,6 +3,7 @@ import { useGlobalState } from "./GlobalStateProvider";
 import cx from "classnames";
 import useNoSleep from "use-no-sleep";
 import { PageWrapper } from "./PageWrapper";
+import EditIcon from "../icons/EditIcon";
 
 function formatScore(score: number) {
   if (score < 0) {
@@ -13,7 +14,7 @@ function formatScore(score: number) {
 }
 
 const Scoreboard = () => {
-  const { gameState } = useGlobalState() || {};
+  const { gameState, socket } = useGlobalState() || {};
   const { name } = useParams();
 
   useNoSleep(true);
@@ -41,17 +42,41 @@ const Scoreboard = () => {
             {!singlePlayerStats &&
               Object.values(gameState?.players || {})
                 .filter(({ name }) => name)
-                .map(({ score, name }, index) => (
+                .map(({ score, name, socketId }, index) => (
                   <div key={name! + index}>
                     <p className="text-7xl text-white my-4 border-b-4 line-clamp-2">
                       {name}
                     </p>
                     <p
-                      className={cx("text-9xl text-white my-4", {
-                        "text-red-500": score < 0,
-                      })}
+                      className={cx(
+                        "text-9xl text-white my-4 flex justify-center items-center gap-4",
+                        {
+                          "text-red-500": score < 0,
+                        }
+                      )}
                     >
                       {formatScore(score)}
+                      <button
+                        onClick={() => {
+                          const newScore = prompt(
+                            `Enter ${name}'s new score`,
+                            score.toString()
+                          );
+                          const areYouSure = confirm(
+                            `Are you sure you want to change ${name}'s score from ${score} to ${newScore}?`
+                          );
+
+                          if (areYouSure) {
+                            socket?.emit(
+                              "update player score manually",
+                              socketId,
+                              Number(newScore)
+                            );
+                          }
+                        }}
+                      >
+                        <EditIcon width={20} />
+                      </button>
                     </p>
                   </div>
                 ))}

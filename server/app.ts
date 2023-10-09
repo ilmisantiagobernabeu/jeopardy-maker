@@ -76,6 +76,7 @@ async function app() {
 
       // new player joined
       gameState.players[socket.id] = {
+        socketId: socket.id,
         score: 0,
       };
 
@@ -116,7 +117,11 @@ async function app() {
           gameState.players[socket.id] = returnedPlayer;
           socket.emit("player successfully added to game");
         } else {
-          gameState.players[socket.id] = { name: "", score: 0 };
+          gameState.players[socket.id] = {
+            name: "",
+            socketId: socket.id,
+            score: 0,
+          };
           gameState.players[socket.id].name = playerName;
           socket.emit("gameState updated", gameState);
           socket.emit("player successfully added to game");
@@ -290,6 +295,7 @@ async function app() {
       socket.on("Host adds a team with a button", ({ playerName, color }) => {
         gameState.players[color] = {
           name: playerName,
+          socketId: color,
           color,
           score: 0,
         };
@@ -305,6 +311,24 @@ async function app() {
             )?.[0] || null;
           gameState.lastActivePlayer = firstPlayer;
         }
+        io.emit("gameState updated", gameState);
+      });
+
+      socket.on("update player score manually", (socketId, newScore) => {
+        const oldScore = gameState.players[socketId].score;
+        const diff = newScore - oldScore;
+        gameState.players[socketId].score = newScore;
+
+        const player = gameState.players[socketId];
+        gameState.history.push({
+          name: player.name || "",
+          score: diff,
+          totalScore: gameState.players[player.socketId].score,
+          answer: diff > 0 ? "correct" : "incorrect",
+          timeStamp: new Date(),
+          socket: player.socketId,
+        });
+        // emit to EVERYONE the update game state
         io.emit("gameState updated", gameState);
       });
 

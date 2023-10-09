@@ -18,6 +18,7 @@ export interface GameObject {
 export type ButtonColor = "green" | "yellow" | "red";
 
 export interface PlayerObject {
+  socketId: string;
   score: number;
   name?: string;
   color?: ButtonColor | "";
@@ -110,4 +111,5 @@ export interface ClientToServerEvents {
   ["Team selects a daily double clue"]: () => void;
   ["create a new game"]: (game: SingleGame) => void;
   ["delete a game"]: (gameName: string) => void;
+  ["update player score manually"]: (socketId: string, score: number) => void;
 }
