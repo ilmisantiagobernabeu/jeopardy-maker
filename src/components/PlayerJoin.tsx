@@ -15,37 +15,24 @@ const PlayerJoin = () => {
 
   const screenWakeLock = useRef<null | WakeLockSentinel>(null);
 
-  useEffect(() => {
-    const requestScreenWakeLock = async () => {
-      try {
-        if ("wakeLock" in navigator) {
-          const wakeLock = await (navigator as any).wakeLock.request("screen"); // Type casting due to potential NavigatorWakeLock API not being recognized in TypeScript
+  const requestScreenWakeLock = async () => {
+    try {
+      if ("wakeLock" in navigator) {
+        const wakeLock = await (navigator as any).wakeLock.request("screen"); // Type casting due to potential NavigatorWakeLock API not being recognized in TypeScript
 
-          screenWakeLock.current = wakeLock;
+        screenWakeLock.current = wakeLock;
 
-          wakeLock.addEventListener("release", () => {
-            console.log("Screen wake lock released.");
-          });
-        } else {
-          console.error(
-            "Screen Wake Lock API is not supported in this browser."
-          );
-        }
-      } catch (error) {
-        alert(error);
-        console.error("Error requesting screen wake lock:", error);
+        wakeLock.addEventListener("release", () => {
+          console.log("Screen wake lock released.");
+        });
+      } else {
+        console.error("Screen Wake Lock API is not supported in this browser.");
       }
-    };
-
-    requestScreenWakeLock();
-
-    // Cleanup: Release the screen wake lock when the component unmounts
-    return () => {
-      if (screenWakeLock.current) {
-        screenWakeLock.current.release();
-      }
-    };
-  }, [screenWakeLock]);
+    } catch (error) {
+      alert(error);
+      console.error("Error requesting screen wake lock:", error);
+    }
+  };
 
   useEffect(() => {
     if (gameState?.guid) {
@@ -69,6 +56,7 @@ const PlayerJoin = () => {
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    requestScreenWakeLock();
 
     const otherPlayerNames = Object.values(gameState?.players || {})?.map(
       (player) => player.name
