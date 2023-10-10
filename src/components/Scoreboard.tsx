@@ -1,7 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useGlobalState } from "./GlobalStateProvider";
 import cx from "classnames";
-import useNoSleep from "use-no-sleep";
 import { PageWrapper } from "./PageWrapper";
 import EditIcon from "../icons/EditIcon";
 
@@ -16,8 +15,6 @@ function formatScore(score: number) {
 const Scoreboard = () => {
   const { gameState, socket } = useGlobalState() || {};
   const { name } = useParams();
-
-  useNoSleep(true);
 
   // if a user goes to /scoreboard/[team name], let's show just their score
   const singlePlayerStats =

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useGlobalState } from "./GlobalStateProvider";
 import { useNavigate } from "react-router-dom";
 import { PageWrapper } from "./PageWrapper";
+import { requestScreenWakeLock } from "../hooks/requestScreenWakeLock";
 
 const PlayerJoin = () => {
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -12,27 +13,6 @@ const PlayerJoin = () => {
   const previousGameGuid = useRef("");
 
   const navigate = useNavigate();
-
-  const screenWakeLock = useRef<null | WakeLockSentinel>(null);
-
-  const requestScreenWakeLock = async () => {
-    try {
-      if ("wakeLock" in navigator) {
-        const wakeLock = await (navigator as any).wakeLock.request("screen"); // Type casting due to potential NavigatorWakeLock API not being recognized in TypeScript
-
-        screenWakeLock.current = wakeLock;
-
-        wakeLock.addEventListener("release", () => {
-          console.log("Screen wake lock released.");
-        });
-      } else {
-        console.error("Screen Wake Lock API is not supported in this browser.");
-      }
-    } catch (error) {
-      alert(error);
-      console.error("Error requesting screen wake lock:", error);
-    }
-  };
 
   useEffect(() => {
     if (gameState?.guid) {

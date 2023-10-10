@@ -2,14 +2,13 @@ import React, { useEffect } from "react";
 import { useGlobalState } from "./GlobalStateProvider";
 import cx from "classnames";
 import buzzerSound from "../sounds/buzzer.mp3";
-import useNoSleep from "use-no-sleep";
 import { useNavigate } from "react-router-dom";
 import CloseIcon from "../icons/CloseIcon";
+import { requestScreenWakeLock } from "../hooks/requestScreenWakeLock";
 
 const Buzzer = () => {
   const { socket, gameState } = useGlobalState();
   const navigate = useNavigate();
-  useNoSleep(true);
 
   const handleClick = () => {
     const sound = new Audio(buzzerSound);
@@ -36,6 +35,10 @@ const Buzzer = () => {
       navigate("/join");
     }
   }, [hasDisconnected]);
+
+  useEffect(() => {
+    requestScreenWakeLock();
+  }, []);
 
   return (
     <div className="fixed inset-0 h-full w-full bg-white">
