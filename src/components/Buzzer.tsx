@@ -33,7 +33,7 @@ const Buzzer = () => {
 
   useEffect(() => {
     window.addEventListener("visibilitychange", () => {
-      requestScreenWakeLock();
+      window.location.reload();
     });
   }, []);
 
