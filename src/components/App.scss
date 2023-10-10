@@ -14,22 +14,6 @@ body {
   background: #000;
 }
 
-@font-face {
-  font-family: "swiss911";
-  src: url("assets/fonts/swiss911.woff2") format("woff2"),
-    url("assets/fonts/swiss911.woff") format("woff");
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "korinna";
-  src: url("fonts/korinna.woff2") format("woff2"),
-    url("fonts/korinna.woff") format("woff");
-  font-weight: normal;
-  font-style: normal;
-}
-
 $blue: #060ce9;
 $yellow: rgb(214, 159, 76);
 
