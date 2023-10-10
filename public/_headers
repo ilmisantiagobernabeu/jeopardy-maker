@@ -1,2 +1,2 @@
 /*
-  Permissions-Policy: screen-wake-lock=*
+  Permissions-Policy: screen-wake-lock=*;
