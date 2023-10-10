@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useGlobalState } from "./GlobalStateProvider";
 import cx from "classnames";
 import buzzerSound from "../sounds/buzzer.mp3";
@@ -9,6 +9,7 @@ import { requestScreenWakeLock } from "../hooks/requestScreenWakeLock";
 const Buzzer = () => {
   const { socket, gameState } = useGlobalState();
   const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(true);
 
   const handleClick = () => {
     const sound = new Audio(buzzerSound);
@@ -36,12 +37,23 @@ const Buzzer = () => {
     }
   }, [hasDisconnected]);
 
-  useEffect(() => {
-    requestScreenWakeLock();
-  }, []);
-
   return (
-    <div className="fixed inset-0 h-full w-full bg-white">
+    <div className="fixed inset-0 h-full w-full bg-white font-korinna">
+      <button
+        onClick={() => {
+          requestScreenWakeLock();
+          setShowModal(false);
+        }}
+        className={cx(
+          "fixed inset-0 h-full w-full bg-[#060ce9] z-10 text-white text-3xl",
+          {
+            "-translate-x-full": !showModal,
+          }
+        )}
+      >
+        Tap screen to show buzzer
+      </button>
+
       <button
         type="button"
         className={cx(

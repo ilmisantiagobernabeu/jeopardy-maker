@@ -10,7 +10,6 @@ export const requestScreenWakeLock = async () => {
       console.error("Screen Wake Lock API is not supported in this browser.");
     }
   } catch (error) {
-    alert(error);
     console.error("Error requesting screen wake lock:", error);
   }
 };
