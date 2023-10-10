@@ -1,6 +1,10 @@
 import QRCodeLib from "react-qr-code";
 import cx from "classnames";
 
+const url = import.meta.env.PROD
+  ? "https://buzzingagame.netlify.app/join"
+  : `http://${import.meta.env.VITE_STATIC_IP}:3000/join`;
+
 export const QRCode = ({ className = "" }: { className?: string }) => (
   <div
     className={cx("flex justify-center items-center", {
@@ -13,7 +17,7 @@ export const QRCode = ({ className = "" }: { className?: string }) => (
         }`}
     </style>
     <QRCodeLib
-      value={`http://${import.meta.env.VITE_STATIC_IP}:3000/join`}
+      value={url}
       className="w-full h-full max-w-fit"
       preserveAspectRatio="xMidYMid slice"
     />
