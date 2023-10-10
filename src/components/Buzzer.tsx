@@ -32,6 +32,12 @@ const Buzzer = () => {
   const hasDisconnected = !gameState?.players?.[socket?.id || ""];
 
   useEffect(() => {
+    window.addEventListener("visibilitychange", () => {
+      requestScreenWakeLock();
+    });
+  }, []);
+
+  useEffect(() => {
     if (hasDisconnected) {
       navigate("/join");
     }
