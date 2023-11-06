@@ -8,6 +8,8 @@ import wrongAnswerSound from "../sounds/wronganswer.mp3";
 import dailyDoubleSound from "../sounds/dailydouble.mp3";
 import hahaSound from "../sounds/haha.mp3";
 import Answer from "./Answer";
+import { CircularProgressbar } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
 
 const COUNTDOWN_SECONDS = 25;
 
@@ -54,6 +56,23 @@ const GameCard = ({ clue, index, round }: Props) => {
     },
   });
 
+  const [{ seconds: imageSeconds }, { start: imageStart, reset: imageReset }] =
+    useCountDown({
+      // Start time in milliseconds
+      startTimeMilliseconds: 5000,
+      // Decrement to update the timer with
+      interval: 100,
+      // Callback triggered when the timer reaches 0
+      onCountDownEnd: () => {
+        // this will run for every game card instance
+        // so we only want to mark incorrect for the currently flipped one
+        if (isFlipped && !clue.alreadyPlayed) {
+          handleBuzzerToggle();
+          imageReset();
+        }
+      },
+    });
+
   useLayoutEffect(() => {
     if (isFlipped && buttonRef.current) {
       const { left, top, width, height } =
@@ -98,6 +117,7 @@ const GameCard = ({ clue, index, round }: Props) => {
         setResetStyles(undefined);
         setStyles(undefined);
         setIsFlipped(false);
+        imageReset();
         socket?.emit("Host deselects a clue");
       }
     };
@@ -121,6 +141,14 @@ const GameCard = ({ clue, index, round }: Props) => {
       reset();
     }
   }, [gameState]);
+
+  const isAudioClue = clue.text.trim().endsWith("mp3");
+
+  const isImageClue =
+    clue.text.trim().endsWith("gif") ||
+    clue.text.trim().endsWith("jpg") ||
+    clue.text.trim().endsWith("jpeg") ||
+    clue.text.trim().endsWith("png");
 
   const handleIncorrect = () => {
     const audio = new Audio(wrongAnswerSound);
@@ -190,6 +218,13 @@ const GameCard = ({ clue, index, round }: Props) => {
   const handleClick = () => {
     setIsFlipped(true);
     socket?.emit("Host selects a clue", clue);
+
+    console.log("wtfwtfwtf", isImageClue);
+    if (isAudioClue) {
+      imageStart();
+    } else if (isImageClue) {
+      handleBuzzerToggle();
+    }
   };
 
   const handleRangeChange = (e: any) => {
@@ -257,14 +292,11 @@ const GameCard = ({ clue, index, round }: Props) => {
                 </div>
               )}
               <p className="ClueModal-text">
-                {clue.text.trim().endsWith("mp3") ? (
+                {isAudioClue ? (
                   <audio controls className="max-w-full">
                     <source src={`sounds/${clue.text}`} type="audio/mpeg" />
                   </audio>
-                ) : clue.text.trim().endsWith("gif") ||
-                  clue.text.trim().endsWith("jpg") ||
-                  clue.text.trim().endsWith("jpeg") ||
-                  clue.text.trim().endsWith("png") ? (
+                ) : isImageClue ? (
                   <div
                     className="flex justify-center items-center w-[50vw] h-[50vh]"
                     style={{
@@ -327,13 +359,34 @@ const GameCard = ({ clue, index, round }: Props) => {
             !gameState?.isBuzzerActive &&
               !gameState?.activePlayer &&
               !showDailyDoubleScreen &&
-              !Boolean(gameState?.dailyDoubleAmount)
+              !Boolean(gameState?.dailyDoubleAmount) &&
+              !isImageClue
           ) && (
             <button
               onClick={handleBuzzerToggle}
               className="text-green-600 disabled:opacity-30 text-6xl bg-white hover:bg-black p-4 rounded-md"
             >
-              Activate Buzzers
+              <span className="flex gap-4 w-full items-center">
+                <span className="whitespace-nowrap">Activate Buzzers</span>
+                {isAudioClue && (
+                  <CircularProgressbar
+                    className="w-10 h-10"
+                    value={(imageSeconds / 5) * 100}
+                    strokeWidth={50}
+                    styles={{
+                      path: {
+                        stroke: "#dedede",
+                        fill: "#dedede",
+                        strokeLinecap: "butt",
+                      },
+                      trail: {
+                        stroke: "#ff0000",
+                        strokeLinecap: "butt",
+                      },
+                    }}
+                  />
+                )}
+              </span>
             </button>
           )}
         </div>
