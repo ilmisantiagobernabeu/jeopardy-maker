@@ -47,7 +47,11 @@ const Homepage = () => {
                   <li key={game.name} className="flex gap-6">
                     <button
                       onClick={() => {
-                        socket?.emit("Host changes the game", game.name);
+                        socket?.emit(
+                          "Host changes the game",
+                          game.name,
+                          gameState?.players
+                        );
                         localStorage.setItem("dt-gameName", game.name);
                         window.open(`/board?game=${game.name}`, "_blank");
                       }}

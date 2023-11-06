@@ -100,7 +100,10 @@ export interface ClientToServerEvents {
   ) => void;
   ["Host loads the game board for the first time"]: (game: string) => void;
   ["Host restarts the game"]: (gameName: string) => void;
-  ["Host changes the game"]: (gameName: string) => void;
+  ["Host changes the game"]: (
+    gameName: string,
+    players: Players | undefined
+  ) => void;
   ["Host adds a team with a button"]: (teamObject: {
     playerName: string;
     color: ButtonColor | "";

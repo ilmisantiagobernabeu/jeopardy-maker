@@ -5,6 +5,7 @@ import {
   ClientToServerEvents,
   GameState,
   PlayerObject,
+  Players,
   ServerToClientEvents,
 } from "../stateTypes";
 import { Server, Socket } from "socket.io";
@@ -41,12 +42,22 @@ async function app() {
 
   const createDefaultGameState = async (
     newGameId = true,
-    specificGameName?: string
+    specificGameName?: string,
+    previousPlayers?: Players | undefined
   ): Promise<GameState> => {
     const publicGames = await getPublicGames();
 
     const gameId = newGameId ? uuidv4() : previousGameId;
     previousGameId = gameId;
+    const previousPlayersWithoutScores: Players = Object.fromEntries(
+      Object.entries(previousPlayers || {}).map(([guid, player]) => [
+        guid,
+        {
+          ...player,
+          score: 0,
+        },
+      ])
+    );
     return {
       name: specificGameName || publicGames[Object.keys(publicGames)[0]].name,
       games: publicGames,
@@ -57,7 +68,7 @@ async function app() {
       dailyDoubleAmount: 0,
       previousClue: null,
       activeClue: null,
-      players: {},
+      players: previousPlayersWithoutScores || {},
       gameBoard:
         publicGames[specificGameName || Object.keys(publicGames)[0]].rounds[0],
       incorrectGuesses: [],
@@ -85,12 +96,15 @@ async function app() {
         io.emit("gameState updated", gameState);
       });
 
-      socket.on("Host changes the game", async (gameName: string) => {
-        console.log("Host changes up the game", gameName);
-        gameState = await createDefaultGameState(false, gameName);
-        playersThatLeft = [];
-        io.emit("gameState updated", gameState);
-      });
+      socket.on(
+        "Host changes the game",
+        async (gameName: string, players: Players | undefined) => {
+          console.log("Host changes up the game", gameName);
+          gameState = await createDefaultGameState(false, gameName, players);
+          playersThatLeft = [];
+          io.emit("gameState updated", gameState);
+        }
+      );
 
       socket.on("new player joined", (playerName) => {
         // emit to EVERYONE the update game state
