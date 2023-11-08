@@ -26,6 +26,7 @@ type Props = {
 };
 
 const GameCard = ({ clue, index, round }: Props) => {
+  const audioRef = useRef<HTMLAudioElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [isFlipped, setIsFlipped] = useState(false);
   const [styles, setStyles] = useState<Record<string, any> | undefined>(
@@ -133,11 +134,17 @@ const GameCard = ({ clue, index, round }: Props) => {
 
   const { socket, gameState } = useGlobalState() || {};
 
+  const buzzedInUserExists = Boolean(
+    gameState?.activePlayer || gameState?.dailyDoubleAmount
+  );
+
   useEffect(() => {
     // if buzzed in user exists
-    if (Boolean(gameState?.activePlayer || gameState?.dailyDoubleAmount)) {
+    if (buzzedInUserExists) {
       start();
+      audioRef.current?.pause();
     } else {
+      audioRef.current?.play();
       reset();
     }
   }, [gameState]);
@@ -216,11 +223,20 @@ const GameCard = ({ clue, index, round }: Props) => {
   }
 
   const handleClick = () => {
+    // disallow clicks after it's already been flipped
+    if (isFlipped) {
+      return;
+    }
+
     setIsFlipped(true);
+
     socket?.emit("Host selects a clue", clue);
 
-    console.log("wtfwtfwtf", isImageClue);
     if (isAudioClue) {
+      // let audioRef render first
+      setTimeout(() => {
+        audioRef.current?.play();
+      });
       imageStart();
     } else if (isImageClue) {
       handleBuzzerToggle();
@@ -293,7 +309,7 @@ const GameCard = ({ clue, index, round }: Props) => {
               )}
               <p className="ClueModal-text">
                 {isAudioClue ? (
-                  <audio controls className="max-w-full">
+                  <audio ref={audioRef} controls className="max-w-full">
                     <source src={`sounds/${clue.text}`} type="audio/mpeg" />
                   </audio>
                 ) : isImageClue ? (
@@ -319,7 +335,7 @@ const GameCard = ({ clue, index, round }: Props) => {
       </button>
       {isFlipped && (
         <div className="fixed z-10 bottom-0 left-0 right-0 flex justify-center align-center p-5 gap-x-8">
-          {Boolean(gameState?.activePlayer || gameState?.dailyDoubleAmount) && (
+          {buzzedInUserExists && (
             <>
               {seconds > 0 && (
                 <div
@@ -334,22 +350,20 @@ const GameCard = ({ clue, index, round }: Props) => {
                 Buzzed In:{" "}
                 <span className="text-green-500">Team {buzzedInPlayer}</span>
               </p>
-            </>
-          )}
-          {Boolean(gameState?.activePlayer || gameState?.dailyDoubleAmount) && (
-            <>
-              <button
-                onClick={handleCorrect}
-                className="text-green-600 disabled:opacity-30 text-6xl bg-white hover:bg-black p-4 rounded-md"
-              >
-                Correct!
-              </button>
-              <button
-                onClick={handleIncorrect}
-                className="text-red-600 disabled:opacity-30 text-6xl bg-white hover:bg-black p-4 rounded-md"
-              >
-                Incorrect!
-              </button>
+              <>
+                <button
+                  onClick={handleCorrect}
+                  className="text-green-600 disabled:opacity-30 text-6xl bg-white hover:bg-black p-4 rounded-md"
+                >
+                  Correct!
+                </button>
+                <button
+                  onClick={handleIncorrect}
+                  className="text-red-600 disabled:opacity-30 text-6xl bg-white hover:bg-black p-4 rounded-md"
+                >
+                  Incorrect!
+                </button>
+              </>
             </>
           )}
           {gameState?.isBuzzerActive && (
