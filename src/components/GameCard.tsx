@@ -381,24 +381,30 @@ const GameCard = ({ clue, index, round }: Props) => {
               className="text-green-600 disabled:opacity-30 text-6xl bg-white hover:bg-black p-4 rounded-md"
             >
               <span className="flex gap-4 w-full items-center">
-                <span className="whitespace-nowrap">Activate Buzzers</span>
-                {isAudioClue && (
-                  <CircularProgressbar
-                    className="w-10 h-10"
-                    value={(imageSeconds / 5) * 100}
-                    strokeWidth={50}
-                    styles={{
-                      path: {
-                        stroke: "#dedede",
-                        fill: "#dedede",
-                        strokeLinecap: "butt",
-                      },
-                      trail: {
-                        stroke: "#ff0000",
-                        strokeLinecap: "butt",
-                      },
-                    }}
-                  />
+                {isAudioClue ? (
+                  <>
+                    <span className="whitespace-nowrap">
+                      Activating Buzzers...
+                    </span>
+                    <CircularProgressbar
+                      className="w-10 h-10"
+                      value={(imageSeconds / 5) * 100}
+                      strokeWidth={50}
+                      styles={{
+                        path: {
+                          stroke: "#dedede",
+                          fill: "#dedede",
+                          strokeLinecap: "butt",
+                        },
+                        trail: {
+                          stroke: "#ff0000",
+                          strokeLinecap: "butt",
+                        },
+                      }}
+                    />
+                  </>
+                ) : (
+                  <span className="whitespace-nowrap">Activate Buzzers</span>
                 )}
               </span>
             </button>
