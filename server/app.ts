@@ -9,7 +9,98 @@ import {
   ServerToClientEvents,
 } from "../stateTypes";
 import { Server, Socket } from "socket.io";
+import express from "express";
+import cors from "cors";
+import multer from "multer";
+import crypto from "crypto";
+import sharp from "sharp";
 dotenv.config();
+
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
+const expApp = express();
+
+expApp.use(cors());
+
+expApp.post("/api/uploadImage", upload.single("image"), async (req, res) => {
+  // resize image
+  try {
+    const buffer = await sharp(req.file?.buffer)
+      .resize({
+        width: 1920,
+        height: 1080,
+        withoutEnlargement: true,
+      })
+      .toBuffer();
+
+    const imageName = `${req.file?.originalname}-${crypto
+      .randomBytes(32)
+      .toString("hex")}`;
+
+    const params = {
+      Bucket: AWS_BUCKET_NAME,
+      Key: imageName,
+      Body: buffer,
+      ContentType: req.file?.mimetype,
+    };
+
+    const command = new PutObjectCommand(params);
+    await s3.send(command);
+
+    res.send(imageName);
+  } catch (err) {
+    console.log("oh no could not resize!!!!!", err);
+  }
+});
+
+expApp.post("/api/uploadAudio", upload.single("mp3"), async (req, res) => {
+  const audioName = `${req.file?.originalname}-${crypto
+    .randomBytes(32)
+    .toString("hex")}`;
+
+  console.log("audio file:", req?.file?.buffer);
+  if (req?.file?.buffer) {
+    const params = {
+      Bucket: AWS_BUCKET_NAME,
+      Key: audioName,
+      Body: req.file.buffer,
+      ContentType: "audio/mpeg",
+    };
+
+    const command = new PutObjectCommand(params);
+
+    try {
+      await s3.send(command);
+    } catch (error) {
+      // Failed upload
+      console.error("Error uploading audio file:", error);
+      res.status(500).json({ error: "Failed to upload audio file to S3" });
+    }
+  }
+
+  res.send(audioName);
+});
+
+// Start the server
+expApp.listen(5001, () => {
+  console.log(`Server is listening on port ${5001}`);
+});
+
+const AWS_BUCKET_NAME = process.env.AWS_BUCKET_NAME ?? "";
+const AWS_BUCKET_REGION = process.env.AWS_BUCKET_REGION ?? "";
+const AWS_ACCESS_KEY = process.env.AWS_ACCESS_KEY ?? "";
+const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY ?? "";
+
+const s3 = new S3Client({
+  credentials: {
+    accessKeyId: AWS_ACCESS_KEY,
+    secretAccessKey: AWS_SECRET_ACCESS_KEY,
+  },
+  region: AWS_BUCKET_REGION,
+});
 
 const {
   getPublicGames,

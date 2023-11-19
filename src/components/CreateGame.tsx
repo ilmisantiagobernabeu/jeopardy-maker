@@ -3,7 +3,7 @@ import { useGlobalState } from "./GlobalStateProvider";
 import GameCardStatic from "./GameCardStatic";
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { SingleGame } from "../../stateTypes";
+import { ClueType, SingleGame } from "../../stateTypes";
 import EditIcon from "../icons/EditIcon";
 import { HamburgerMenu } from "./HamburgerMenu";
 
@@ -17,22 +17,27 @@ const getInitialGameState = (gameName: string) => ({
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
         ],
       },
@@ -42,22 +47,27 @@ const getInitialGameState = (gameName: string) => ({
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
         ],
       },
@@ -67,22 +77,27 @@ const getInitialGameState = (gameName: string) => ({
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
         ],
       },
@@ -92,22 +107,27 @@ const getInitialGameState = (gameName: string) => ({
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
         ],
       },
@@ -117,22 +137,27 @@ const getInitialGameState = (gameName: string) => ({
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
         ],
       },
@@ -142,22 +167,27 @@ const getInitialGameState = (gameName: string) => ({
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
         ],
       },
@@ -169,22 +199,27 @@ const getInitialGameState = (gameName: string) => ({
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
         ],
       },
@@ -194,22 +229,27 @@ const getInitialGameState = (gameName: string) => ({
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
         ],
       },
@@ -219,22 +259,27 @@ const getInitialGameState = (gameName: string) => ({
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
         ],
       },
@@ -244,22 +289,27 @@ const getInitialGameState = (gameName: string) => ({
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
         ],
       },
@@ -269,22 +319,27 @@ const getInitialGameState = (gameName: string) => ({
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
         ],
       },
@@ -294,22 +349,27 @@ const getInitialGameState = (gameName: string) => ({
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
           {
             text: "",
             answer: "",
+            type: ClueType.TEXT,
           },
         ],
       },
@@ -330,9 +390,6 @@ function CreateGame() {
     getInitialGameState(gameName)
   );
   const [isEditGameName, setIsEditGameName] = useState(false);
-
-  console.log(gameState);
-  console.log("global", globalGameState);
 
   const catTitles = gameState.rounds?.[round - 1]?.map(
     (round) => round.category
