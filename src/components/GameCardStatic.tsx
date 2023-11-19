@@ -238,35 +238,6 @@ const EditModal = ({
           <div className="flex flex-col gap-1">
             <div className="flex justify-between items-baseline">
               <label htmlFor={`clue-${clue.answer}`}>Answer</label>
-              {/* <ul className="flex gap-2 list-none lowercase font-korinna text-xs">
-                <li>
-                  <button
-                    onClick={() => {
-                      setAnswerType(ClueType.TEXT);
-                    }}
-                  >
-                    Text
-                  </button>
-                </li>
-                <li>
-                  <button
-                    onClick={() => {
-                      setAnswerType(ClueType.IMAGE);
-                    }}
-                  >
-                    Image
-                  </button>
-                </li>
-                <li>
-                  <button
-                    onClick={() => {
-                      setAnswerType(ClueType.AUDIO);
-                    }}
-                  >
-                    Audio
-                  </button>
-                </li>
-              </ul> */}
             </div>
             {answerType === ClueType.TEXT ? (
               <textarea
