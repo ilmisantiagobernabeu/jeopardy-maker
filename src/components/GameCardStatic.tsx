@@ -77,6 +77,8 @@ type EditModalProps = {
   round: number;
 };
 
+const apiUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+
 const EditModal = ({
   setIsFlipped,
   clue,
@@ -115,9 +117,13 @@ const EditModal = ({
     const formData = new FormData();
     formData.append("image", imageFile);
 
-    const { data: imageName } = await axios.post("/api/uploadImage", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
+    const { data: imageName } = await axios.post(
+      `${apiUrl}/api/uploadImage`,
+      formData,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      }
+    );
 
     setImageName(imageName);
     setClueText(imageName);
@@ -129,9 +135,13 @@ const EditModal = ({
     const formData = new FormData();
     formData.append("mp3", audioFile);
 
-    const { data: imageName } = await axios.post("/api/uploadAudio", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
+    const { data: imageName } = await axios.post(
+      `${apiUrl}/api/uploadAudio`,
+      formData,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      }
+    );
 
     setAudioName(imageName);
     setClueText(imageName);
