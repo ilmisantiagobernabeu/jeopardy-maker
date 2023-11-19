@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { GameBoard, SingleGame } from "../../stateTypes";
+import { SingleGame } from "../../stateTypes";
 
 const gameSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -8,7 +8,7 @@ const gameSchema = new mongoose.Schema({
 });
 
 // Game Class
-const Game = mongoose.model("Game", gameSchema);
+export const Game = mongoose.model("Game", gameSchema);
 
 type GameInMongoose = (mongoose.Document<
   unknown,
@@ -41,7 +41,7 @@ function convertToObject(publicGames: GameInMongoose) {
     }, {} as any);
 }
 
-async function getPublicGames(opts = {}) {
+export async function getPublicGames(opts = {}) {
   try {
     const publicGames = await Game.find({ isPublic: true, ...opts });
 
@@ -56,7 +56,7 @@ async function getPublicGames(opts = {}) {
   }
 }
 
-async function createGame({
+export async function createGame({
   name,
   isPublic,
   gameObject,
@@ -79,21 +79,14 @@ async function createGame({
   }
 }
 
-async function updateGame(game: SingleGame) {
+export async function updateGame(game: SingleGame) {
   return await Game.updateOne({ name: game.name }, { gameObject: game });
 }
 
-async function deleteGame(gameName: string) {
+export async function deleteGame(gameName: string) {
   try {
     await Game.deleteOne({ name: gameName });
   } catch (err) {
     console.error("There was an deleting a game from the database...", err);
   }
 }
-
-module.exports.Game = Game;
-module.exports.getPublicGames = getPublicGames;
-module.exports.createGame = createGame;
-module.exports.updateGame = updateGame;
-module.exports.deleteGame = deleteGame;
-module.exports.convertToObject = convertToObject;

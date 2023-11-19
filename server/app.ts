@@ -1,6 +1,10 @@
-import fs from "fs";
 import dotenv from "dotenv";
+dotenv.config();
 import { v4 as uuidv4 } from "uuid";
+import { Server, Socket } from "socket.io";
+import mongoose from "mongoose";
+import http from "http";
+import app from "./server";
 import {
   ClientToServerEvents,
   GameState,
@@ -8,111 +12,18 @@ import {
   Players,
   ServerToClientEvents,
 } from "../stateTypes";
-import { Server, Socket } from "socket.io";
-import express from "express";
-import cors from "cors";
-import multer from "multer";
-import crypto from "crypto";
-import sharp from "sharp";
-dotenv.config();
-
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
-
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
-
-const expApp = express();
-
-expApp.use(cors());
-
-expApp.post("/api/uploadImage", upload.single("image"), async (req, res) => {
-  // resize image
-  try {
-    const buffer = await sharp(req.file?.buffer)
-      .resize({
-        width: 1920,
-        height: 1080,
-        withoutEnlargement: true,
-      })
-      .toBuffer();
-
-    const imageName = `${req.file?.originalname}-${crypto
-      .randomBytes(32)
-      .toString("hex")}`;
-
-    const params = {
-      Bucket: AWS_BUCKET_NAME,
-      Key: imageName,
-      Body: buffer,
-      ContentType: req.file?.mimetype,
-    };
-
-    const command = new PutObjectCommand(params);
-    await s3.send(command);
-
-    res.send(imageName);
-  } catch (err) {
-    console.log("oh no could not resize!!!!!", err);
-  }
-});
-
-expApp.post("/api/uploadAudio", upload.single("mp3"), async (req, res) => {
-  const audioName = `${req.file?.originalname}-${crypto
-    .randomBytes(32)
-    .toString("hex")}`;
-
-  console.log("audio file:", req?.file?.buffer);
-  if (req?.file?.buffer) {
-    const params = {
-      Bucket: AWS_BUCKET_NAME,
-      Key: audioName,
-      Body: req.file.buffer,
-      ContentType: "audio/mpeg",
-    };
-
-    const command = new PutObjectCommand(params);
-
-    try {
-      await s3.send(command);
-    } catch (error) {
-      // Failed upload
-      console.error("Error uploading audio file:", error);
-      res.status(500).json({ error: "Failed to upload audio file to S3" });
-    }
-  }
-
-  res.send(audioName);
-});
-
-// Start the server
-expApp.listen(5001, () => {
-  console.log(`Server is listening on port ${5001}`);
-});
-
-const AWS_BUCKET_NAME = process.env.AWS_BUCKET_NAME ?? "";
-const AWS_BUCKET_REGION = process.env.AWS_BUCKET_REGION ?? "";
-const AWS_ACCESS_KEY = process.env.AWS_ACCESS_KEY ?? "";
-const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY ?? "";
-
-const s3 = new S3Client({
-  credentials: {
-    accessKeyId: AWS_ACCESS_KEY,
-    secretAccessKey: AWS_SECRET_ACCESS_KEY,
-  },
-  region: AWS_BUCKET_REGION,
-});
-
-const {
+import {
   getPublicGames,
   createGame,
   Game,
   updateGame,
   deleteGame,
-} = require("./models/game");
+} from "./models/game";
 
-import mongoose from "mongoose";
+const server = http.createServer(app);
 
-const io = new Server(5000, {
+// Start the websocket server
+const io = new Server(server, {
   cors: {
     origin: `*`,
     methods: ["GET", "POST"],
@@ -121,7 +32,13 @@ const io = new Server(5000, {
   pingTimeout: 300000,
 });
 
-async function app() {
+// Start the server
+const port = Number(process.env.PORT || 5000);
+server.listen(port, () => {
+  console.log(`Server is listening on port ${port}`);
+});
+
+async function start() {
   try {
     await mongoose.connect(process.env.MONGO_URI!);
     console.log("Connected to MongoDB...");
@@ -465,8 +382,11 @@ async function app() {
             isPublic: true,
             gameObject: game,
           });
-          gameState.games[newGame.name] = newGame.gameObject;
-          io.emit("gameState updated", gameState);
+
+          if (newGame) {
+            gameState.games[newGame.name] = newGame.gameObject;
+            io.emit("gameState updated", gameState);
+          }
         } catch (err: any) {
           console.error(
             "Error: There was an issue saving this game to the database...",
@@ -493,4 +413,4 @@ async function app() {
     }
   );
 }
-app();
+start();
