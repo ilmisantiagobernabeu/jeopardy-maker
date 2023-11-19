@@ -1,4 +1,11 @@
+export enum ClueType {
+  TEXT = "TEXT",
+  IMAGE = "IMAGE",
+  AUDIO = "AUDIO",
+}
+
 export interface Clue {
+  type: ClueType;
   text: string;
   answer: string;
   alreadyPlayed?: boolean;

@@ -10,15 +10,10 @@ import hahaSound from "../sounds/haha.mp3";
 import Answer from "./Answer";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
+import { Clue, ClueType } from "../../stateTypes";
 
 const COUNTDOWN_SECONDS = 25;
 
-type Clue = {
-  text: string;
-  answer: string;
-  isDailyDouble?: boolean;
-  alreadyPlayed?: boolean;
-};
 type Props = {
   clue: Clue;
   index: number;
@@ -149,9 +144,11 @@ const GameCard = ({ clue, index, round }: Props) => {
     }
   }, [gameState]);
 
-  const isAudioClue = clue.text.trim().endsWith("mp3");
+  const isAudioClue =
+    clue.type === ClueType.AUDIO || clue.text.trim().endsWith("mp3");
 
   const isImageClue =
+    clue.type === ClueType.IMAGE ||
     clue.text.trim().endsWith("gif") ||
     clue.text.trim().endsWith("jpg") ||
     clue.text.trim().endsWith("jpeg") ||
@@ -310,7 +307,10 @@ const GameCard = ({ clue, index, round }: Props) => {
               <p className="ClueModal-text">
                 {isAudioClue ? (
                   <audio ref={audioRef} controls className="max-w-full">
-                    <source src={`sounds/${clue.text}`} type="audio/mpeg" />
+                    <source
+                      src={`https://buzzinga.s3.us-east-2.amazonaws.com/${clue.text}`}
+                      type="audio/mpeg"
+                    />
                   </audio>
                 ) : isImageClue ? (
                   <div
@@ -320,7 +320,7 @@ const GameCard = ({ clue, index, round }: Props) => {
                     }}
                   >
                     <img
-                      src={clue.text}
+                      src={`https://buzzinga.s3.us-east-2.amazonaws.com/${clue.text}`}
                       alt=""
                       className="w-full h-full object-contain"
                     />

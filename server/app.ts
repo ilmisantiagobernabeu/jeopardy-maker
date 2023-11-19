@@ -1,6 +1,10 @@
-import fs from "fs";
 import dotenv from "dotenv";
+dotenv.config();
 import { v4 as uuidv4 } from "uuid";
+import { Server, Socket } from "socket.io";
+import mongoose from "mongoose";
+import http from "http";
+import app from "./server";
 import {
   ClientToServerEvents,
   GameState,
@@ -8,20 +12,18 @@ import {
   Players,
   ServerToClientEvents,
 } from "../stateTypes";
-import { Server, Socket } from "socket.io";
-dotenv.config();
-
-const {
+import {
   getPublicGames,
   createGame,
   Game,
   updateGame,
   deleteGame,
-} = require("./models/game");
+} from "./models/game";
 
-import mongoose from "mongoose";
+const server = http.createServer(app);
 
-const io = new Server(5000, {
+// Start the websocket server
+const io = new Server(server, {
   cors: {
     origin: `*`,
     methods: ["GET", "POST"],
@@ -30,7 +32,13 @@ const io = new Server(5000, {
   pingTimeout: 300000,
 });
 
-async function app() {
+// Start the server
+const port = Number(process.env.PORT || 5000);
+server.listen(port, () => {
+  console.log(`Server is listening on port ${port}`);
+});
+
+async function start() {
   try {
     await mongoose.connect(process.env.MONGO_URI!);
     console.log("Connected to MongoDB...");
@@ -374,8 +382,11 @@ async function app() {
             isPublic: true,
             gameObject: game,
           });
-          gameState.games[newGame.name] = newGame.gameObject;
-          io.emit("gameState updated", gameState);
+
+          if (newGame) {
+            gameState.games[newGame.name] = newGame.gameObject;
+            io.emit("gameState updated", gameState);
+          }
         } catch (err: any) {
           console.error(
             "Error: There was an issue saving this game to the database...",
@@ -402,4 +413,4 @@ async function app() {
     }
   );
 }
-app();
+start();
