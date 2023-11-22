@@ -36,7 +36,8 @@ function App() {
         "Host changes the game",
         game,
         gameState?.players,
-        roomId || ""
+        roomId || "",
+        localStorage.getItem("bz-userId") || ""
       );
     }
   }, [socket, location, game, roomId]);
@@ -96,7 +97,7 @@ function App() {
           <div className="h-screen flex justify-center items-center">
             <Link
               className="text-white h-full w-full flex justify-center items-center text-9xl bg-[#060ce9]"
-              to={`/scoreboard`}
+              to={`/scoreboard/${roomId}`}
               onClick={() => {
                 setRoundOver(false);
               }}

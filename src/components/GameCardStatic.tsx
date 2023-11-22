@@ -10,9 +10,16 @@ type Props = {
   index: number;
   round: number;
   setGameState: React.Dispatch<React.SetStateAction<SingleGame>>;
+  localGameState: SingleGame;
 };
 
-const GameCardStatic = ({ clue, index, round, setGameState }: Props) => {
+const GameCardStatic = ({
+  clue,
+  index,
+  round,
+  setGameState,
+  localGameState,
+}: Props) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
   useEffect(() => {
@@ -61,6 +68,7 @@ const GameCardStatic = ({ clue, index, round, setGameState }: Props) => {
               setGameState={setGameState}
               index={index}
               round={round}
+              localGameState={localGameState}
             />
           </>
         )}
@@ -75,6 +83,7 @@ type EditModalProps = {
   setGameState: React.Dispatch<React.SetStateAction<SingleGame>>;
   index: number;
   round: number;
+  localGameState: SingleGame;
 };
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
@@ -85,8 +94,9 @@ const EditModal = ({
   setGameState,
   index,
   round,
+  localGameState,
 }: EditModalProps) => {
-  const { gameState, socket } = useGlobalState();
+  const { gameState, session, socket } = useGlobalState();
   const [isDailyDouble, setIsDailyDouble] = useState(
     clue.isDailyDouble || false
   );
@@ -301,17 +311,29 @@ const EditModal = ({
           </div>
         </div>
 
-        <div className="flex gap-1">
-          <label htmlFor={`clue-${clue.isDailyDouble}`}>Is Daily Double</label>
-          <input
-            id={`clue-${clue.isDailyDouble}`}
-            type="checkbox"
-            className="ClueModal-text bg-transparent text-center border-white border rounded-sm"
-            checked={isDailyDouble}
-            onChange={(e) => {
-              setIsDailyDouble(e.target.checked);
-            }}
-          />
+        <div className="flex flex-col gap-1 items-center">
+          <div className="flex gap-4">
+            <input
+              id={`clue-${clue.isDailyDouble}`}
+              type="checkbox"
+              className="ClueModal-text bg-transparent text-center border-white border rounded-sm"
+              checked={isDailyDouble}
+              onChange={(e) => {
+                setIsDailyDouble(e.target.checked);
+              }}
+            />
+            <label htmlFor={`clue-${clue.isDailyDouble}`}>
+              Is Daily Double
+            </label>
+          </div>
+          <p className="italic text-sm normal-case font-korinna">
+            {
+              localGameState.rounds[round - 1]
+                .flatMap((game) => game.clues)
+                .filter((clue) => clue.isDailyDouble).length
+            }{" "}
+            out of 2 Daily Doubles in round {round}.
+          </p>
         </div>
         <div className="flex flex-wrap gap-4">
           <button
@@ -347,7 +369,8 @@ const EditModal = ({
                 socket?.emit(
                   "create a new game",
                   newGameState,
-                  gameState?.guid || ""
+                  gameState?.guid || "",
+                  localStorage.getItem("bz-userId") || ""
                 );
 
                 return newGameState;

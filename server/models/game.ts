@@ -3,6 +3,7 @@ import { SingleGame } from "../../stateTypes";
 
 const gameSchema = new mongoose.Schema({
   name: { type: String, required: true },
+  userId: { type: String, required: true },
   isPublic: { type: Boolean, default: false },
   gameObject: { type: mongoose.Schema.Types.Mixed, required: true },
 });
@@ -15,11 +16,13 @@ type GameInMongoose = (mongoose.Document<
   {},
   {
     name: string;
+    userId: string;
     isPublic: boolean;
     gameObject: any;
   }
 > & {
   name: string;
+  userId: string;
   isPublic: boolean;
   gameObject: any;
 } & {
@@ -35,6 +38,8 @@ function convertToObject(publicGames: GameInMongoose) {
 
       obj[item.name] = {
         name: item.name,
+        isPublic: item.isPublic,
+        userId: item.userId,
         rounds: actualObj.rounds,
       };
       return obj;
@@ -56,17 +61,37 @@ export async function getPublicGames(opts = {}) {
   }
 }
 
+export async function getUserGames(userId: string) {
+  try {
+    const publicGames = await Game.find({
+      $or: [{ isPublic: true }, { userId }],
+    });
+
+    const result = convertToObject(publicGames);
+
+    return result;
+  } catch (err: any) {
+    console.error(
+      "There was an issue trying to access user games: ",
+      err.message
+    );
+  }
+}
+
 export async function createGame({
   name,
+  userId,
   isPublic,
   gameObject,
 }: {
   name: string;
+  userId: string;
   isPublic: boolean;
   gameObject: SingleGame;
 }) {
   const game = new Game({
     name,
+    userId,
     isPublic,
     gameObject,
   });

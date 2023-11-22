@@ -44,7 +44,12 @@ export type HistoryPlayer = {
   timeStamp: Date;
 };
 
-export type SingleGame = { name: string; rounds: GameBoard[][] };
+export type SingleGame = {
+  name: string;
+  rounds: GameBoard[][];
+  userId: string;
+  isPublic: boolean;
+};
 
 export type Game = {
   [key: string]: SingleGame;
@@ -117,13 +122,19 @@ export interface ClientToServerEvents {
     game: string,
     roomId: string
   ) => void;
-  ["Host restarts the game"]: (gameName: string, roomId: string) => void;
+  ["Host restarts the game"]: (
+    gameName: string,
+    roomId: string,
+    userId: string
+  ) => void;
   ["Host visits the homepage"]: () => void;
+  ["Get user created boards"]: (roomId: string, userId: string) => void;
   ["Host reloads the board page"]: (roomId: string) => void;
   ["Host changes the game"]: (
     gameName: string,
     players: Players | undefined,
-    roomId: string
+    roomId: string,
+    userId: string
   ) => void;
   ["Host adds a team with a button"]: (
     teamObject: {
@@ -133,7 +144,11 @@ export interface ClientToServerEvents {
     roomId: string
   ) => void;
   ["Team selects a daily double clue"]: (roomId: string) => void;
-  ["create a new game"]: (game: SingleGame, roomId: string) => void;
+  ["create a new game"]: (
+    game: SingleGame,
+    roomId: string,
+    userId: string
+  ) => void;
   ["delete a game"]: (gameName: string, roomId: string) => void;
   ["update player score manually"]: (
     socketId: string,

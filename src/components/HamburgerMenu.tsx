@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import MenuIcon from "../icons/MenuIcon";
-import { NavLink, useNavigate, useParams } from "react-router-dom";
+import { Link, NavLink, useNavigate, useParams } from "react-router-dom";
 import CloseIcon from "../icons/CloseIcon";
 import cx from "classnames";
 import WarningIcon from "../icons/WarningIcon";
 import { useGlobalState } from "./GlobalStateProvider";
+import { LogoutButton } from "../features/login/LogoutButton";
 
 type HamburgerMenuProps = {
   isVisible?: boolean;
@@ -18,7 +19,7 @@ export const HamburgerMenu = ({
   const { roomId } = useParams();
   const [isOpen, setIsOpen] = useState(false);
   const [isVisibleLocal, setIsVisibleLocal] = useState(isVisible);
-  const { gameState, socket } = useGlobalState();
+  const { gameState, session, socket } = useGlobalState();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -52,6 +53,26 @@ export const HamburgerMenu = ({
             <CloseIcon width={20} />
           </button>
           <ul className="flex flex-col gap-4">
+            {session?.user.email ? (
+              <li>
+                <p className="flex gap-1" title={session.user.email}>
+                  <span>Hi,</span>
+                  <span className="font-semibold max-w-xs truncate">
+                    {" "}
+                    {session?.user.email}!
+                  </span>
+                </p>
+                <LogoutButton />
+                <div className="pt-4 border-b" />
+              </li>
+            ) : (
+              <>
+                <Link to="/login" className="primary-btn">
+                  Login / Sign Up
+                </Link>
+                <div className="pt-2 border-b mb-2" />
+              </>
+            )}
             <li>
               <NavLink
                 to="/"
@@ -145,7 +166,8 @@ export const HamburgerMenu = ({
                       socket?.emit(
                         "Host restarts the game",
                         gameState.name,
-                        roomId || ""
+                        roomId || "",
+                        localStorage.getItem("bz-userId") || ""
                       );
                     }
                   }}

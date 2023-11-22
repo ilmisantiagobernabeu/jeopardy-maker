@@ -1,17 +1,21 @@
 import React, { useContext, useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
+import { Session } from "@supabase/supabase-js";
 import {
   ClientToServerEvents,
   GameState,
   ServerToClientEvents,
 } from "../../stateTypes";
 import { SOCKET_SERVER_URL } from "../api/constants";
+import { supabase } from "../api/supabase";
 
 export type ContextType = {
   gameState: GameState | null;
   setGameState: React.Dispatch<React.SetStateAction<GameState | null>>;
   socket: Socket<ServerToClientEvents, ClientToServerEvents> | null;
   setSocket: any;
+  session: Session | null;
+  setSession: React.Dispatch<React.SetStateAction<Session | null>>;
 };
 
 const GlobalStateContext = React.createContext<ContextType | null>(
@@ -28,6 +32,10 @@ const GlobalStateProvider = ({ children }: { children: React.ReactNode }) => {
     ServerToClientEvents,
     ClientToServerEvents
   > | null>(null);
+  const localSession = localStorage.getItem("bz-session")
+    ? JSON.parse(localStorage.getItem("bz-session") || "")
+    : null;
+  const [session, setSession] = useState<Session | null>(localSession);
 
   useEffect(() => {
     // connect to the socket server
@@ -46,6 +54,24 @@ const GlobalStateProvider = ({ children }: { children: React.ReactNode }) => {
     });
   }, [socket]);
 
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      localStorage.setItem("bz-session", JSON.stringify(session));
+      localStorage.setItem("bz-userId", session?.user.id || "");
+      setSession(session);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      localStorage.setItem("bz-session", JSON.stringify(session));
+      localStorage.setItem("bz-userId", session?.user.id || "");
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
   return (
     <GlobalStateContext.Provider
       value={{
@@ -53,6 +79,8 @@ const GlobalStateProvider = ({ children }: { children: React.ReactNode }) => {
         setGameState,
         socket,
         setSocket,
+        session,
+        setSession,
       }}
     >
       {children}

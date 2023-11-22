@@ -4,14 +4,17 @@
   "version": "0.0.0",
   "scripts": {
     "ipCheck": "ts-node --project custom-tsconfig.json getStaticIp.ts",
-    "dev": "ts-node --project custom-tsconfig.json getStaticIp.ts && vite --host",
-    "start": "ts-node --project custom-tsconfig.json getStaticIp.ts && vite --host",
+    "dev": "vite --host",
+    "start": "vite --host",
     "build": "vite build",
     "preview": "vite preview",
     "format": "prettier --write"
   },
   "dependencies": {
     "@radix-ui/react-select": "^1.2.2",
+    "@supabase/auth-ui-react": "^0.4.6",
+    "@supabase/auth-ui-shared": "^0.1.8",
+    "@supabase/supabase-js": "^2.38.5",
     "@tailwindcss/line-clamp": "^0.4.2",
     "@types/node": "^20.6.0",
     "axios": "^1.5.0",

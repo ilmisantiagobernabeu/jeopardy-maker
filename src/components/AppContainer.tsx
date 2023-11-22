@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import App from "./App";
 import { useGlobalState } from "./GlobalStateProvider";
 import Scoreboard from "./Scoreboard";
@@ -14,9 +14,10 @@ import Teams from "./Teams";
 import { ButtonColor } from "../../stateTypes";
 import buzzerSound from "../sounds/buzzer.mp3";
 import { Debug } from "./Debug";
+import { Login } from "../features/login/Login";
 
 const AppContainer = () => {
-  const { gameState, socket } = useGlobalState();
+  const { gameState, session, socket } = useGlobalState();
 
   // Logic for physical buttons
   useEffect(() => {
@@ -96,12 +97,19 @@ const AppContainer = () => {
     };
   }, [gameState, socket]);
 
+  const isAuthenticated = localStorage.getItem("bz-userId") || "";
+
   return (
     <>
       <Routes>
         <Route path="/" element={<Homepage />} />
         <Route path="/answer/:roomId" element={<HostControls />} />
-        <Route path="/create/:roomId" element={<CreateGame />} />
+        <Route
+          path="/create/:roomId"
+          element={
+            isAuthenticated ? <CreateGame /> : <Navigate to="/login" replace />
+          }
+        />
         <Route path="/board/:roomId" element={<App />} />
         <Route path="/scoreboard/:roomId" element={<Scoreboard />} />
         <Route path="/scoreboard/:roomId/:name" element={<Scoreboard />} />
@@ -114,6 +122,7 @@ const AppContainer = () => {
           path="/qr/:roomId"
           element={<QRCode className="p-12 w-full h-full" />}
         />
+        <Route path="/login" element={<Login />} />
       </Routes>
     </>
   );

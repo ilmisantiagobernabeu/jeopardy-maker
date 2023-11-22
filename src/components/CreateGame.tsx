@@ -10,6 +10,8 @@ import { useGetUpdatedGameState } from "../hooks/useGetUpdatedGameState";
 
 const getInitialGameState = (gameName: string) => ({
   name: gameName,
+  userId: "",
+  isPublic: false,
   rounds: [
     [
       {
@@ -387,7 +389,7 @@ function CreateGame() {
 
   const { roomId } = useParams();
 
-  const { socket, gameState: globalGameState } = useGlobalState();
+  const { socket, gameState: globalGameState, session } = useGlobalState();
 
   const [gameState, setGameState] = useState<SingleGame>(
     getInitialGameState(gameName)
@@ -457,7 +459,12 @@ function CreateGame() {
                 onBlur={() => {
                   setIsEditGameName(false);
 
-                  socket?.emit("create a new game", gameState, roomId || "");
+                  socket?.emit(
+                    "create a new game",
+                    gameState,
+                    roomId || "",
+                    localStorage.getItem("bz-userId") || ""
+                  );
                 }}
               />
             ) : (
@@ -515,6 +522,7 @@ function CreateGame() {
                 index={index}
                 round={round}
                 setGameState={setGameState}
+                localGameState={gameState}
               />
             );
           })}
