@@ -93,7 +93,9 @@ const EditModal = ({
   const [answer, setAnswer] = useState(clue.answer);
   const [clueText, setClueText] = useState(clue.text);
   const [clueType, setClueType] = useState<ClueType>(clue.type);
+  const [uploadedImageFile, setUploadedImageFile] = useState<any>(null);
   const [imageFile, setImageFile] = useState<any>(null);
+  const [uploadedAudioFile, setUploadedAudioFile] = useState<any>(null);
   const [audioFile, setAudioFile] = useState<any>(null);
   const [imageName, setImageName] = useState(
     clue.type === ClueType.IMAGE ? clue.text : null
@@ -101,6 +103,7 @@ const EditModal = ({
   const [audioName, setAudioName] = useState(
     clue.type === ClueType.AUDIO ? clue.text : null
   );
+  const [isUploading, setIsUploading] = useState(false);
   const [answerType, setAnswerType] = useState<ClueType>(ClueType.TEXT);
 
   const catIndex = index % 6;
@@ -113,6 +116,7 @@ const EditModal = ({
 
   const handleClueSubmitImage = async (event: any) => {
     event.preventDefault();
+    setIsUploading(true);
 
     const formData = new FormData();
     formData.append("image", imageFile);
@@ -127,15 +131,19 @@ const EditModal = ({
 
     setImageName(imageName);
     setClueText(imageName);
+
+    setUploadedImageFile(imageFile);
+    setIsUploading(false);
   };
 
   const handleClueSubmitAudio = async (event: any) => {
     event.preventDefault();
+    setIsUploading(true);
 
     const formData = new FormData();
     formData.append("mp3", audioFile);
 
-    const { data: imageName } = await axios.post(
+    const { data: audioName } = await axios.post(
       `${apiUrl}/api/uploadAudio`,
       formData,
       {
@@ -143,8 +151,11 @@ const EditModal = ({
       }
     );
 
-    setAudioName(imageName);
-    setClueText(imageName);
+    setAudioName(audioName);
+    setClueText(audioName);
+
+    setUploadedAudioFile(audioFile);
+    setIsUploading(false);
   };
 
   return (
@@ -220,7 +231,11 @@ const EditModal = ({
                   <button
                     className="primary-btn !text-3xl mt-4"
                     type="submit"
-                    disabled={!imageFile}
+                    disabled={
+                      !imageFile ||
+                      isUploading ||
+                      (!!imageFile && imageFile === uploadedImageFile)
+                    }
                   >
                     Upload
                   </button>
@@ -248,7 +263,11 @@ const EditModal = ({
                   <button
                     className="primary-btn !text-3xl mt-4"
                     type="submit"
-                    disabled={!audioFile}
+                    disabled={
+                      !audioFile ||
+                      isUploading ||
+                      (!!audioFile && audioFile === uploadedAudioFile)
+                    }
                   >
                     Upload
                   </button>
