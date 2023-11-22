@@ -1,6 +1,7 @@
 import { useGlobalState } from "./GlobalStateProvider";
 import { useEffect, useState } from "react";
 import cx from "classnames";
+import { useGetUpdatedGameState } from "../hooks/useGetUpdatedGameState";
 
 export const Debug = () => {
   const { gameState } = useGlobalState();
@@ -10,10 +11,7 @@ export const Debug = () => {
   const initialKeys = Object.keys(gameState || {});
   const [keys, setKeys] = useState<string[]>(localDebugKeys || initialKeys);
 
-  // useEffect(() => {
-  //   const newKeys = Object.keys(gameState || {});
-  //   setKeys(newKeys);
-  // }, [gameState]);
+  useGetUpdatedGameState();
 
   useEffect(() => {
     localStorage.setItem("bz-debugKeys", JSON.stringify(keys));

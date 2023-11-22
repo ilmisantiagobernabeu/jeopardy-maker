@@ -4,12 +4,15 @@ import cx from "classnames";
 import { useState } from "react";
 import { ButtonColor } from "../../stateTypes";
 import { PageWrapper } from "./PageWrapper";
+import { useGetUpdatedGameState } from "../hooks/useGetUpdatedGameState";
 
 const Teams = () => {
   const { gameState, socket } = useGlobalState() || {};
   const { name } = useParams();
   const [playerName, setPlayerName] = useState("");
   const [color, setColor] = useState<ButtonColor | "">("");
+
+  useGetUpdatedGameState();
 
   const playersWithButtons = Object.values(gameState?.players || {}).filter(
     (player) => player.name && player.color

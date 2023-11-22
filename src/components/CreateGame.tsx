@@ -2,10 +2,11 @@ import "./App.scss";
 import { useGlobalState } from "./GlobalStateProvider";
 import GameCardStatic from "./GameCardStatic";
 import { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { ClueType, SingleGame } from "../../stateTypes";
 import EditIcon from "../icons/EditIcon";
 import { HamburgerMenu } from "./HamburgerMenu";
+import { useGetUpdatedGameState } from "../hooks/useGetUpdatedGameState";
 
 const getInitialGameState = (gameName: string) => ({
   name: gameName,
@@ -384,12 +385,16 @@ function CreateGame() {
   const round = Number(queryParams.get("round") || 1);
   const gameName = queryParams.get("name") || "";
 
+  const { roomId } = useParams();
+
   const { socket, gameState: globalGameState } = useGlobalState();
 
   const [gameState, setGameState] = useState<SingleGame>(
     getInitialGameState(gameName)
   );
   const [isEditGameName, setIsEditGameName] = useState(false);
+
+  useGetUpdatedGameState();
 
   const catTitles = gameState.rounds?.[round - 1]?.map(
     (round) => round.category
@@ -452,11 +457,7 @@ function CreateGame() {
                 onBlur={() => {
                   setIsEditGameName(false);
 
-                  socket?.emit(
-                    "create a new game",
-                    gameState,
-                    globalGameState?.guid || ""
-                  );
+                  socket?.emit("create a new game", gameState, roomId || "");
                 }}
               />
             ) : (
@@ -480,7 +481,7 @@ function CreateGame() {
           <div className="flex gap-4">
             <p>
               <Link
-                to={`/create?name=${gameState.name}&round=1`}
+                to={`/create/${roomId}?name=${gameState.name}&round=1`}
                 className="block border rounded-md py-1 px-2"
               >
                 Round 1
@@ -488,7 +489,7 @@ function CreateGame() {
             </p>
             <p>
               <Link
-                to={`/create?name=${gameState.name}&round=2`}
+                to={`/create/${roomId}?name=${gameState.name}&round=2`}
                 className="block border rounded-md py-1 px-2"
               >
                 Round 2

@@ -4,6 +4,7 @@ import "./App.scss";
 import { useGlobalState } from "./GlobalStateProvider";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { HamburgerMenu } from "./HamburgerMenu";
+import { useGetUpdatedGameState } from "../hooks/useGetUpdatedGameState";
 
 function App() {
   const { roomId } = useParams();
@@ -15,6 +16,8 @@ function App() {
   const [roundOver, setRoundOver] = useState(false);
   const [pointerOver, setPointerOver] = useState(false);
   const timeout = useRef<NodeJS.Timeout | null>(null);
+
+  useGetUpdatedGameState();
 
   useEffect(() => {
     if (

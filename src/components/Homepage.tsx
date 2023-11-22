@@ -35,7 +35,7 @@ const Homepage = () => {
           <h2 className="flex items-center gap-2 font-bold text-2xl leading-none">
             <PhoneIcon width={14} className=" fill-white" /> Teams join here
           </h2>
-          <Link to="/qr" target="_blank">
+          <Link to={`/qr/${gameState?.guid}`} target="_blank">
             <QRCode />
           </Link>
           <p className="font-bold text-2xl leading-none">
@@ -75,7 +75,7 @@ const Homepage = () => {
                     </button>
                     <div className="flex gap-3">
                       <Link
-                        to={`/create?name=${game.name}`}
+                        to={`/create/${gameState?.guid}?name=${game.name}`}
                         className="flex justify-center items-center hover:text-gold focus:text-gold"
                       >
                         <EditIcon width={16} height={16} />
@@ -114,7 +114,9 @@ const Homepage = () => {
 
           <p>
             <Link
-              to={`/create?name=default-game-${generateRandomString()}`}
+              to={`/create/${
+                gameState?.guid
+              }?name=default-game-${generateRandomString()}`}
               className="primary-btn"
             >
               Create new game

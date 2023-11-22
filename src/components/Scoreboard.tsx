@@ -3,6 +3,7 @@ import { useGlobalState } from "./GlobalStateProvider";
 import cx from "classnames";
 import { PageWrapper } from "./PageWrapper";
 import EditIcon from "../icons/EditIcon";
+import { useGetUpdatedGameState } from "../hooks/useGetUpdatedGameState";
 
 function formatScore(score: number) {
   if (score < 0) {
@@ -14,9 +15,11 @@ function formatScore(score: number) {
 
 const Scoreboard = () => {
   const { gameState, socket } = useGlobalState() || {};
-  const { name } = useParams();
+  const { roomId, name } = useParams();
 
-  // if a user goes to /scoreboard/[team name], let's show just their score
+  useGetUpdatedGameState();
+
+  // if a user goes to /scoreboard/:roomId/[team name], let's show just their score
   const singlePlayerStats =
     name &&
     gameState?.players &&
@@ -67,7 +70,7 @@ const Scoreboard = () => {
                               "update player score manually",
                               socketId,
                               Number(newScore),
-                              gameState?.guid || ""
+                              roomId || ""
                             );
                           }
                         }}

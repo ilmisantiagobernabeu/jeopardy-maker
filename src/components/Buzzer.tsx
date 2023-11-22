@@ -39,8 +39,8 @@ const Buzzer = () => {
   }, []);
 
   useEffect(() => {
-    if (hasDisconnected && localStorage.getItem("bz-previousRoomId")) {
-      navigate(`/join/${localStorage.getItem("bz-previousRoomId")}`);
+    if (hasDisconnected && roomId) {
+      navigate(`/join/${roomId}`);
     }
   }, [hasDisconnected]);
 

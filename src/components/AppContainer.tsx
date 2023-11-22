@@ -100,17 +100,20 @@ const AppContainer = () => {
     <>
       <Routes>
         <Route path="/" element={<Homepage />} />
-        <Route path="/answer" element={<HostControls />} />
-        <Route path="/create" element={<CreateGame />} />
+        <Route path="/answer/:roomId" element={<HostControls />} />
+        <Route path="/create/:roomId" element={<CreateGame />} />
         <Route path="/board/:roomId" element={<App />} />
-        <Route path="/scoreboard" element={<Scoreboard />} />
-        <Route path="/scoreboard/:name" element={<Scoreboard />} />
-        <Route path="/history" element={<History />} />
-        <Route path="/teams" element={<Teams />} />
+        <Route path="/scoreboard/:roomId" element={<Scoreboard />} />
+        <Route path="/scoreboard/:roomId/:name" element={<Scoreboard />} />
+        <Route path="/history/:roomId" element={<History />} />
+        <Route path="/teams/:roomId" element={<Teams />} />
         <Route path="/join/:roomId" element={<PlayerJoin />} />
         <Route path="/buzzer/:roomId" element={<Buzzer />} />
-        <Route path="/debug" element={<Debug />} />
-        <Route path="/qr" element={<QRCode className="p-12 w-full h-full" />} />
+        <Route path="/debug/:roomId" element={<Debug />} />
+        <Route
+          path="/qr/:roomId"
+          element={<QRCode className="p-12 w-full h-full" />}
+        />
       </Routes>
     </>
   );

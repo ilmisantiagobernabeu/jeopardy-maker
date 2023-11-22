@@ -254,7 +254,6 @@ const EditModal = ({
                 <form onSubmit={handleClueSubmitAudio}>
                   <input
                     onChange={(e) => {
-                      console.log("wtfwtf", e.target.files?.[0]);
                       setAudioFile(e?.target?.files?.[0]);
                     }}
                     type="file"

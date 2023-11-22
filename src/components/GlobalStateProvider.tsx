@@ -38,22 +38,11 @@ const GlobalStateProvider = ({ children }: { children: React.ReactNode }) => {
     if (!socket) {
       return;
     }
+
     // listen for when the server emits the updated game state
     socket?.on("gameState updated", function (gameStateFromServer: GameState) {
       // set the new game state on the client
       setGameState(gameStateFromServer);
-      localStorage.setItem("bz-previousRoomId", gameStateFromServer.guid);
-    });
-
-    socket?.on("connect", () => {
-      // when socket first connects or reconnects,
-      // tell the server to send just them the existing server state
-      if (localStorage.getItem("bz-previousRoomId")) {
-        socket?.emit(
-          "Host reloads the board page",
-          localStorage.getItem("bz-previousRoomId") || ""
-        );
-      }
     });
   }, [socket]);
 

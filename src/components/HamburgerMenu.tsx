@@ -80,7 +80,7 @@ export const HamburgerMenu = ({
             </li>
             <li>
               <NavLink
-                to="/scoreboard"
+                to={`/scoreboard/${roomId}`}
                 className={({ isActive }) =>
                   isActive
                     ? "text-gold hover:underline focus:underline"
@@ -92,7 +92,7 @@ export const HamburgerMenu = ({
             </li>
             <li>
               <NavLink
-                to="/history"
+                to={`/history/${roomId}`}
                 className={({ isActive }) =>
                   isActive
                     ? "text-gold hover:underline focus:underline"
@@ -104,7 +104,7 @@ export const HamburgerMenu = ({
             </li>
             <li>
               <NavLink
-                to="/teams"
+                to={`/teams/${roomId}`}
                 className={({ isActive }) =>
                   isActive
                     ? "text-gold hover:underline focus:underline"
@@ -122,7 +122,7 @@ export const HamburgerMenu = ({
                   );
 
                   if (response) {
-                    navigate("/answer");
+                    navigate(`/answer/${roomId}`);
                   }
                 }}
               >

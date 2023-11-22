@@ -285,7 +285,11 @@ async function start() {
           if (!rooms[roomId]) {
             return;
           }
-          console.log("Host loads the game board for the first time", gameName);
+          console.log(
+            "Host loads the game board for the first time",
+            gameName,
+            roomId
+          );
           rooms[roomId].name = gameName;
           rooms[roomId].gameBoard = rooms[roomId].games[gameName].rounds[0];
           io.to(roomId).emit("gameState updated", rooms[roomId]);
