@@ -217,7 +217,13 @@ const EditModal = ({
                     type="file"
                     accept="image/*"
                   />
-                  <button type="submit">Upload</button>
+                  <button
+                    className="primary-btn !text-3xl mt-4"
+                    type="submit"
+                    disabled={!imageFile}
+                  >
+                    Upload
+                  </button>
                 </form>
               </>
             ) : clueType === ClueType.AUDIO ? (
@@ -239,7 +245,13 @@ const EditModal = ({
                     type="file"
                     accept=".mp3"
                   />
-                  <button type="submit">Upload</button>
+                  <button
+                    className="primary-btn !text-3xl mt-4"
+                    type="submit"
+                    disabled={!audioFile}
+                  >
+                    Upload
+                  </button>
                 </form>
               </>
             ) : null}
