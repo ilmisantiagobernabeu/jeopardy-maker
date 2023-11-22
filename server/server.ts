@@ -24,9 +24,7 @@ app.post("/api/uploadImage", upload.single("image"), async (req, res) => {
       })
       .toBuffer();
 
-    const imageName = `${req.file?.originalname}-${crypto
-      .randomBytes(32)
-      .toString("hex")}`;
+    const imageName = crypto.randomBytes(32).toString("hex");
 
     const params = {
       Bucket: AWS_BUCKET_NAME,
@@ -45,9 +43,7 @@ app.post("/api/uploadImage", upload.single("image"), async (req, res) => {
 });
 
 app.post("/api/uploadAudio", upload.single("mp3"), async (req, res) => {
-  const audioName = `${req.file?.originalname}-${crypto
-    .randomBytes(32)
-    .toString("hex")}`;
+  const audioName = crypto.randomBytes(32).toString("hex");
 
   console.log("audio file:", req?.file?.buffer);
   if (req?.file?.buffer) {
