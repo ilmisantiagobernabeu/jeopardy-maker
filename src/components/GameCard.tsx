@@ -11,6 +11,7 @@ import Answer from "./Answer";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import { Clue, ClueType } from "../../stateTypes";
+import { useParams } from "react-router-dom";
 
 const COUNTDOWN_SECONDS = 25;
 
@@ -21,6 +22,7 @@ type Props = {
 };
 
 const GameCard = ({ clue, index, round }: Props) => {
+  const { roomId } = useParams();
   const audioRef = useRef<HTMLAudioElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [isFlipped, setIsFlipped] = useState(false);
@@ -94,7 +96,7 @@ const GameCard = ({ clue, index, round }: Props) => {
       setShowDailyDoubleScreen(true);
       const audio = new Audio(dailyDoubleSound);
       audio.play();
-      socket?.emit("Team selects a daily double clue");
+      socket?.emit("Team selects a daily double clue", roomId || "");
     }
   }, [isFlipped]);
 
@@ -114,7 +116,7 @@ const GameCard = ({ clue, index, round }: Props) => {
         setStyles(undefined);
         setIsFlipped(false);
         imageReset();
-        socket?.emit("Host deselects a clue");
+        socket?.emit("Host deselects a clue", roomId || "");
       }
     };
 
@@ -163,6 +165,7 @@ const GameCard = ({ clue, index, round }: Props) => {
         : value * -1,
       arrayIndex: index % 6,
       clueText: clue.text,
+      roomId: roomId || "",
     });
 
     // Only show answer if this is the last incorrect guess
@@ -183,6 +186,7 @@ const GameCard = ({ clue, index, round }: Props) => {
       value: gameState?.dailyDoubleAmount || value,
       arrayIndex: index % 6,
       clueText: clue.text,
+      roomId: roomId || "",
     });
 
     const audio = new Audio(rightAnswerSound);
@@ -191,16 +195,20 @@ const GameCard = ({ clue, index, round }: Props) => {
   };
 
   const handleBuzzerToggle = () => {
-    socket?.emit("Host activates the buzzers");
+    socket?.emit("Host activates the buzzers", roomId || "");
   };
 
   const handleNobodyKnows = () => {
     const audio = new Audio(hahaSound);
     audio.play();
-    socket?.emit("No player knows the answer", {
-      clueText: clue.text,
-      arrayIndex: index % 6,
-    });
+    socket?.emit(
+      "No player knows the answer",
+      {
+        clueText: clue.text,
+        arrayIndex: index % 6,
+      },
+      roomId || ""
+    );
     setShowAnswer(true);
   };
 
@@ -227,7 +235,7 @@ const GameCard = ({ clue, index, round }: Props) => {
 
     setIsFlipped(true);
 
-    socket?.emit("Host selects a clue", clue);
+    socket?.emit("Host selects a clue", clue, roomId || "");
 
     if (isAudioClue) {
       // let audioRef render first
@@ -246,11 +254,15 @@ const GameCard = ({ clue, index, round }: Props) => {
 
   const handleSetWager = () => {
     // seend daily double amount ot server
-    socket?.emit("A player sets daily double wager", {
-      dailyDoubleAmount,
-      arrayIndex: index % 6,
-      clueText: clue.text,
-    });
+    socket?.emit(
+      "A player sets daily double wager",
+      {
+        dailyDoubleAmount,
+        arrayIndex: index % 6,
+        clueText: clue.text,
+      },
+      roomId || ""
+    );
     // socket?.emit("Host activates the buzzers");
 
     setShowDailyDoubleScreen(false);

@@ -452,7 +452,11 @@ function CreateGame() {
                 onBlur={() => {
                   setIsEditGameName(false);
 
-                  socket?.emit("create a new game", gameState);
+                  socket?.emit(
+                    "create a new game",
+                    gameState,
+                    globalGameState?.guid || ""
+                  );
                 }}
               />
             ) : (

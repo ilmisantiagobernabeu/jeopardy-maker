@@ -2,10 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import GameCard from "./GameCard";
 import "./App.scss";
 import { useGlobalState } from "./GlobalStateProvider";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { HamburgerMenu } from "./HamburgerMenu";
 
 function App() {
+  const { roomId } = useParams();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const game = queryParams.get("game") || "";
@@ -17,19 +18,31 @@ function App() {
 
   useEffect(() => {
     if (
+      roomId &&
       localStorage.getItem("dt-gameName") &&
       game === localStorage.getItem("dt-gameName")
     ) {
-      socket?.emit("Host loads the game board for the first time", game);
-    } else if (localStorage.getItem("dt-gameName") && socket) {
+      socket?.emit(
+        "Host loads the game board for the first time",
+        game,
+        roomId || ""
+      );
+    } else if (roomId && localStorage.getItem("dt-gameName") && socket) {
       localStorage.setItem("dt-gameName", game);
-      socket?.emit("Host changes the game", game, gameState?.players);
+      socket?.emit(
+        "Host changes the game",
+        game,
+        gameState?.players,
+        roomId || ""
+      );
     }
-  }, [socket, location, game]);
+  }, [socket, location, game, roomId]);
 
   useEffect(() => {
-    socket?.emit("Host navigates to another round", round);
-  }, [round, socket]);
+    if (roomId) {
+      socket?.emit("Host navigates to another round", round, roomId || "");
+    }
+  }, [round, socket, roomId]);
 
   const catTitles = gameState?.gameBoard.map((d) => d.category);
 
@@ -92,7 +105,7 @@ function App() {
           <div className="h-screen flex justify-center items-center">
             <Link
               className="text-white h-full w-full flex justify-center items-center text-9xl bg-[#060ce9]"
-              to={`/board?game=${game}&round=${round + 1}`}
+              to={`/board/${roomId}?game=${game}&round=${round + 1}`}
               onClick={() => {
                 setRoundOver(false);
               }}

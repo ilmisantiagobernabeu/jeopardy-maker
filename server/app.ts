@@ -8,7 +8,6 @@ import app from "./server";
 import {
   ClientToServerEvents,
   GameState,
-  PlayerObject,
   Players,
   ServerToClientEvents,
 } from "../stateTypes";
@@ -46,17 +45,15 @@ async function start() {
     console.error("Failed to connect to MongoDB...", err);
   }
 
-  let previousGameId = "";
-
   const createDefaultGameState = async (
-    newGameId = true,
+    previousRoomId = "",
     specificGameName?: string,
     previousPlayers?: Players | undefined
   ): Promise<GameState> => {
     const publicGames = await getPublicGames();
 
-    const gameId = newGameId ? uuidv4() : previousGameId;
-    previousGameId = gameId;
+    const gameId = previousRoomId || uuidv4().slice(0, 5);
+
     const previousPlayersWithoutScores: Players = Object.fromEntries(
       Object.entries(previousPlayers || {}).map(([guid, player]) => [
         guid,
@@ -66,6 +63,7 @@ async function start() {
         },
       ])
     );
+
     return {
       name: specificGameName || publicGames[Object.keys(publicGames)[0]].name,
       games: publicGames,
@@ -76,6 +74,7 @@ async function start() {
       dailyDoubleAmount: 0,
       previousClue: null,
       activeClue: null,
+      playersThatLeft: [],
       players: previousPlayersWithoutScores || {},
       gameBoard:
         publicGames[specificGameName || Object.keys(publicGames)[0]].rounds[0],
@@ -84,117 +83,143 @@ async function start() {
     };
   };
 
-  // the game state
-  let gameState = await createDefaultGameState();
-
-  let playersThatLeft: PlayerObject[] = [];
+  // global state
+  const rooms: { [roomId: string]: GameState } = {};
 
   io.on(
     "connect",
-    function (socket: Socket<ClientToServerEvents, ServerToClientEvents>) {
-      // console.log("A new client has joined", socket.id);
+    function (
+      socket: Socket<ClientToServerEvents, ServerToClientEvents> & {
+        roomId?: string;
+      }
+    ) {
+      socket.on("Host reloads the board page", (roomId) => {
+        if (!rooms[roomId]) {
+          return;
+        }
+        socket.join(roomId);
+        console.log("Host reloads the board page", roomId);
+        socket.emit("gameState updated", rooms[roomId]);
+      });
 
-      // emit to the newly connected client the existing count
-      socket.emit("gameState updated", gameState);
+      socket.on("Host visits the homepage", async () => {
+        const gameState = await createDefaultGameState();
+        const roomId = gameState.guid;
+        rooms[roomId] = gameState;
+        socket.join(roomId);
+        console.log("Host visits the homepage", roomId, Object.keys(rooms));
+        io.to(roomId).emit("gameState updated", rooms[roomId]);
+      });
 
-      socket.on("Host restarts the game", async (gameName) => {
+      socket.on("Host restarts the game", async (gameName, roomId) => {
+        if (!rooms[roomId]) {
+          return;
+        }
         console.log("Host restarts the game", gameName);
-        gameState = await createDefaultGameState(false, gameName);
-        playersThatLeft = [];
-        io.emit("gameState updated", gameState);
+        rooms[roomId] = await createDefaultGameState(roomId, gameName);
+        rooms[roomId].playersThatLeft = [];
+        io.to(roomId).emit("gameState updated", rooms[roomId]);
       });
 
       socket.on(
         "Host changes the game",
-        async (gameName: string, players: Players | undefined) => {
-          console.log("Host changes up the game", gameName);
-          gameState = await createDefaultGameState(false, gameName, players);
-          playersThatLeft = [];
-          io.emit("gameState updated", gameState);
+        async (gameName: string, players: Players | undefined, roomId) => {
+          if (!rooms[roomId]) {
+            return;
+          }
+          rooms[roomId] = await createDefaultGameState(
+            roomId,
+            gameName,
+            players
+          );
+          console.log("Host changes up the game", gameName, roomId);
+          rooms[roomId].playersThatLeft = [];
+          io.to(roomId).emit("gameState updated", rooms[roomId]);
         }
       );
 
-      socket.on("new player joined", (playerName) => {
-        // emit to EVERYONE the update game state
-        const returnedPlayer = playersThatLeft.find(
-          (player) => player?.name && player.name === playerName
-        );
-        if (returnedPlayer) {
-          gameState.players[socket.id] = returnedPlayer;
-          io.emit("existing player returned");
+      socket.on("player signed up", (playerName, roomId) => {
+        if (!rooms[roomId]) {
+          return;
         }
-        io.emit("gameState updated", gameState);
-      });
 
-      socket.on("player signed up", (playerName) => {
+        socket.roomId = roomId;
+        socket.join(roomId);
+
         console.log("A player has joined", playerName);
-        const returnedPlayer = playersThatLeft.find(
+        const returnedPlayer = rooms[roomId].playersThatLeft.find(
           (player) => player?.name && player.name === playerName
         );
         if (returnedPlayer) {
-          gameState.players[socket.id] = returnedPlayer;
+          rooms[roomId].players[socket.id] = returnedPlayer;
           socket.emit("player successfully added to game");
         } else {
-          gameState.players[socket.id] = {
+          rooms[roomId].players[socket.id] = {
             name: "",
             socketId: socket.id,
             score: 0,
           };
-          gameState.players[socket.id].name = playerName;
-          socket.emit("gameState updated", gameState);
+          rooms[roomId].players[socket.id].name = playerName;
+          socket.emit("gameState updated", rooms[roomId]);
           socket.emit("player successfully added to game");
         }
-        io.emit("gameState updated", gameState);
+        io.to(roomId).emit("gameState updated", rooms[roomId]);
       });
 
       socket.on(
         "A player answers the clue",
-        ({ value: score, clueText, arrayIndex }) => {
+        ({ value: score, clueText, arrayIndex, roomId }) => {
+          if (!rooms[roomId]) {
+            return;
+          }
           if (score < 0) {
-            if (gameState.activePlayer) {
-              gameState.incorrectGuesses.push(gameState.activePlayer);
+            if (rooms[roomId].activePlayer) {
+              rooms[roomId].incorrectGuesses.push(
+                rooms[roomId].activePlayer as string
+              );
             }
-            gameState.isBuzzerActive = true;
+            rooms[roomId].isBuzzerActive = true;
 
-            const activePlayers = Object.values(gameState.players).filter(
+            const activePlayers = Object.values(rooms[roomId].players).filter(
               (x) => x.name
             );
 
             if (
-              gameState.incorrectGuesses.length === activePlayers.length ||
-              gameState.dailyDoubleAmount
+              rooms[roomId].incorrectGuesses.length === activePlayers.length ||
+              rooms[roomId].dailyDoubleAmount
             ) {
-              const clueIndex = gameState.gameBoard[arrayIndex].clues.findIndex(
-                (clue) => clue.text === clueText
-              );
-              gameState.gameBoard[arrayIndex].clues[clueIndex].alreadyPlayed =
-                true;
-              gameState.incorrectGuesses = [];
-              gameState.isBuzzerActive = false;
-              if (gameState.dailyDoubleAmount) {
-                gameState.dailyDoubleAmount *= -1;
+              const clueIndex = rooms[roomId].gameBoard[
+                arrayIndex
+              ].clues.findIndex((clue) => clue.text === clueText);
+              rooms[roomId].gameBoard[arrayIndex].clues[
+                clueIndex
+              ].alreadyPlayed = true;
+              rooms[roomId].incorrectGuesses = [];
+              rooms[roomId].isBuzzerActive = false;
+              if (rooms[roomId].dailyDoubleAmount) {
+                (rooms[roomId].dailyDoubleAmount as number) *= -1;
               }
             }
           } else {
-            gameState.incorrectGuesses = [];
-            gameState.isBuzzerActive = false;
+            rooms[roomId].incorrectGuesses = [];
+            rooms[roomId].isBuzzerActive = false;
 
-            const clueIndex = gameState.gameBoard[arrayIndex].clues.findIndex(
-              (clue) => clue.text === clueText
-            );
-            gameState.gameBoard[arrayIndex].clues[clueIndex].alreadyPlayed =
+            const clueIndex = rooms[roomId].gameBoard[
+              arrayIndex
+            ].clues.findIndex((clue) => clue.text === clueText);
+            rooms[roomId].gameBoard[arrayIndex].clues[clueIndex].alreadyPlayed =
               true;
           }
 
-          const updatedScore = gameState.dailyDoubleAmount || score;
+          const updatedScore = rooms[roomId].dailyDoubleAmount || score;
           const playerThatScored =
-            gameState.activePlayer || gameState.lastActivePlayer;
+            rooms[roomId].activePlayer || rooms[roomId].lastActivePlayer;
 
-          gameState.players[playerThatScored!].score += updatedScore;
+          rooms[roomId].players[playerThatScored!].score += updatedScore;
 
-          const player = gameState.players[playerThatScored!];
+          const player = rooms[roomId].players[playerThatScored!];
 
-          gameState.history.push({
+          rooms[roomId].history.push({
             ...player,
             name: player.name || "N/A",
             socket: playerThatScored || "N/A",
@@ -203,171 +228,213 @@ async function start() {
             answer: updatedScore > 0 ? "correct" : "incorrect",
             timeStamp: new Date(),
           });
-          gameState.dailyDoubleAmount = 0;
-          gameState.activePlayer = null;
-          io.emit("gameState updated", gameState);
+          rooms[roomId].dailyDoubleAmount = 0;
+          rooms[roomId].activePlayer = null;
+          io.to(roomId).emit("gameState updated", rooms[roomId]);
         }
       );
 
       socket.on("Host modifies the score", (player) => {
-        gameState.players[player.socket].score += player.score;
-        gameState.history.push({
+        const { roomId } = player;
+        if (!rooms[roomId]) {
+          return;
+        }
+        rooms[roomId].players[player.socket].score += player.score;
+        rooms[roomId].history.push({
           name: player.name,
           score: player.score,
-          totalScore: gameState.players[player.socket].score,
+          totalScore: rooms[roomId].players[player.socket].score,
           answer: player.score > 0 ? "correct" : "incorrect",
           timeStamp: new Date(),
           socket: player.socket,
         });
-        io.emit("gameState updated", gameState);
+        io.to(roomId).emit("gameState updated", rooms[roomId]);
       });
 
-      socket.on("Host selects a clue", (activeClue) => {
-        gameState.previousClue = gameState.activeClue;
-        gameState.activeClue = activeClue;
-        io.emit("gameState updated", gameState);
+      socket.on("Host selects a clue", (activeClue, roomId) => {
+        if (!rooms[roomId]) {
+          return;
+        }
+        rooms[roomId].previousClue = rooms[roomId].activeClue;
+        rooms[roomId].activeClue = activeClue;
+        io.to(roomId).emit("gameState updated", rooms[roomId]);
       });
 
-      socket.on("Host deselects a clue", () => {
-        gameState.isBuzzerActive = false;
-        gameState.activeClue = gameState.previousClue;
-        io.emit("gameState updated", gameState);
+      socket.on("Host deselects a clue", (roomId) => {
+        if (!rooms[roomId]) {
+          return;
+        }
+        rooms[roomId].isBuzzerActive = false;
+        rooms[roomId].activeClue = rooms[roomId].previousClue;
+        io.to(roomId).emit("gameState updated", rooms[roomId]);
       });
 
       socket.on(
         "A player sets daily double wager",
-        ({ dailyDoubleAmount, clueText, arrayIndex }) => {
-          gameState.dailyDoubleAmount = dailyDoubleAmount;
+        ({ dailyDoubleAmount, clueText, arrayIndex }, roomId) => {
+          if (!rooms[roomId]) {
+            return;
+          }
+          rooms[roomId].dailyDoubleAmount = dailyDoubleAmount;
         }
       );
 
       socket.on(
         "Host loads the game board for the first time",
-        (gameName = "steveo") => {
+        (gameName = "steveo", roomId) => {
+          if (!rooms[roomId]) {
+            return;
+          }
           console.log("Host loads the game board for the first time", gameName);
-          gameState.name = gameName;
-          gameState.gameBoard = gameState.games[gameName].rounds[0];
-          io.emit("gameState updated", gameState);
+          rooms[roomId].name = gameName;
+          rooms[roomId].gameBoard = rooms[roomId].games[gameName].rounds[0];
+          io.to(roomId).emit("gameState updated", rooms[roomId]);
         }
       );
 
-      socket.on("Host activates the buzzers", () => {
-        gameState.isBuzzerActive = !gameState.isBuzzerActive;
-        io.emit("gameState updated", gameState);
+      socket.on("Host activates the buzzers", (roomId) => {
+        if (!rooms[roomId]) {
+          return;
+        }
+        rooms[roomId].isBuzzerActive = !rooms[roomId].isBuzzerActive;
+        io.to(roomId).emit("gameState updated", rooms[roomId]);
       });
 
-      socket.on("A player hits the buzzer", () => {
-        if (gameState.activePlayer) return;
-        gameState.activePlayer = socket.id;
-        gameState.lastActivePlayer = socket.id;
-        gameState.isBuzzerActive = false;
-        io.emit("gameState updated", gameState);
+      socket.on("A player hits the buzzer", (roomId) => {
+        if (!rooms[roomId]) {
+          return;
+        }
+        if (rooms[roomId].activePlayer) return;
+        rooms[roomId].activePlayer = socket.id;
+        rooms[roomId].lastActivePlayer = socket.id;
+        rooms[roomId].isBuzzerActive = false;
+        io.to(roomId).emit("gameState updated", rooms[roomId]);
       });
 
-      socket.on("A player with a button hits the buzzer", (color) => {
-        if (gameState.activePlayer) return;
-        gameState.activePlayer = color;
-        gameState.lastActivePlayer = color;
-        gameState.isBuzzerActive = false;
-        io.emit("gameState updated", gameState);
+      socket.on("A player with a button hits the buzzer", (color, roomId) => {
+        if (!rooms[roomId]) {
+          return;
+        }
+        if (rooms[roomId].activePlayer) return;
+        rooms[roomId].activePlayer = color;
+        rooms[roomId].lastActivePlayer = color;
+        rooms[roomId].isBuzzerActive = false;
+        io.to(roomId).emit("gameState updated", rooms[roomId]);
       });
 
-      socket.on("Host navigates to another round", (round) => {
+      socket.on("Host navigates to another round", (round, roomId) => {
+        if (!rooms[roomId]) {
+          return;
+        }
         console.log("Host navigates to another round, round: ", round);
         // console.log("navigate 1st round", data);
-        gameState.gameBoard = gameState.games[gameState.name].rounds[round - 1];
-        io.emit("gameState updated", gameState);
+        rooms[roomId].gameBoard =
+          rooms[roomId].games[rooms[roomId].name].rounds[round - 1];
+        io.to(roomId).emit("gameState updated", rooms[roomId]);
       });
 
-      socket.on("No player knows the answer", ({ clueText, arrayIndex }) => {
-        gameState.incorrectGuesses = [];
-        gameState.isBuzzerActive = false;
-        const clueIndex = gameState.gameBoard[arrayIndex].clues.findIndex(
-          (clue) => clue.text === clueText
-        );
-        gameState.gameBoard[arrayIndex].clues[clueIndex].alreadyPlayed = true;
-        io.emit("gameState updated", gameState);
-      });
-
-      socket.on("a player disconnected", () => {
-        // if they had a name and a score (>0) and left, let them rejoin with old score
-        if (
-          gameState.players[socket.id]?.name &&
-          gameState.players[socket.id]?.score &&
-          !playersThatLeft
-            .map((player) => player.name)
-            .includes(gameState.players[socket.id]?.name)
-        ) {
-          playersThatLeft.push(gameState.players[socket.id]);
+      socket.on(
+        "No player knows the answer",
+        ({ clueText, arrayIndex }, roomId) => {
+          if (!rooms[roomId]) {
+            return;
+          }
+          rooms[roomId].incorrectGuesses = [];
+          rooms[roomId].isBuzzerActive = false;
+          const clueIndex = rooms[roomId].gameBoard[arrayIndex].clues.findIndex(
+            (clue) => clue.text === clueText
+          );
+          rooms[roomId].gameBoard[arrayIndex].clues[clueIndex].alreadyPlayed =
+            true;
+          io.to(roomId).emit("gameState updated", rooms[roomId]);
         }
-        delete gameState.players[socket.id];
-        // emit to EVERYONE the update game state
-        io.emit("gameState updated", gameState);
-      });
+      );
 
-      socket.on("Host adds a team with a button", ({ playerName, color }) => {
-        gameState.players[color] = {
-          name: playerName,
-          socketId: color,
-          color,
-          score: 0,
-        };
-        // emit to EVERYONE the update game state
-        io.emit("gameState updated", gameState);
-      });
+      socket.on(
+        "Host adds a team with a button",
+        ({ playerName, color }, roomId) => {
+          if (!rooms[roomId]) {
+            return;
+          }
+          rooms[roomId].players[color] = {
+            name: playerName,
+            socketId: color,
+            color,
+            score: 0,
+          };
+          // emit to EVERYONE the update game state
+          io.to(roomId).emit("gameState updated", rooms[roomId]);
+        }
+      );
 
-      socket.on("Team selects a daily double clue", () => {
-        if (!gameState.lastActivePlayer) {
+      socket.on("Team selects a daily double clue", (roomId) => {
+        if (!rooms[roomId]) {
+          return;
+        }
+        if (!rooms[roomId].lastActivePlayer) {
           const firstPlayer =
-            Object.entries(gameState.players || {}).find(
+            Object.entries(rooms[roomId].players || {}).find(
               ([_, player]) => player.name
             )?.[0] || null;
-          gameState.lastActivePlayer = firstPlayer;
+          rooms[roomId].lastActivePlayer = firstPlayer;
         }
-        io.emit("gameState updated", gameState);
+        io.to(roomId).emit("gameState updated", rooms[roomId]);
       });
 
-      socket.on("update player score manually", (socketId, newScore) => {
-        const oldScore = gameState.players[socketId].score;
-        const diff = newScore - oldScore;
-        gameState.players[socketId].score = newScore;
+      socket.on(
+        "update player score manually",
+        (socketId, newScore, roomId) => {
+          if (!rooms[roomId]) {
+            return;
+          }
+          const oldScore = rooms[roomId].players[socketId].score;
+          const diff = newScore - oldScore;
+          rooms[roomId].players[socketId].score = newScore;
 
-        const player = gameState.players[socketId];
-        gameState.history.push({
-          name: player.name || "",
-          score: diff,
-          totalScore: gameState.players[player.socketId].score,
-          answer: diff > 0 ? "correct" : "incorrect",
-          timeStamp: new Date(),
-          socket: player.socketId,
-        });
-        // emit to EVERYONE the update game state
-        io.emit("gameState updated", gameState);
-      });
+          const player = rooms[roomId].players[socketId];
+          rooms[roomId].history.push({
+            name: player.name || "",
+            score: diff,
+            totalScore: rooms[roomId].players[player.socketId].score,
+            answer: diff > 0 ? "correct" : "incorrect",
+            timeStamp: new Date(),
+            socket: player.socketId,
+          });
+          // emit to EVERYONE the update game state
+          io.to(roomId).emit("gameState updated", rooms[roomId]);
+        }
+      );
 
       socket.on("disconnect", function () {
-        // if they had a name and left, let them rejoin with old score
-        if (gameState.players[socket.id]?.name) {
-          playersThatLeft.push(gameState.players[socket.id]);
+        const roomId = socket.roomId || "";
+        if (!rooms[roomId]) {
+          return;
         }
-        delete gameState.players[socket.id];
+        // if they had a name and left, let them rejoin with old score
+        if (rooms[roomId].players[socket.id]?.name) {
+          rooms[roomId].playersThatLeft.push(rooms[roomId].players[socket.id]);
+        }
+        delete rooms[roomId].players[socket.id];
         // emit to EVERYONE the update game state
-        io.emit("gameState updated", gameState);
+        io.to(roomId).emit("gameState updated", rooms[roomId]);
       });
 
-      socket.on("create a new game", async function (game) {
+      socket.on("create a new game", async function (game, roomId) {
+        if (!rooms[roomId]) {
+          return;
+        }
         try {
           const existingGame = await Game.findOne({ name: game.name });
 
           if (existingGame) {
             try {
               const editedGame = await updateGame(game);
-              gameState.games[game.name] = game;
+              rooms[roomId].games[game.name] = game;
               console.log(
                 `Updated the ${game.name} game successfully!`,
                 editedGame
               );
-              io.emit("gameState updated", gameState);
+              io.to(roomId).emit("gameState updated", rooms[roomId]);
             } catch (err: any) {
               console.error(
                 "Error: There was an issue updating this game to the database...",
@@ -384,8 +451,8 @@ async function start() {
           });
 
           if (newGame) {
-            gameState.games[newGame.name] = newGame.gameObject;
-            io.emit("gameState updated", gameState);
+            rooms[roomId].games[newGame.name] = newGame.gameObject;
+            io.to(roomId).emit("gameState updated", rooms[roomId]);
           }
         } catch (err: any) {
           console.error(
@@ -395,13 +462,16 @@ async function start() {
         }
       });
 
-      socket.on("delete a game", function (gameFileName) {
+      socket.on("delete a game", function (gameFileName, roomId) {
+        if (!rooms[roomId]) {
+          return;
+        }
         try {
           deleteGame(gameFileName);
-          const updatedGames = { ...gameState.games };
+          const updatedGames = { ...rooms[roomId].games };
           delete updatedGames[gameFileName];
-          gameState.games = updatedGames;
-          io.emit("gameState updated", gameState);
+          rooms[roomId].games = updatedGames;
+          io.to(roomId).emit("gameState updated", rooms[roomId]);
         } catch (err) {
           console.log(
             "Error: couldn't delete game file: ",

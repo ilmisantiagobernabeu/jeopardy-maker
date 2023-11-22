@@ -86,7 +86,7 @@ const EditModal = ({
   index,
   round,
 }: EditModalProps) => {
-  const { socket } = useGlobalState();
+  const { gameState, socket } = useGlobalState();
   const [isDailyDouble, setIsDailyDouble] = useState(
     clue.isDailyDouble || false
   );
@@ -314,7 +314,11 @@ const EditModal = ({
                   clueIndex
                 ].alreadyPlayed = false;
 
-                socket?.emit("create a new game", newGameState);
+                socket?.emit(
+                  "create a new game",
+                  newGameState,
+                  gameState?.guid || ""
+                );
 
                 return newGameState;
               });

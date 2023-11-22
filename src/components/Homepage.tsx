@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { QRCode } from "./QR";
 import { useGlobalState } from "./GlobalStateProvider";
@@ -20,10 +20,16 @@ function generateRandomString(length = 5) {
 }
 
 const Homepage = () => {
-  const { gameState, setGameState, socket } = useGlobalState();
+  const { gameState, socket } = useGlobalState();
+
+  useEffect(() => {
+    socket?.emit("Host visits the homepage");
+  }, [socket]);
+
   return (
     <PageWrapper>
       <h1 className="text-7xl font-bold font-korinna gold-text">BUZZINGA</h1>
+
       <div className="flex gap-16 items-start max-w-4xl flex-col sm:flex-row">
         <div className="flex flex-col gap-4">
           <h2 className="flex items-center gap-2 font-bold text-2xl leading-none">
@@ -32,6 +38,10 @@ const Homepage = () => {
           <Link to="/qr" target="_blank">
             <QRCode />
           </Link>
+          <p className="font-bold text-2xl leading-none">
+            Session Name:{" "}
+            <span className="text-center gold-text">{gameState?.guid}</span>
+          </p>
         </div>
         <div className="flex flex-col gap-4">
           <h2 className="flex items-center gap-2 font-bold text-2xl leading-none">
@@ -50,10 +60,14 @@ const Homepage = () => {
                         socket?.emit(
                           "Host changes the game",
                           game.name,
-                          gameState?.players
+                          gameState?.players,
+                          gameState?.guid || ""
                         );
                         localStorage.setItem("dt-gameName", game.name);
-                        window.open(`/board?game=${game.name}`, "_blank");
+                        window.open(
+                          `/board/${gameState?.guid}?game=${game.name}`,
+                          "_blank"
+                        );
                       }}
                       className="hover:text-gold focus:text-gold font-semibold transition-colors duration-200 text-left flex-grow"
                     >
@@ -74,7 +88,11 @@ const Homepage = () => {
                           );
 
                           if (response) {
-                            socket?.emit("delete a game", game.name);
+                            socket?.emit(
+                              "delete a game",
+                              game.name,
+                              gameState?.guid || ""
+                            );
                           }
                         }}
                         disabled={game.name === "history-101"}

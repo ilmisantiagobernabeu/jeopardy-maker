@@ -20,7 +20,7 @@ export const Debug = () => {
   }, [keys.length]);
 
   if (!gameState) {
-    return null;
+    return <div className="text-white">No gameState</div>;
   }
 
   return (

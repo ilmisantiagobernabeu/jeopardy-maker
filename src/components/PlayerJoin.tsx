@@ -1,36 +1,23 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useGlobalState } from "./GlobalStateProvider";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { PageWrapper } from "./PageWrapper";
 import { requestScreenWakeLock } from "../hooks/requestScreenWakeLock";
 
 const PlayerJoin = () => {
+  const { roomId } = useParams();
   const inputRef = useRef<HTMLInputElement | null>(null);
   const { gameState, socket } = useGlobalState();
   const [playerName, setPlayerName] = useState(
     localStorage.getItem("dt-playerName") || ""
   );
-  const previousGameGuid = useRef("");
+  const [sessionName, setSessionName] = useState(roomId || "");
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (gameState?.guid) {
-      // reload page when the game guid changes on the server
-      if (
-        previousGameGuid.current &&
-        previousGameGuid.current !== gameState.guid
-      ) {
-        location.reload();
-      } else {
-        previousGameGuid.current = gameState.guid;
-      }
-    }
-  }, [gameState?.guid]);
-
   function handleSubmission(localPlayerName: string) {
-    socket?.emit("player signed up", localPlayerName);
-    localStorage.setItem(`dt-${gameState?.guid}-playerName`, localPlayerName);
+    socket?.emit("player signed up", localPlayerName, sessionName || "");
+    localStorage.setItem(`dt-${sessionName}-playerName`, localPlayerName);
     localStorage.setItem(`dt-playerName`, localPlayerName);
   }
 
@@ -52,22 +39,26 @@ const PlayerJoin = () => {
     setPlayerName(e.target.value);
   }
 
+  function handleSessionChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setSessionName(e.target.value);
+  }
+
   useEffect(() => {
-    const localName = localStorage.getItem(`dt-${gameState?.guid}-playerName`);
+    const localName = localStorage.getItem(`dt-${sessionName}-playerName`);
 
     if (localName) {
       setPlayerName(localName);
       handleSubmission(localName);
     }
-  }, [gameState?.guid]);
+  }, [sessionName]);
 
   useEffect(() => {
     if (socket) {
       socket.on("player successfully added to game", () => {
-        navigate("/buzzer");
+        navigate(`/buzzer/${sessionName}`);
       });
     }
-  }, [socket]);
+  }, [sessionName, socket]);
 
   useEffect(() => {
     inputRef?.current?.focus();
@@ -81,31 +72,50 @@ const PlayerJoin = () => {
           background-color: #060ce9;
         }`}
         </style>
-        <div className="flex flex-col gap-4 items-center">
-          <label
-            htmlFor="playerJoin"
-            className="font-bold text-2xl leading-none text-center normal-case"
-          >
-            Select a team name
-          </label>
-          <input
-            id="playerJoin"
-            type="text"
-            placeholder="Team Name"
-            className="w-full max-w-lg px-4 py-2 text-black"
-            value={playerName}
-            onChange={handleChange}
-            ref={inputRef}
-            autoFocus
-          />
-        </div>
-        <div className="flex gap-4 mt-4">
-          <button
-            className="primary-btn disabled:opacity-40"
-            disabled={!playerName.trim()}
-          >
-            Join Game
-          </button>
+        <div className="flex flex-col gap-8">
+          <div className="flex flex-col gap-4">
+            <label
+              htmlFor="sessionName"
+              className="font-bold text-2xl leading-none normal-case"
+            >
+              Session name
+            </label>
+            <input
+              id="sessionName"
+              type="text"
+              placeholder="e.g. abcde"
+              className="w-full max-w-lg px-4 py-2 text-black"
+              value={sessionName}
+              onChange={handleSessionChange}
+            />
+          </div>
+          <div className="flex flex-col gap-4">
+            <label
+              htmlFor="playerJoin"
+              className="font-bold text-2xl leading-none normal-case"
+            >
+              Select a team name
+            </label>
+            <input
+              id="playerJoin"
+              type="text"
+              placeholder="Team Name"
+              className="w-full max-w-lg px-4 py-2 text-black"
+              value={playerName}
+              onChange={handleChange}
+              ref={inputRef}
+              autoFocus
+            />
+          </div>
+
+          <div className="flex gap-4">
+            <button
+              className="primary-btn disabled:opacity-40"
+              disabled={!playerName.trim() || sessionName.trim().length !== 5}
+            >
+              Join Game
+            </button>
+          </div>
         </div>
       </form>
     </PageWrapper>

@@ -14,6 +14,7 @@ const History = () => {
       name: player.name,
       socket: player.socket,
       score: player.score * -2,
+      roomId: gameState?.guid || "",
     });
   };
 

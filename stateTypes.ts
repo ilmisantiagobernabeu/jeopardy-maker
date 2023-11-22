@@ -55,6 +55,7 @@ export interface GameState {
   guid: string;
   games: Game;
   players: Players;
+  playersThatLeft: PlayerObject[];
   isBuzzerActive: boolean;
   activePlayer: string | null;
   lastActivePlayer: string | null;
@@ -69,7 +70,6 @@ export interface GameState {
 export interface ServerToClientEvents {
   ["gameState updated"]: (gameStateFromServer: GameState) => void;
   ["player successfully added to game"]: () => void;
-  ["existing player returned"]: () => void;
 }
 
 type DailyDoubleObject = {
@@ -79,44 +79,65 @@ type DailyDoubleObject = {
 };
 
 export interface ClientToServerEvents {
-  ["new player joined"]: (playerName?: string | null) => void;
-  ["a player disconnected"]: () => void;
-  ["player signed up"]: (playerName: string) => void;
+  ["old player rejoined"]: (roomId: string, playerName?: string | null) => void;
+  ["player signed up"]: (playerName: string, roomId: string) => void;
   ["A player answers the clue"]: (clueObject: {
     value: number;
     arrayIndex: number;
     clueText?: string;
+    roomId: string;
   }) => void;
   ["Host modifies the score"]: (playerObject: {
     socket: string;
     name: string;
     score: number;
+    roomId: string;
   }) => void;
-  ["Host activates the buzzers"]: () => void;
-  ["A player hits the buzzer"]: () => void;
-  ["A player with a button hits the buzzer"]: (color: ButtonColor) => void;
-  ["No player knows the answer"]: (clueObject: {
-    arrayIndex: number;
-    clueText: string;
-  }) => void;
-  ["Host selects a clue"]: (clueObject: Clue) => void;
-  ["Host deselects a clue"]: () => void;
-  ["Host navigates to another round"]: (round: number) => void;
-  ["A player sets daily double wager"]: (
-    dailyDoubleObject: DailyDoubleObject
+  ["Host activates the buzzers"]: (roomId: string) => void;
+  ["A player hits the buzzer"]: (roomId: string) => void;
+  ["A player with a button hits the buzzer"]: (
+    color: ButtonColor,
+    roomId: string
   ) => void;
-  ["Host loads the game board for the first time"]: (game: string) => void;
-  ["Host restarts the game"]: (gameName: string) => void;
+  ["No player knows the answer"]: (
+    clueObject: {
+      arrayIndex: number;
+      clueText: string;
+    },
+    roomId: string
+  ) => void;
+  ["Host selects a clue"]: (clueObject: Clue, roomId: string) => void;
+  ["Host deselects a clue"]: (roomId: string) => void;
+  ["Host navigates to another round"]: (round: number, roomId: string) => void;
+  ["A player sets daily double wager"]: (
+    dailyDoubleObject: DailyDoubleObject,
+    roomId: string
+  ) => void;
+  ["Host loads the game board for the first time"]: (
+    game: string,
+    roomId: string
+  ) => void;
+  ["Host restarts the game"]: (gameName: string, roomId: string) => void;
+  ["Host visits the homepage"]: () => void;
+  ["Host reloads the board page"]: (roomId: string) => void;
   ["Host changes the game"]: (
     gameName: string,
-    players: Players | undefined
+    players: Players | undefined,
+    roomId: string
   ) => void;
-  ["Host adds a team with a button"]: (teamObject: {
-    playerName: string;
-    color: ButtonColor | "";
-  }) => void;
-  ["Team selects a daily double clue"]: () => void;
-  ["create a new game"]: (game: SingleGame) => void;
-  ["delete a game"]: (gameName: string) => void;
-  ["update player score manually"]: (socketId: string, score: number) => void;
+  ["Host adds a team with a button"]: (
+    teamObject: {
+      playerName: string;
+      color: ButtonColor | "";
+    },
+    roomId: string
+  ) => void;
+  ["Team selects a daily double clue"]: (roomId: string) => void;
+  ["create a new game"]: (game: SingleGame, roomId: string) => void;
+  ["delete a game"]: (gameName: string, roomId: string) => void;
+  ["update player score manually"]: (
+    socketId: string,
+    score: number,
+    roomId: string
+  ) => void;
 }

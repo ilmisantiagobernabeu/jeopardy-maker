@@ -66,7 +66,8 @@ const Scoreboard = () => {
                             socket?.emit(
                               "update player score manually",
                               socketId,
-                              Number(newScore)
+                              Number(newScore),
+                              gameState?.guid || ""
                             );
                           }
                         }}

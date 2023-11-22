@@ -16,10 +16,14 @@ const Teams = () => {
   );
 
   const addPlayer = () => {
-    socket?.emit("Host adds a team with a button", {
-      playerName,
-      color,
-    });
+    socket?.emit(
+      "Host adds a team with a button",
+      {
+        playerName,
+        color,
+      },
+      gameState?.guid || ""
+    );
 
     // reset state
     setPlayerName("");

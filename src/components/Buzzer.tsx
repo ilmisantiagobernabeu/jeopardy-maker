@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useGlobalState } from "./GlobalStateProvider";
 import cx from "classnames";
 import buzzerSound from "../sounds/buzzer.mp3";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import CloseIcon from "../icons/CloseIcon";
 import { requestScreenWakeLock } from "../hooks/requestScreenWakeLock";
 
 const Buzzer = () => {
+  const { roomId } = useParams();
   const { socket, gameState } = useGlobalState();
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(true);
@@ -14,7 +15,7 @@ const Buzzer = () => {
   const handleClick = () => {
     const sound = new Audio(buzzerSound);
     sound.play();
-    socket?.emit("A player hits the buzzer");
+    socket?.emit("A player hits the buzzer", roomId || "");
   };
 
   const isActivePlayer =
@@ -38,8 +39,8 @@ const Buzzer = () => {
   }, []);
 
   useEffect(() => {
-    if (hasDisconnected) {
-      navigate("/join");
+    if (hasDisconnected && localStorage.getItem("bz-previousRoomId")) {
+      navigate(`/join/${localStorage.getItem("bz-previousRoomId")}`);
     }
   }, [hasDisconnected]);
 

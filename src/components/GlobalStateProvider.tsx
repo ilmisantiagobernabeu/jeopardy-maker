@@ -35,21 +35,25 @@ const GlobalStateProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    // when connected, look for when the server emits the updated game state
+    if (!socket) {
+      return;
+    }
+    // listen for when the server emits the updated game state
     socket?.on("gameState updated", function (gameStateFromServer: GameState) {
       // set the new game state on the client
       setGameState(gameStateFromServer);
+      localStorage.setItem("bz-previousRoomId", gameStateFromServer.guid);
     });
 
     socket?.on("connect", () => {
-      socket?.emit(
-        "new player joined",
-        localStorage.getItem(`dt-${gameState?.guid}-playerName`)
-      );
-    });
-
-    socket?.on("disconnect", () => {
-      socket?.emit("a player disconnected");
+      // when socket first connects or reconnects,
+      // tell the server to send just them the existing server state
+      if (localStorage.getItem("bz-previousRoomId")) {
+        socket?.emit(
+          "Host reloads the board page",
+          localStorage.getItem("bz-previousRoomId") || ""
+        );
+      }
     });
   }, [socket]);
 
