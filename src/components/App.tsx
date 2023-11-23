@@ -5,6 +5,18 @@ import { useGlobalState } from "./GlobalStateProvider";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { HamburgerMenu } from "./HamburgerMenu";
 import { useGetUpdatedGameState } from "../hooks/useGetUpdatedGameState";
+import { Clue, ClueType } from "../../stateTypes";
+
+function preloadResources(clues: Clue[]): void {
+  clues.forEach((clue) => {
+    const link = document.createElement("link");
+    link.rel = "preload";
+    link.href = `https://buzzinga.s3.us-east-2.amazonaws.com/${clue.text}`;
+    link.as = clue.type.toLowerCase();
+
+    document.head.appendChild(link);
+  });
+}
 
 function App() {
   const { roomId } = useParams();
@@ -18,6 +30,16 @@ function App() {
   const timeout = useRef<NodeJS.Timeout | null>(null);
 
   useGetUpdatedGameState();
+
+  useEffect(() => {
+    const resourceClues = gameState?.gameBoard
+      .flatMap((round) => round.clues)
+      .filter((clue) => [ClueType.AUDIO, ClueType.IMAGE].includes(clue.type));
+
+    if (resourceClues) {
+      preloadResources(resourceClues);
+    }
+  }, [gameState?.gameBoard]);
 
   useEffect(() => {
     if (
