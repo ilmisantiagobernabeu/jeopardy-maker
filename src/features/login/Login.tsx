@@ -18,16 +18,18 @@ export function Login() {
 
   if (!session) {
     return (
-      <div className="w-full h-full flex justify-center items-center bg-[#121425] ">
-        <div className="w-full max-w-lg">
+      <div className="w-full h-full flex justify-center items-center bg-[#060ce9]">
+        <div className="flex flex-col gap-4 w-full max-w-lg">
           <h1 className="text-7xl font-bold font-korinna gold-text text-center">
             BUZZINGA
           </h1>
-          <Auth
-            supabaseClient={supabase}
-            appearance={{ theme: ThemeSupa }}
-            providers={[]}
-          />
+          <div className="bg-white rounded-lg px-6 py-3 shadow-md">
+            <Auth
+              supabaseClient={supabase}
+              appearance={{ theme: ThemeSupa }}
+              providers={[]}
+            />
+          </div>
         </div>
       </div>
     );
