@@ -96,8 +96,6 @@ async function start() {
         publicGames[specificGameName || Object.keys(publicGames)[0]].rounds[0],
       incorrectGuesses: [],
       history: [],
-      timer: null,
-      firstPlayerToBuzzIn: null,
     };
   };
 
@@ -350,44 +348,15 @@ async function start() {
         io.to(roomId).emit("gameState updated", rooms[roomId]);
       });
 
-      socket.on("A player hits the buzzer", (roomId, timestamp) => {
+      socket.on("A player hits the buzzer", (roomId) => {
         if (!rooms[roomId]) {
           return;
         }
         if (rooms[roomId].activePlayer) return;
-
-        if (rooms[roomId].firstPlayerToBuzzIn === null) {
-          // If no player has clicked the button yet, consider the current player as the first
-          rooms[roomId].firstPlayerToBuzzIn = {
-            socketId: socket.id,
-            timestamp: timestamp,
-          };
-
-          // Start a half-second timer
-          rooms[roomId].timer = setTimeout(() => {
-            console.log(
-              "Time is up! First player:",
-              rooms[roomId].firstPlayerToBuzzIn
-            );
-            rooms[roomId].activePlayer =
-              rooms[roomId].firstPlayerToBuzzIn?.socketId || "";
-            rooms[roomId].lastActivePlayer =
-              rooms[roomId].firstPlayerToBuzzIn?.socketId || "";
-            rooms[roomId].isBuzzerActive = false;
-            // Reset variables for the next round
-            rooms[roomId].firstPlayerToBuzzIn = null;
-            rooms[roomId].timer = null;
-
-            io.to(roomId).emit("gameState updated", rooms[roomId]);
-          }, 500);
-        } else if (
-          timestamp < (rooms[roomId].firstPlayerToBuzzIn?.timestamp || Infinity)
-        ) {
-          rooms[roomId].firstPlayerToBuzzIn = {
-            socketId: socket.id,
-            timestamp: timestamp,
-          };
-        }
+        rooms[roomId].activePlayer = socket.id;
+        rooms[roomId].lastActivePlayer = socket.id;
+        rooms[roomId].isBuzzerActive = false;
+        io.to(roomId).emit("gameState updated", rooms[roomId]);
       });
 
       socket.on("A player with a button hits the buzzer", (color, roomId) => {

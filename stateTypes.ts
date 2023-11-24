@@ -55,11 +55,6 @@ export type Game = {
   [key: string]: SingleGame;
 };
 
-export type FirstPlayerToBuzzIn = {
-  socketId: string;
-  timestamp: number;
-};
-
 export interface GameState {
   name: string;
   guid: string;
@@ -75,8 +70,6 @@ export interface GameState {
   previousClue: Clue | null;
   dailyDoubleAmount?: number;
   history: HistoryPlayer[];
-  firstPlayerToBuzzIn: FirstPlayerToBuzzIn | null;
-  timer: NodeJS.Timeout | null;
 }
 
 export interface ServerToClientEvents {
@@ -106,7 +99,7 @@ export interface ClientToServerEvents {
     roomId: string;
   }) => void;
   ["Host activates the buzzers"]: (roomId: string) => void;
-  ["A player hits the buzzer"]: (roomId: string, timestamp: number) => void;
+  ["A player hits the buzzer"]: (roomId: string) => void;
   ["A player with a button hits the buzzer"]: (
     color: ButtonColor,
     roomId: string

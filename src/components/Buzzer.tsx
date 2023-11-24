@@ -15,11 +15,7 @@ const Buzzer = () => {
   const handleClick = () => {
     const sound = new Audio(buzzerSound);
     sound.play();
-    socket?.emit(
-      "A player hits the buzzer",
-      roomId || "",
-      new Date().getTime()
-    );
+    socket?.emit("A player hits the buzzer", roomId || "");
   };
 
   const isActivePlayer =
