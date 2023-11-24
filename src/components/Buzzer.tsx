@@ -3,7 +3,6 @@ import { useGlobalState } from "./GlobalStateProvider";
 import cx from "classnames";
 import buzzerSound from "../sounds/buzzer.mp3";
 import { useNavigate, useParams } from "react-router-dom";
-import CloseIcon from "../icons/CloseIcon";
 import { requestScreenWakeLock } from "../hooks/requestScreenWakeLock";
 
 const Buzzer = () => {
@@ -64,17 +63,30 @@ const Buzzer = () => {
       <button
         type="button"
         className={cx(
-          "fixed font-bold inset-0 h-full w-full leading-none text-[100vw] color-white appearance-none",
+          "fixed font-bold inset-0 h-full w-full leading-none color-white appearance-none",
           {
-            "bg-red-500 disabled:opacity-40": !isActivePlayer,
+            "bg-red-500": !isActivePlayer,
+            "bg-opacity-50": disabled,
             "bg-green-500": isActivePlayer,
           }
         )}
         disabled={disabled}
         onClick={handleClick}
       >
-        {disabled && !isActivePlayer && (
-          <CloseIcon className="w-full h-full p-12" />
+        {disabled && !gameState?.activePlayer && (
+          <p className="text-3xl">Buzzer deactivated</p>
+        )}
+        {!disabled && !isActivePlayer && (
+          <p className="text-3xl">Buzzer activated!</p>
+        )}
+        {gameState?.activePlayer && (
+          <p className="text-3xl">
+            Buzzed in:{" "}
+            {isActivePlayer
+              ? "YOU"
+              : gameState?.players?.[gameState.activePlayer || ""]?.name}
+            !
+          </p>
         )}
       </button>
       <div className="fixed top-0 w-full left-0 text-center pt-10 text-6xl pointer-events-none">
