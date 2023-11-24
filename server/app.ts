@@ -1,6 +1,5 @@
 import dotenv from "dotenv";
 dotenv.config();
-import { v4 as uuidv4 } from "uuid";
 import { Server, Socket } from "socket.io";
 import mongoose from "mongoose";
 import http from "http";
@@ -47,12 +46,14 @@ async function start() {
   }
 
   const createDefaultGameState = async ({
-    previousRoomId = "",
+    newRoomId = "",
+    previousRoomId,
     specificGameName,
     previousPlayers,
     userId,
   }: Partial<{
-    previousRoomId: string;
+    newRoomId: string;
+    previousRoomId?: string | null;
     specificGameName?: string;
     previousPlayers?: Players | undefined;
     userId?: string;
@@ -61,7 +62,7 @@ async function start() {
       ? await getUserGames(userId)
       : await getPublicGames();
 
-    const gameId = previousRoomId || uuidv4().slice(0, 5);
+    const gameId = previousRoomId || newRoomId;
 
     const previousPlayersWithoutScores: Players = Object.fromEntries(
       Object.entries(previousPlayers || {}).map(([guid, player]) => [
@@ -71,13 +72,6 @@ async function start() {
           score: 0,
         },
       ])
-    );
-
-    console.log(
-      "why you do this",
-      Object.keys(publicGames),
-      specificGameName,
-      Object.keys(publicGames)[0]
     );
 
     return {
@@ -109,9 +103,9 @@ async function start() {
         roomId?: string;
       }
     ) {
-      socket.on("Host reloads the board page", (roomId) => {
+      socket.on("Host reloads the board page", async (roomId) => {
         if (!rooms[roomId]) {
-          return;
+          rooms[roomId] = await createDefaultGameState({ newRoomId: roomId });
         }
         socket.join(roomId);
         console.log("Host reloads the board page", roomId);
@@ -123,7 +117,7 @@ async function start() {
           return;
         }
         const games = await createDefaultGameState({
-          previousRoomId: roomId,
+          newRoomId: roomId,
           userId,
         });
         rooms[roomId] = games;
@@ -131,14 +125,24 @@ async function start() {
         io.to(roomId).emit("gameState updated", rooms[roomId]);
       });
 
-      socket.on("Host visits the homepage", async () => {
-        const gameState = await createDefaultGameState();
-        const roomId = gameState.guid;
-        rooms[roomId] = gameState;
-        socket.join(roomId);
-        console.log("Host visits the homepage", roomId, Object.keys(rooms));
-        io.to(roomId).emit("gameState updated", rooms[roomId]);
-      });
+      socket.on(
+        "Host refreshes the room code",
+        async (newRoomId, previousRoomId) => {
+          const gameState = await createDefaultGameState({
+            newRoomId: newRoomId || undefined,
+          });
+          const roomId = gameState.guid;
+          rooms[roomId] = gameState;
+          socket.join(roomId);
+          console.log("Host refreshes the room code", newRoomId, {
+            roomId,
+          });
+          io.to(roomId).emit("gameState updated", rooms[roomId]);
+          if (previousRoomId) {
+            io.to(previousRoomId).emit("gameState updated", rooms[roomId]);
+          }
+        }
+      );
 
       socket.on("Host restarts the game", async (gameName, roomId, userId) => {
         if (!rooms[roomId]) {
@@ -146,7 +150,7 @@ async function start() {
         }
         console.log("Host restarts the game", roomId, gameName);
         rooms[roomId] = await createDefaultGameState({
-          previousRoomId: roomId,
+          newRoomId: roomId,
           specificGameName: gameName,
           userId,
         });
@@ -168,7 +172,7 @@ async function start() {
           console.log("Host changes up the game", gameName, roomId, userId);
           rooms[roomId] = await createDefaultGameState({
             userId,
-            previousRoomId: roomId,
+            newRoomId: roomId,
             specificGameName: gameName,
             previousPlayers: players,
           });
@@ -254,19 +258,24 @@ async function start() {
           const playerThatScored =
             rooms[roomId].activePlayer || rooms[roomId].lastActivePlayer;
 
-          rooms[roomId].players[playerThatScored!].score += updatedScore;
+          // @TODO: when the player leaves after they buzz in but before they are marked correct/incorrect
+          // we can't update their score. look into this
+          if (playerThatScored && rooms[roomId].players[playerThatScored]) {
+            rooms[roomId].players[playerThatScored].score += updatedScore;
 
-          const player = rooms[roomId].players[playerThatScored!];
+            const player = rooms[roomId].players[playerThatScored!];
 
-          rooms[roomId].history.push({
-            ...player,
-            name: player.name || "N/A",
-            socket: playerThatScored || "N/A",
-            score: updatedScore,
-            totalScore: player.score,
-            answer: updatedScore > 0 ? "correct" : "incorrect",
-            timeStamp: new Date(),
-          });
+            rooms[roomId].history.push({
+              ...player,
+              name: player.name || "N/A",
+              socket: playerThatScored || "N/A",
+              score: updatedScore,
+              totalScore: player.score,
+              answer: updatedScore > 0 ? "correct" : "incorrect",
+              timeStamp: new Date(),
+            });
+          }
+
           rooms[roomId].dailyDoubleAmount = 0;
           rooms[roomId].activePlayer = null;
           io.to(roomId).emit("gameState updated", rooms[roomId]);
@@ -459,7 +468,13 @@ async function start() {
           return;
         }
         // if they had a name and left, let them rejoin with old score
-        if (rooms[roomId].players?.[socket.id]?.name) {
+        console.log("DISCONNECTED", socket.id, rooms[roomId].playersThatLeft);
+        if (
+          rooms[roomId].players?.[socket.id]?.name &&
+          !rooms[roomId].playersThatLeft.find(
+            (player) => player.socketId === socket.id
+          )
+        ) {
           rooms[roomId].playersThatLeft.push(rooms[roomId].players[socket.id]);
         }
         delete rooms[roomId].players[socket.id];

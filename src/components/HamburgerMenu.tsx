@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import MenuIcon from "../icons/MenuIcon";
-import { Link, NavLink, useNavigate, useParams } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import CloseIcon from "../icons/CloseIcon";
 import cx from "classnames";
 import WarningIcon from "../icons/WarningIcon";
@@ -16,7 +16,6 @@ export const HamburgerMenu = ({
   isVisible = true,
   onPointerOver,
 }: HamburgerMenuProps) => {
-  const { roomId } = useParams();
   const [isOpen, setIsOpen] = useState(false);
   const [isVisibleLocal, setIsVisibleLocal] = useState(isVisible);
   const { gameState, session, socket } = useGlobalState();
@@ -87,9 +86,7 @@ export const HamburgerMenu = ({
             </li>
             <li>
               <NavLink
-                to={`/board/${roomId}/${
-                  gameState?.name ? `?game=${gameState.name}` : ""
-                }`}
+                to={`/board${gameState?.name ? `?game=${gameState.name}` : ""}`}
                 className={({ isActive }) =>
                   isActive
                     ? "text-gold hover:underline focus:underline"
@@ -101,7 +98,7 @@ export const HamburgerMenu = ({
             </li>
             <li>
               <NavLink
-                to={`/scoreboard/${roomId}`}
+                to={`/scoreboard`}
                 className={({ isActive }) =>
                   isActive
                     ? "text-gold hover:underline focus:underline"
@@ -113,7 +110,7 @@ export const HamburgerMenu = ({
             </li>
             <li>
               <NavLink
-                to={`/history/${roomId}`}
+                to={`/history`}
                 className={({ isActive }) =>
                   isActive
                     ? "text-gold hover:underline focus:underline"
@@ -125,7 +122,7 @@ export const HamburgerMenu = ({
             </li>
             <li>
               <NavLink
-                to={`/teams/${roomId}`}
+                to={`/teams`}
                 className={({ isActive }) =>
                   isActive
                     ? "text-gold hover:underline focus:underline"
@@ -143,7 +140,7 @@ export const HamburgerMenu = ({
                   );
 
                   if (response) {
-                    navigate(`/answer/${roomId}`);
+                    navigate(`/answer`);
                   }
                 }}
               >
@@ -166,7 +163,7 @@ export const HamburgerMenu = ({
                       socket?.emit(
                         "Host restarts the game",
                         gameState.name,
-                        roomId || "",
+                        localStorage.getItem("bz-roomId") || "",
                         localStorage.getItem("bz-userId") || ""
                       );
                     }

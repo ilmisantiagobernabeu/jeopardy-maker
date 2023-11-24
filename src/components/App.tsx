@@ -19,7 +19,6 @@ function preloadResources(clues: Clue[]): void {
 }
 
 function App() {
-  const { roomId } = useParams();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const game = queryParams.get("game") || "";
@@ -43,32 +42,40 @@ function App() {
 
   useEffect(() => {
     if (
-      roomId &&
+      localStorage.getItem("bz-roomId") &&
       localStorage.getItem("dt-gameName") &&
       game === localStorage.getItem("dt-gameName")
     ) {
       socket?.emit(
         "Host loads the game board for the first time",
         game,
-        roomId || ""
+        localStorage.getItem("bz-roomId") || ""
       );
-    } else if (roomId && localStorage.getItem("dt-gameName") && socket) {
+    } else if (
+      localStorage.getItem("bz-roomId") &&
+      localStorage.getItem("dt-gameName") &&
+      socket
+    ) {
       localStorage.setItem("dt-gameName", game);
       socket?.emit(
         "Host changes the game",
         game,
         gameState?.players,
-        roomId || "",
+        localStorage.getItem("bz-roomId") || "",
         localStorage.getItem("bz-userId") || ""
       );
     }
-  }, [socket, location, game, roomId]);
+  }, [socket, location, game]);
 
   useEffect(() => {
-    if (roomId) {
-      socket?.emit("Host navigates to another round", round, roomId || "");
+    if (localStorage.getItem("bz-roomId")) {
+      socket?.emit(
+        "Host navigates to another round",
+        round,
+        localStorage.getItem("bz-roomId") || ""
+      );
     }
-  }, [round, socket, roomId]);
+  }, [round, socket]);
 
   const catTitles = gameState?.gameBoard.map((d) => d.category);
 
@@ -119,7 +126,7 @@ function App() {
           <div className="h-screen flex justify-center items-center">
             <Link
               className="text-white h-full w-full flex justify-center items-center text-9xl bg-[#060ce9]"
-              to={`/scoreboard/${roomId}`}
+              to={`/scoreboard`}
               onClick={() => {
                 setRoundOver(false);
               }}
@@ -131,7 +138,7 @@ function App() {
           <div className="h-screen flex justify-center items-center">
             <Link
               className="text-white h-full w-full flex justify-center items-center text-9xl bg-[#060ce9]"
-              to={`/board/${roomId}?game=${game}&round=${round + 1}`}
+              to={`/board?game=${game}&round=${round + 1}`}
               onClick={() => {
                 setRoundOver(false);
               }}

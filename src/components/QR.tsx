@@ -23,7 +23,7 @@ export const QRCode = ({ className = "" }: { className?: string }) => {
         }`}
       </style>
       <QRCodeLib
-        value={getUrl(gameState?.guid)}
+        value={getUrl(localStorage.getItem("bz-roomId") || "")}
         className="w-full h-full max-w-fit"
         preserveAspectRatio="xMidYMid slice"
       />

@@ -51,12 +51,18 @@ const GlobalStateProvider = ({ children }: { children: React.ReactNode }) => {
     socket?.on("gameState updated", function (gameStateFromServer: GameState) {
       // set the new game state on the client
       setGameState(gameStateFromServer);
+      localStorage.setItem("bz-roomId", gameStateFromServer.guid);
+      console.log("hello thar", gameStateFromServer.guid);
     });
   }, [socket]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      localStorage.setItem("bz-session", JSON.stringify(session));
+      if (session) {
+        localStorage.setItem("bz-session", JSON.stringify(session));
+      } else {
+        localStorage.removeItem("bz-session");
+      }
       localStorage.setItem("bz-userId", session?.user.id || "");
       setSession(session);
     });
@@ -64,7 +70,11 @@ const GlobalStateProvider = ({ children }: { children: React.ReactNode }) => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      localStorage.setItem("bz-session", JSON.stringify(session));
+      if (session) {
+        localStorage.setItem("bz-session", JSON.stringify(session));
+      } else {
+        localStorage.removeItem("bz-session");
+      }
       localStorage.setItem("bz-userId", session?.user.id || "");
       setSession(session);
     });

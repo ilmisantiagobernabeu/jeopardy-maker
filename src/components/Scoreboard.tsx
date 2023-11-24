@@ -15,11 +15,11 @@ function formatScore(score: number) {
 
 const Scoreboard = () => {
   const { gameState, socket } = useGlobalState() || {};
-  const { roomId, name } = useParams();
+  const { name } = useParams();
 
   useGetUpdatedGameState();
 
-  // if a user goes to /scoreboard/:roomId/[team name], let's show just their score
+  // if a user goes to /scoreboard/[team name], let's show just their score
   const singlePlayerStats =
     name &&
     gameState?.players &&
@@ -70,7 +70,7 @@ const Scoreboard = () => {
                               "update player score manually",
                               socketId,
                               Number(newScore),
-                              roomId || ""
+                              localStorage.getItem("bz-roomId") || ""
                             );
                           }
                         }}

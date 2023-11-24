@@ -127,7 +127,10 @@ export interface ClientToServerEvents {
     roomId: string,
     userId: string
   ) => void;
-  ["Host visits the homepage"]: () => void;
+  ["Host refreshes the room code"]: (
+    roomId: string | null,
+    previousRoomId: string | null
+  ) => void;
   ["Get user created boards"]: (roomId: string, userId: string) => void;
   ["Host reloads the board page"]: (roomId: string) => void;
   ["Host changes the game"]: (

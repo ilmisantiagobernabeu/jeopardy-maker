@@ -2,11 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useGlobalState } from "./GlobalStateProvider";
 import cx from "classnames";
 import buzzerSound from "../sounds/buzzer.mp3";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { requestScreenWakeLock } from "../hooks/requestScreenWakeLock";
 
 const Buzzer = () => {
-  const { roomId } = useParams();
   const { socket, gameState } = useGlobalState();
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(true);
@@ -14,7 +13,10 @@ const Buzzer = () => {
   const handleClick = () => {
     const sound = new Audio(buzzerSound);
     sound.play();
-    socket?.emit("A player hits the buzzer", roomId || "");
+    socket?.emit(
+      "A player hits the buzzer",
+      localStorage.getItem("bz-roomId") || ""
+    );
   };
 
   const isActivePlayer =
@@ -38,8 +40,8 @@ const Buzzer = () => {
   }, []);
 
   useEffect(() => {
-    if (hasDisconnected && roomId) {
-      navigate(`/join/${roomId}`);
+    if (hasDisconnected && localStorage.getItem("bz-roomId")) {
+      navigate(`/join/${localStorage.getItem("bz-roomId")}`);
     }
   }, [hasDisconnected]);
 
@@ -92,6 +94,12 @@ const Buzzer = () => {
       <div className="fixed top-0 w-full left-0 text-center pt-10 text-6xl pointer-events-none">
         <p className="text-6xl uppercase font-semibold">
           Team {gameState?.players?.[socket?.id || ""]?.name}
+        </p>
+        <p className="text-sm">
+          Session Name:{" "}
+          <span className="font-semibold">
+            {localStorage.getItem("bz-roomId")}
+          </span>
         </p>
       </div>
       <ul className="fixed bottom-0 w-full left-0 pb-10 text-2xl px-4 pointer-events-none">

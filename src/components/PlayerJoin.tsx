@@ -55,7 +55,7 @@ const PlayerJoin = () => {
   useEffect(() => {
     if (socket) {
       socket.on("player successfully added to game", () => {
-        navigate(`/buzzer/${sessionName}`);
+        navigate(`/buzzer`);
       });
     }
   }, [sessionName, socket]);

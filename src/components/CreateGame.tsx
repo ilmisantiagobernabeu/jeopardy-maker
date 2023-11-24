@@ -387,8 +387,6 @@ function CreateGame() {
   const round = Number(queryParams.get("round") || 1);
   const gameName = queryParams.get("name") || "";
 
-  const { roomId } = useParams();
-
   const { socket, gameState: globalGameState, session } = useGlobalState();
 
   const [gameState, setGameState] = useState<SingleGame>(
@@ -462,7 +460,7 @@ function CreateGame() {
                   socket?.emit(
                     "create a new game",
                     gameState,
-                    roomId || "",
+                    localStorage.getItem("bz-roomId") || "",
                     localStorage.getItem("bz-userId") || ""
                   );
                 }}
@@ -488,7 +486,7 @@ function CreateGame() {
           <div className="flex gap-4">
             <p>
               <Link
-                to={`/create/${roomId}?name=${gameState.name}&round=1`}
+                to={`/create?name=${gameState.name}&round=1`}
                 className="block border rounded-md py-1 px-2"
               >
                 Round 1
@@ -496,7 +494,7 @@ function CreateGame() {
             </p>
             <p>
               <Link
-                to={`/create/${roomId}?name=${gameState.name}&round=2`}
+                to={`/create?name=${gameState.name}&round=2`}
                 className="block border rounded-md py-1 px-2"
               >
                 Round 2
