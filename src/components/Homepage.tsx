@@ -27,11 +27,6 @@ const Homepage = () => {
   useEffect(() => {
     if (!localStorage.getItem("bz-roomId")) {
       socket?.emit("Host refreshes the room code", uuidv4().slice(0, 5), null);
-    } else {
-      socket?.emit(
-        "Host reloads the board page",
-        localStorage.getItem("bz-roomId") || ""
-      );
     }
   }, [socket]);
 
@@ -85,7 +80,7 @@ const Homepage = () => {
         <div className="flex flex-col gap-4">
           <h2 className="flex items-center gap-2 font-bold text-2xl leading-none">
             <DesktopIcon width={22} className="fill-white" />
-            Select a board
+            Host
           </h2>
           {Object.keys(gameState?.games || {}).length === 0 ? (
             <p>No existing games found</p>
@@ -204,7 +199,6 @@ const Homepage = () => {
                                     );
                                   }
                                 }}
-                                disabled={game.name === "history-101"}
                               >
                                 <DeleteIcon height={18} />
                               </button>
