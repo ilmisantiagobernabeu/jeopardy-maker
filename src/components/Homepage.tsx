@@ -43,10 +43,12 @@ const Homepage = () => {
 
   return (
     <PageWrapper>
-      <h1 className="text-7xl font-bold font-korinna gold-text">BUZZINGA</h1>
-      <div className="flex gap-16 items-start max-w-4xl flex-col sm:flex-row">
-        <div className="flex flex-col gap-4">
-          <h2 className="flex items-center gap-2 font-bold text-2xl leading-none">
+      <h1 className="text-5xl sm:text-7xl font-bold font-korinna gold-text">
+        BUZZINGA
+      </h1>
+      <div className="flex gap-8 sm:gap-16 items-start justify-center max-w-4xl flex-col sm:flex-row w-full">
+        <div className="flex flex-col gap-4 justify-center sm:justify-start w-full sm:w-auto">
+          <h2 className="flex items-center justify-center sm:justify-start gap-2 font-bold text-2xl leading-none">
             <PhoneIcon width={14} className=" fill-white" /> Teams join{" "}
             <Link
               to={`/join/${localStorage.getItem("bz-roomId")}`}
@@ -77,7 +79,7 @@ const Homepage = () => {
             )}
           </p>
         </div>
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 w-full sm:w-auto">
           <h2 className="flex items-center gap-2 font-bold text-2xl leading-none">
             <DesktopIcon width={22} className="fill-white" />
             Host
