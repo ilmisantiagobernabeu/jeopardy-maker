@@ -2,14 +2,15 @@ import React, { useEffect, useState } from "react";
 import { useGlobalState } from "./GlobalStateProvider";
 import cx from "classnames";
 import buzzerSound from "../sounds/buzzer.mp3";
-import { useNavigate } from "react-router-dom";
 import { requestScreenWakeLock } from "../hooks/requestScreenWakeLock";
+import { useGetUpdatedGameState } from "../hooks/useGetUpdatedGameState";
 
 const Buzzer = () => {
   const { socket, gameState } = useGlobalState();
-  const navigate = useNavigate();
   const [showModal, setShowModal] = useState(true);
   const [ping, setPing] = useState<number | null>(null);
+
+  useGetUpdatedGameState();
 
   const handleClick = () => {
     const sound = new Audio(buzzerSound);
@@ -21,7 +22,7 @@ const Buzzer = () => {
   };
 
   useEffect(() => {
-    socket?.on("pong", (initialTimeStamp) => {
+    const handlePong = (initialTimeStamp: number) => {
       const newPing = new Date().getTime() - initialTimeStamp;
       setPing(newPing);
       socket?.emit(
@@ -29,10 +30,15 @@ const Buzzer = () => {
         localStorage.getItem("bz-roomId") || "",
         newPing
       );
-    });
+    };
+    socket?.on("pong", handlePong);
     if (localStorage.getItem("bz-roomId")) {
       socket?.emit("ping", new Date().getTime());
     }
+
+    return () => {
+      socket?.off("pong", handlePong);
+    };
   }, [socket]);
 
   const isActivePlayer =
@@ -47,19 +53,14 @@ const Buzzer = () => {
       gameState?.incorrectGuesses.includes(socket!.id)
   );
 
-  const hasDisconnected = !gameState?.players?.[socket?.id || ""];
-
   useEffect(() => {
-    window.addEventListener("visibilitychange", () => {
-      window.location.reload();
-    });
-  }, []);
-
-  useEffect(() => {
-    if (hasDisconnected && localStorage.getItem("bz-roomId")) {
-      navigate(`/join/${localStorage.getItem("bz-roomId")}`);
-    }
-  }, [hasDisconnected]);
+    const sessionName = localStorage.getItem("bz-roomId") || "";
+    socket?.emit(
+      "player signed up",
+      localStorage.getItem(`dt-${sessionName}-playerName`) || "",
+      sessionName
+    );
+  }, [socket]);
 
   return (
     <div className="fixed inset-0 h-full w-full bg-white font-korinna">

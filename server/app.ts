@@ -107,7 +107,7 @@ async function start() {
         socket.emit("pong", timestamp);
       });
       socket.on("Set ping of a phone buzzer", (roomId, timestamp) => {
-        if (!rooms[roomId]) {
+        if (!rooms[roomId] || !rooms[roomId].players[socket.id]) {
           return;
         }
         rooms[roomId].players[socket.id].ping = timestamp;

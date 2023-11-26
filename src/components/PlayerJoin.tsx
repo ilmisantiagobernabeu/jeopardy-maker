@@ -44,21 +44,16 @@ const PlayerJoin = () => {
   }
 
   useEffect(() => {
-    const localName = localStorage.getItem(`dt-${sessionName}-playerName`);
+    const goToBuzzer = () => {
+      alert("navigate to buzzer page!");
+      navigate("/buzzer");
+    };
+    socket?.on("player successfully added to game", goToBuzzer);
 
-    if (localName) {
-      setPlayerName(localName);
-      handleSubmission(localName);
-    }
-  }, [sessionName]);
-
-  useEffect(() => {
-    if (socket) {
-      socket.on("player successfully added to game", () => {
-        navigate(`/buzzer`);
-      });
-    }
-  }, [sessionName, socket]);
+    return () => {
+      socket?.off("player successfully added to game", goToBuzzer);
+    };
+  }, [socket]);
 
   useEffect(() => {
     inputRef?.current?.focus();
