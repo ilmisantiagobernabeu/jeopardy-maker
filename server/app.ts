@@ -202,8 +202,13 @@ async function start() {
         const returnedPlayer = rooms[roomId].playersThatLeft.find(
           (player) => player?.name && player.name === playerName
         );
+        const filteredPlayersThatLeft = rooms[roomId].playersThatLeft.filter(
+          (player) => player?.name && player.name !== playerName
+        );
         if (returnedPlayer) {
+          returnedPlayer.socketId = socket.id;
           rooms[roomId].players[socket.id] = returnedPlayer;
+          rooms[roomId].playersThatLeft = filteredPlayersThatLeft;
           socket.emit("player successfully added to game");
         } else {
           rooms[roomId].players[socket.id] = {
@@ -483,7 +488,7 @@ async function start() {
         if (
           rooms[roomId].players?.[socket.id]?.name &&
           !rooms[roomId].playersThatLeft.find(
-            (player) => player.socketId === socket.id
+            (player) => player.name === rooms[roomId].players[socket.id].name
           )
         ) {
           rooms[roomId].playersThatLeft.push(rooms[roomId].players[socket.id]);

@@ -16,7 +16,7 @@ const PlayerJoin = () => {
   const navigate = useNavigate();
 
   function handleSubmission(localPlayerName: string) {
-    socket?.emit("player signed up", localPlayerName, sessionName || "");
+    socket?.emit("player signed up", localPlayerName.trim(), sessionName || "");
     localStorage.setItem(`dt-${sessionName}-playerName`, localPlayerName);
     localStorage.setItem(`dt-playerName`, localPlayerName);
   }
