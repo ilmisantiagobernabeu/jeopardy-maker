@@ -51,7 +51,7 @@ const Homepage = () => {
           <h2 className="flex items-center justify-center sm:justify-start gap-2 font-bold text-2xl leading-none">
             <PhoneIcon width={14} className=" fill-white" /> Teams join{" "}
             <Link
-              to={`/join/${localStorage.getItem("bz-roomId")}`}
+              to={`/join/${gameState?.guid}`}
               className="gold-text hover:underline focus:underline"
             >
               here

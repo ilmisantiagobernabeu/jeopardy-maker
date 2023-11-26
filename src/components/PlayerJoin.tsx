@@ -45,7 +45,6 @@ const PlayerJoin = () => {
 
   useEffect(() => {
     const goToBuzzer = () => {
-      alert("navigate to buzzer page!");
       navigate("/buzzer");
     };
     socket?.on("player successfully added to game", goToBuzzer);
