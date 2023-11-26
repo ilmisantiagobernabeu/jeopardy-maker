@@ -52,7 +52,6 @@ const GlobalStateProvider = ({ children }: { children: React.ReactNode }) => {
       // set the new game state on the client
       setGameState(gameStateFromServer);
       localStorage.setItem("bz-roomId", gameStateFromServer.guid);
-      console.log("hello thar", gameStateFromServer.guid);
     });
   }, [socket]);
 

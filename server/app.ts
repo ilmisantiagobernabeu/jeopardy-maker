@@ -103,6 +103,15 @@ async function start() {
         roomId?: string;
       }
     ) {
+      socket.on("ping", (timestamp) => {
+        socket.emit("pong", timestamp);
+      });
+      socket.on("Set ping of a phone buzzer", (roomId, timestamp) => {
+        if (!rooms[roomId]) {
+          return;
+        }
+        rooms[roomId].players[socket.id].ping = timestamp;
+      });
       socket.on("Host reloads the board page", async (roomId) => {
         if (!rooms[roomId]) {
           rooms[roomId] = await createDefaultGameState({ newRoomId: roomId });
@@ -154,7 +163,7 @@ async function start() {
           specificGameName: gameName,
           userId,
         });
-        rooms[roomId].playersThatLeft = [];
+
         io.to(roomId).emit("gameState updated", rooms[roomId]);
       });
 
@@ -176,7 +185,7 @@ async function start() {
             specificGameName: gameName,
             previousPlayers: players,
           });
-          rooms[roomId].playersThatLeft = [];
+
           io.to(roomId).emit("gameState updated", rooms[roomId]);
         }
       );
@@ -201,6 +210,7 @@ async function start() {
             name: "",
             socketId: socket.id,
             score: 0,
+            ping: 0,
           };
           rooms[roomId].players[socket.id].name = playerName;
           socket.emit("gameState updated", rooms[roomId]);
@@ -418,6 +428,7 @@ async function start() {
             socketId: color,
             color,
             score: 0,
+            ping: 0,
           };
           // emit to EVERYONE the update game state
           io.to(roomId).emit("gameState updated", rooms[roomId]);

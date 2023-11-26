@@ -9,6 +9,7 @@ const Buzzer = () => {
   const { socket, gameState } = useGlobalState();
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(true);
+  const [ping, setPing] = useState<number | null>(null);
 
   const handleClick = () => {
     const sound = new Audio(buzzerSound);
@@ -18,6 +19,21 @@ const Buzzer = () => {
       localStorage.getItem("bz-roomId") || ""
     );
   };
+
+  useEffect(() => {
+    socket?.on("pong", (initialTimeStamp) => {
+      const newPing = new Date().getTime() - initialTimeStamp;
+      setPing(newPing);
+      socket?.emit(
+        "Set ping of a phone buzzer",
+        localStorage.getItem("bz-roomId") || "",
+        newPing
+      );
+    });
+    if (localStorage.getItem("bz-roomId")) {
+      socket?.emit("ping", new Date().getTime());
+    }
+  }, [socket]);
 
   const isActivePlayer =
     gameState?.activePlayer && gameState?.activePlayer === socket!.id;
@@ -62,6 +78,17 @@ const Buzzer = () => {
         Tap screen to show buzzer
       </button>
 
+      {!showModal && disabled && (
+        <button
+          className="fixed inset-0 h-full w-full z-10"
+          onClick={() => {
+            if (socket) {
+              socket.emit("ping", new Date().getTime());
+            }
+          }}
+        ></button>
+      )}
+
       <button
         type="button"
         className={cx(
@@ -100,6 +127,9 @@ const Buzzer = () => {
           <span className="font-semibold">
             {localStorage.getItem("bz-roomId")}
           </span>
+        </p>
+        <p className="text-sm">
+          Ping: <span className="font-semibold">{ping}ms</span>
         </p>
       </div>
       <ul className="fixed bottom-0 w-full left-0 pb-10 text-2xl px-4 pointer-events-none">

@@ -29,6 +29,7 @@ export interface PlayerObject {
   score: number;
   name?: string;
   color?: ButtonColor | "";
+  ping: number;
 }
 
 export interface Players {
@@ -73,6 +74,7 @@ export interface GameState {
 }
 
 export interface ServerToClientEvents {
+  ["pong"]: (timestamp: number) => void;
   ["gameState updated"]: (gameStateFromServer: GameState) => void;
   ["player successfully added to game"]: () => void;
 }
@@ -84,6 +86,8 @@ type DailyDoubleObject = {
 };
 
 export interface ClientToServerEvents {
+  ["Set ping of a phone buzzer"]: (roomId: string, timestamp: number) => void;
+  ["ping"]: (timestamp: number) => void;
   ["old player rejoined"]: (roomId: string, playerName?: string | null) => void;
   ["player signed up"]: (playerName: string, roomId: string) => void;
   ["A player answers the clue"]: (clueObject: {
