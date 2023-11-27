@@ -41,6 +41,19 @@ const Buzzer = () => {
     };
   }, [socket]);
 
+  useEffect(() => {
+    const handleSpacebar = (e: KeyboardEvent) => {
+      if (e.code === "Space") {
+        handleClick();
+      }
+    };
+    window.addEventListener("keydown", handleSpacebar);
+
+    return () => {
+      window.removeEventListener("keydown", handleSpacebar);
+    };
+  }, []);
+
   const isActivePlayer =
     gameState?.activePlayer && gameState?.activePlayer === socket!.id;
 
@@ -107,7 +120,10 @@ const Buzzer = () => {
           <p className="text-3xl">Buzzer deactivated</p>
         )}
         {!disabled && !isActivePlayer && (
-          <p className="text-3xl">Buzzer activated!</p>
+          <p className="text-3xl">
+            Buzzer activated!
+            <span className="block text-lg">(Spacebar)</span>
+          </p>
         )}
         {gameState?.activePlayer && (
           <p className="text-3xl">

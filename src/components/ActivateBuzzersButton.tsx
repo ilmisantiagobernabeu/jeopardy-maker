@@ -56,7 +56,7 @@ export const ActivateBuzzersButton = ({
             <span className="whitespace-nowrap leading-none">
               Activate Buzzers
             </span>
-            <span className="text-lg leading-none">(spacebar)</span>
+            <span className="text-lg leading-none">(Spacebar)</span>
           </p>
         )}
       </span>
