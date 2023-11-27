@@ -11,6 +11,7 @@ import Answer from "./Answer";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import { Clue, ClueType } from "../../stateTypes";
+import { ActivateBuzzersButton } from "./ActivateBuzzersButton";
 
 const COUNTDOWN_SECONDS = 25;
 
@@ -285,6 +286,14 @@ const GameCard = ({ clue, index, round }: Props) => {
       gameState?.activePlayer || gameState.lastActivePlayer || ""
     ]?.name;
 
+  const showActivateBuzzersButton = Boolean(
+    !gameState?.isBuzzerActive &&
+      !gameState?.activePlayer &&
+      !showDailyDoubleScreen &&
+      !Boolean(gameState?.dailyDoubleAmount) &&
+      !isImageClue
+  );
+
   return (
     <>
       <button
@@ -392,45 +401,12 @@ const GameCard = ({ clue, index, round }: Props) => {
           {gameState?.isBuzzerActive && (
             <NobodyKnowsButton onClick={handleNobodyKnows} />
           )}
-          {Boolean(
-            !gameState?.isBuzzerActive &&
-              !gameState?.activePlayer &&
-              !showDailyDoubleScreen &&
-              !Boolean(gameState?.dailyDoubleAmount) &&
-              !isImageClue
-          ) && (
-            <button
+          {showActivateBuzzersButton && (
+            <ActivateBuzzersButton
+              imageSeconds={imageSeconds}
+              isAudioClue={isAudioClue}
               onClick={handleBuzzerToggle}
-              className="text-green-600 disabled:opacity-30 text-6xl bg-white hover:bg-black p-4 rounded-md"
-            >
-              <span className="flex gap-4 w-full items-center">
-                {isAudioClue ? (
-                  <>
-                    <span className="whitespace-nowrap">
-                      Activating Buzzers...
-                    </span>
-                    <CircularProgressbar
-                      className="w-10 h-10"
-                      value={(imageSeconds / 5) * 100}
-                      strokeWidth={50}
-                      styles={{
-                        path: {
-                          stroke: "#dedede",
-                          fill: "#dedede",
-                          strokeLinecap: "butt",
-                        },
-                        trail: {
-                          stroke: "#ff0000",
-                          strokeLinecap: "butt",
-                        },
-                      }}
-                    />
-                  </>
-                ) : (
-                  <span className="whitespace-nowrap">Activate Buzzers</span>
-                )}
-              </span>
-            </button>
+            />
           )}
         </div>
       )}
