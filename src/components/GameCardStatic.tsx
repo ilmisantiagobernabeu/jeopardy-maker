@@ -59,6 +59,14 @@ const GameCardStatic = ({
         >
           <span className="GameCard-dollarSign">$</span>
           {value}
+          {clue.isDailyDouble && (
+            <span
+              title="Daily Double"
+              className="absolute bottom-0 right-0 p-2 w-9 h-9 text-lg [text-shadow:none] rounded-full flex items-center border-2 bg-[#d69f4c] text-[#060ce9] m-2 drop-shadow-lg"
+            >
+              DD
+            </span>
+          )}
         </div>
         {isFlipped && (
           <>
