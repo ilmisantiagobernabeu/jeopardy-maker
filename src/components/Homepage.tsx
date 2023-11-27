@@ -221,9 +221,7 @@ const Homepage = () => {
 
           <p>
             <Link
-              to={`/create/${
-                gameState?.guid
-              }?name=default-game-${generateRandomString()}`}
+              to={`/create?name=default-game-${generateRandomString()}`}
               className="primary-btn"
             >
               Create new board
