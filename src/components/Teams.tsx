@@ -59,9 +59,10 @@ const Teams = () => {
                 setColor("green");
               }}
               className={cx(
-                "rounded-full border-2 border-transparent hover:border-white focus:border-white disabled:opacity-50",
+                "rounded-full border-2 hover:enabled:border-white focus:enabled:border-white disabled:opacity-40",
                 {
-                  "border-2": color === "green",
+                  "border-white": color === "green",
+                  "border-transparent": color !== "green",
                 }
               )}
               title="Shift+Ctrl+1"
@@ -76,9 +77,10 @@ const Teams = () => {
                 setColor("yellow");
               }}
               className={cx(
-                "rounded-full border-2 border-transparent hover:border-white focus:border-white disabled:opacity-50",
+                "rounded-full border-2 hover:enabled:border-white focus:enabled:border-white disabled:opacity-40",
                 {
-                  "border-2": color === "yellow",
+                  "border-white": color === "yellow",
+                  "border-transparent": color !== "yellow",
                 }
               )}
               title="Shift+Ctrl+2"
@@ -93,9 +95,10 @@ const Teams = () => {
                 setColor("red");
               }}
               className={cx(
-                "rounded-full border-2 border-transparent hover:border-white focus:border-white disabled:opacity-50",
+                "rounded-full border-2 hover:enabled:border-white focus:enabled:border-white disabled:opacity-40",
                 {
-                  "border-2": color === "red",
+                  "border-white": color === "red",
+                  "border-transparent": color !== "red",
                 }
               )}
               title="Shift+Ctrl+3"
