@@ -22,13 +22,11 @@ export interface GameObject {
   gameBoard: GameBoard[];
 }
 
-export type ButtonColor = "green" | "yellow" | "red";
-
 export interface PlayerObject {
   socketId: string;
   score: number;
   name?: string;
-  color?: ButtonColor | "";
+  keys?: string[];
   ping: number;
 }
 
@@ -105,7 +103,7 @@ export interface ClientToServerEvents {
   ["Host activates the buzzers"]: (roomId: string) => void;
   ["A player hits the buzzer"]: (roomId: string) => void;
   ["A player with a button hits the buzzer"]: (
-    color: ButtonColor,
+    playerName: string,
     roomId: string
   ) => void;
   ["No player knows the answer"]: (
@@ -146,7 +144,7 @@ export interface ClientToServerEvents {
   ["Host adds a team with a button"]: (
     teamObject: {
       playerName: string;
-      color: ButtonColor | "";
+      keys: string[];
     },
     roomId: string
   ) => void;

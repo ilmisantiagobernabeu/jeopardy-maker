@@ -1,21 +1,22 @@
 import { useParams } from "react-router-dom";
 import { useGlobalState } from "./GlobalStateProvider";
-import cx from "classnames";
 import { useState } from "react";
-import { ButtonColor } from "../../stateTypes";
 import { PageWrapper } from "./PageWrapper";
 import { useGetUpdatedGameState } from "../hooks/useGetUpdatedGameState";
+import { KeyDetectVeil } from "./KeyDetectVeil";
+import { KeysDisplay } from "./KeysDisplay";
 
 const Teams = () => {
   const { gameState, socket } = useGlobalState() || {};
   const { name } = useParams();
   const [playerName, setPlayerName] = useState("");
-  const [color, setColor] = useState<ButtonColor | "">("");
+  const [keys, setKeys] = useState<string[]>([]);
+  const [showKeyDetectVeil, setShowKeyDetectVeil] = useState(false);
 
   useGetUpdatedGameState();
 
   const playersWithButtons = Object.values(gameState?.players || {}).filter(
-    (player) => player.name && player.color
+    (player) => Boolean(player.name && player?.keys?.length)
   );
 
   const addPlayer = () => {
@@ -23,14 +24,14 @@ const Teams = () => {
       "Host adds a team with a button",
       {
         playerName,
-        color,
+        keys,
       },
       gameState?.guid || ""
     );
 
     // reset state
     setPlayerName("");
-    setColor("");
+    setKeys([]);
   };
 
   return (
@@ -39,88 +40,51 @@ const Teams = () => {
         <h2 className="font-bold text-2xl leading-none text-center normal-case mb-2">
           Add Teams with Physical Buttons
         </h2>
-        <div className="flex gap-2 items-center">
-          <input
-            type="text"
-            className="min-w-max rounded-sm p-3 text-black"
-            placeholder="Team name"
-            value={playerName}
-            onChange={(e) => {
-              setPlayerName(e.target.value);
-            }}
-            disabled={playersWithButtons.length === 3}
-          />
-          <div className="flex gap-1 text-xl">
-            <button
-              disabled={
-                !!playersWithButtons.find((player) => player.color === "green")
-              }
-              onClick={() => {
-                setColor("green");
+        <div className="flex flex-col gap-4 items-center">
+          <div className="flex gap-4 items-center w-full">
+            <input
+              type="text"
+              className="min-w-max rounded-sm p-3 text-black"
+              placeholder="Team name"
+              value={playerName}
+              onChange={(e) => {
+                setPlayerName(e.target.value);
               }}
-              className={cx(
-                "rounded-full border-2 hover:enabled:border-white focus:enabled:border-white disabled:opacity-40",
-                {
-                  "border-white": color === "green",
-                  "border-transparent": color !== "green",
-                }
-              )}
-              title="Shift+Ctrl+1"
-            >
-              🟢
-            </button>
+            />
+            <KeysDisplay keys={keys} />
             <button
-              disabled={
-                !!playersWithButtons.find((player) => player.color === "yellow")
-              }
+              className="secondary-btn"
               onClick={() => {
-                setColor("yellow");
+                setShowKeyDetectVeil(true);
               }}
-              className={cx(
-                "rounded-full border-2 hover:enabled:border-white focus:enabled:border-white disabled:opacity-40",
-                {
-                  "border-white": color === "yellow",
-                  "border-transparent": color !== "yellow",
-                }
-              )}
-              title="Shift+Ctrl+2"
             >
-              🟡
-            </button>
-            <button
-              disabled={
-                !!playersWithButtons.find((player) => player.color === "red")
-              }
-              onClick={() => {
-                setColor("red");
-              }}
-              className={cx(
-                "rounded-full border-2 hover:enabled:border-white focus:enabled:border-white disabled:opacity-40",
-                {
-                  "border-white": color === "red",
-                  "border-transparent": color !== "red",
-                }
-              )}
-              title="Shift+Ctrl+3"
-            >
-              🔴
+              Detect Keys
             </button>
           </div>
           <button
             className="primary-btn"
             onClick={addPlayer}
-            disabled={!playerName || !color}
+            disabled={!playerName || keys.length === 0}
           >
             Add
           </button>
         </div>
+        {showKeyDetectVeil && (
+          <KeyDetectVeil
+            setKeys={setKeys}
+            onRequestClose={() => {
+              setShowKeyDetectVeil(false);
+            }}
+            players={playersWithButtons}
+          />
+        )}
         {playersWithButtons.length > 0 && (
           <div className=" text-center flex flex-wrap" key={name}>
             <table className="text-left text-xl w-full" cellPadding={10}>
               <thead className="border-b">
                 <tr>
                   <th>Name</th>
-                  <th>Color</th>
+                  <th>Key Bindings</th>
                 </tr>
               </thead>
               <tbody>
@@ -130,7 +94,9 @@ const Teams = () => {
                     className="even:bg-gray-900 even:!bg-opacity-30 "
                   >
                     <td>{player.name}</td>
-                    <td>{player.color || "No color"}</td>
+                    <td>
+                      <KeysDisplay keys={player?.keys} />
+                    </td>
                   </tr>
                 ))}
               </tbody>

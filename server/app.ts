@@ -128,6 +128,7 @@ async function start() {
         const games = await createDefaultGameState({
           newRoomId: roomId,
           userId,
+          previousPlayers: rooms[roomId].players,
         });
         rooms[roomId] = games;
         console.log("Get user created boards", { userId, roomId });
@@ -383,16 +384,19 @@ async function start() {
         io.to(roomId).emit("gameState updated", rooms[roomId]);
       });
 
-      socket.on("A player with a button hits the buzzer", (color, roomId) => {
-        if (!rooms[roomId]) {
-          return;
+      socket.on(
+        "A player with a button hits the buzzer",
+        (playerName, roomId) => {
+          if (!rooms[roomId]) {
+            return;
+          }
+          if (rooms[roomId].activePlayer) return;
+          rooms[roomId].activePlayer = playerName;
+          rooms[roomId].lastActivePlayer = playerName;
+          rooms[roomId].isBuzzerActive = false;
+          io.to(roomId).emit("gameState updated", rooms[roomId]);
         }
-        if (rooms[roomId].activePlayer) return;
-        rooms[roomId].activePlayer = color;
-        rooms[roomId].lastActivePlayer = color;
-        rooms[roomId].isBuzzerActive = false;
-        io.to(roomId).emit("gameState updated", rooms[roomId]);
-      });
+      );
 
       socket.on("Host navigates to another round", (round, roomId) => {
         if (!rooms[roomId]) {
@@ -424,14 +428,14 @@ async function start() {
 
       socket.on(
         "Host adds a team with a button",
-        ({ playerName, color }, roomId) => {
+        ({ playerName, keys }, roomId) => {
           if (!rooms[roomId]) {
             return;
           }
-          rooms[roomId].players[color] = {
+          rooms[roomId].players[playerName] = {
             name: playerName,
-            socketId: color,
-            color,
+            socketId: playerName,
+            keys,
             score: 0,
             ping: 0,
           };

@@ -11,91 +11,75 @@ import { QRCode } from "./QR";
 import CreateGame from "./CreateGame";
 import { useEffect } from "react";
 import Teams from "./Teams";
-import { ButtonColor } from "../../stateTypes";
 import buzzerSound from "../sounds/buzzer.mp3";
 import { Debug } from "./Debug";
 import { Login } from "../features/login/Login";
 
 const AppContainer = () => {
-  const { gameState, session, socket } = useGlobalState();
+  const { gameState, socket } = useGlobalState();
+
+  const playersWithButtons = Object.values(gameState?.players || {}).filter(
+    (player) => Boolean(player.name && player?.keys?.length)
+  );
 
   // Logic for physical buttons
   useEffect(() => {
+    if (playersWithButtons.length === 0) {
+      return;
+    }
+
     // Disable the button if:
     // 1. the buzzer hasn't been activated by the host
     // 2. the buzzer HAS been activated, but it's not the current player.
-    const isDisabled = (color: ButtonColor) => {
+    const isDisabled = (playerName: string) => {
       const isActivePlayer =
-        gameState?.activePlayer && gameState?.activePlayer === color;
+        gameState?.activePlayer && gameState?.activePlayer === playerName;
 
       return Boolean(
         !gameState?.isBuzzerActive ||
           (gameState?.isBuzzerActive && isActivePlayer) ||
-          gameState?.incorrectGuesses.includes(color)
+          gameState?.incorrectGuesses.includes(playerName)
       );
     };
 
+    let keyState: { [key: string]: boolean } = {};
+
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (
-        Object.keys(gameState?.players || {}).includes("green") &&
-        !isDisabled("green") &&
-        event.shiftKey &&
-        event.ctrlKey &&
-        event.code === "Digit1"
-      ) {
-        console.log("Shift + Ctrl + 1");
-        const sound = new Audio(buzzerSound);
-        sound.play();
-        socket?.emit(
-          "A player with a button hits the buzzer",
-          "green",
-          gameState?.guid || ""
-        );
-        return;
-      }
+      // Track the key state
+      keyState[event.key] = true;
 
-      if (
-        Object.keys(gameState?.players || {}).includes("yellow") &&
-        !isDisabled("yellow") &&
-        event.shiftKey &&
-        event.ctrlKey &&
-        event.code === "Digit2"
-      ) {
-        console.log("Shift + Ctrl + 2");
-        const sound = new Audio(buzzerSound);
-        sound.play();
-        socket?.emit(
-          "A player with a button hits the buzzer",
-          "yellow",
-          gameState?.guid || ""
-        );
-        return;
-      }
+      playersWithButtons.forEach((player) => {
+        // Check if all keys for the current player are pressed
+        const allKeysPressed = player?.keys?.every((key) => keyState[key]);
+        const playerName = player.name || "";
 
-      if (
-        Object.keys(gameState?.players || {}).includes("red") &&
-        !isDisabled("red") &&
-        event.shiftKey &&
-        event.ctrlKey &&
-        event.code === "Digit3"
-      ) {
-        console.log("Shift + Ctrl + 3");
-        const sound = new Audio(buzzerSound);
-        sound.play();
-        socket?.emit(
-          "A player with a button hits the buzzer",
-          "red",
-          gameState?.guid || ""
-        );
-        return;
-      }
+        if (allKeysPressed && !isDisabled(playerName)) {
+          // Do something for the current player
+          console.log(`${player.name} buzzed in!`);
+          const sound = new Audio(buzzerSound);
+          sound.play();
+          socket?.emit(
+            "A player with a button hits the buzzer",
+            playerName,
+            gameState?.guid || ""
+          );
+        }
+      });
     };
+
+    function handleKeyUp(): void {
+      // Empty the key state
+      keyState = {};
+    }
+
     window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
     };
-  }, [gameState, socket]);
+  }, [gameState, socket, playersWithButtons]);
 
   const isAuthenticated = localStorage.getItem("bz-userId") || "";
 
