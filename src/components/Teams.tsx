@@ -5,6 +5,7 @@ import { PageWrapper } from "./PageWrapper";
 import { useGetUpdatedGameState } from "../hooks/useGetUpdatedGameState";
 import { KeyDetectVeil } from "./KeyDetectVeil";
 import { KeysDisplay } from "./KeysDisplay";
+import DeleteIcon from "../icons/DeleteIcon";
 
 const Teams = () => {
   const { gameState, socket } = useGlobalState() || {};
@@ -19,7 +20,7 @@ const Teams = () => {
     (player) => Boolean(player.name && player?.keys?.length)
   );
 
-  const addPlayer = () => {
+  const addPlayer = (keys: string[]) => {
     socket?.emit(
       "Host adds a team with a button",
       {
@@ -34,6 +35,10 @@ const Teams = () => {
     setKeys([]);
   };
 
+  const teamNameExistsAlready = Object.values(gameState?.players || {})
+    .map((player) => player.name?.toLowerCase())
+    .includes(playerName.toLowerCase());
+
   return (
     <PageWrapper>
       <div className="GameCard flex flex-col gap-4">
@@ -41,37 +46,39 @@ const Teams = () => {
           Add Teams with Physical Buttons
         </h2>
         <div className="flex flex-col gap-4 items-center">
-          <div className="flex gap-4 items-center w-full">
-            <input
-              type="text"
-              className="min-w-max rounded-sm p-3 text-black"
-              placeholder="Team name"
-              value={playerName}
-              onChange={(e) => {
-                setPlayerName(e.target.value);
-              }}
-            />
-            <KeysDisplay keys={keys} />
+          <div className="flex gap-4 items-start w-full">
+            <div className="flex flex-col gap-2">
+              <input
+                type="text"
+                className="min-w-max rounded-sm p-3 text-black text-sm"
+                placeholder="Team name"
+                value={playerName}
+                onChange={(e) => {
+                  setPlayerName(e.target.value);
+                }}
+              />
+              {teamNameExistsAlready && (
+                <p className="text-color-error rounded-sm px-2 py-13 bg-red-500 text-center">
+                  Team name already exists.
+                </p>
+              )}
+            </div>
             <button
               className="secondary-btn"
               onClick={() => {
                 setShowKeyDetectVeil(true);
               }}
+              disabled={!playerName || teamNameExistsAlready}
             >
               Detect Keys
             </button>
           </div>
-          <button
-            className="primary-btn"
-            onClick={addPlayer}
-            disabled={!playerName || keys.length === 0}
-          >
-            Add
-          </button>
         </div>
         {showKeyDetectVeil && (
           <KeyDetectVeil
-            setKeys={setKeys}
+            keys={keys}
+            playerName={playerName}
+            onSubmit={addPlayer}
             onRequestClose={() => {
               setShowKeyDetectVeil(false);
             }}
@@ -85,6 +92,7 @@ const Teams = () => {
                 <tr>
                   <th>Name</th>
                   <th>Key Bindings</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -96,6 +104,21 @@ const Teams = () => {
                     <td>{player.name}</td>
                     <td>
                       <KeysDisplay keys={player?.keys} />
+                    </td>
+                    <td>
+                      <div className="flex gap-4 justify-center">
+                        <button
+                          onClick={() => {
+                            socket?.emit(
+                              "Delete the player",
+                              localStorage.getItem("bz-roomId") || "",
+                              player.socketId
+                            );
+                          }}
+                        >
+                          <DeleteIcon width={20} />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}

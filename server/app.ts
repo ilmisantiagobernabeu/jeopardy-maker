@@ -439,6 +439,7 @@ async function start() {
             score: 0,
             ping: 0,
           };
+          console.log("Host adds a team with a button", playerName);
           // emit to EVERYONE the update game state
           io.to(roomId).emit("gameState updated", rooms[roomId]);
         }
@@ -563,6 +564,15 @@ async function start() {
             err
           );
         }
+      });
+
+      socket.on("Delete the player", async (roomId, socketId) => {
+        if (!rooms[roomId]) {
+          return;
+        }
+
+        delete rooms[roomId].players[socketId];
+        io.to(roomId).emit("gameState updated", rooms[roomId]);
       });
     }
   );

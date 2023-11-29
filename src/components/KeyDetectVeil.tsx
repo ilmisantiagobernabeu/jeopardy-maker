@@ -26,13 +26,17 @@ function areArraysEqual(arr1: string[], arr2: string[]): boolean {
 }
 
 type KeyDetectVeilProps = {
-  setKeys: React.Dispatch<React.SetStateAction<string[]>>;
   onRequestClose: () => void;
   players: PlayerObject[];
+  keys: string[];
+  playerName: string;
+  onSubmit: (keys: string[]) => void;
 };
 
 export const KeyDetectVeil = ({
-  setKeys,
+  keys,
+  playerName,
+  onSubmit,
   onRequestClose,
   players,
 }: KeyDetectVeilProps) => {
@@ -61,7 +65,7 @@ export const KeyDetectVeil = ({
       <button onClick={onRequestClose} className="absolute top-0 left-0 p-8">
         <CloseIcon width={16} />
       </button>
-      <div className="flex flex-col gap-8 max-w-lg">
+      <div className="flex flex-col gap-8 max-w-lg items-center">
         <h2 className="text-3xl">Detecting Keys...</h2>
         <div className="flex gap-2 justify-center items-center">
           <KeysDisplay keys={localKeys} />
@@ -84,10 +88,12 @@ export const KeyDetectVeil = ({
           <button
             className="primary-btn"
             onClick={() => {
-              setKeys(localKeys);
-              onRequestClose();
+              onSubmit(localKeys);
+              setTimeout(() => {
+                onRequestClose();
+              }, 0);
             }}
-            disabled={sameKeyBindingsExists}
+            disabled={localKeys.length === 0 || sameKeyBindingsExists}
           >
             Done
           </button>

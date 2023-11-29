@@ -1,12 +1,15 @@
 import mongoose from "mongoose";
 import { SingleGame } from "../../stateTypes";
 
-const gameSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  userId: { type: String, required: true },
-  isPublic: { type: Boolean, default: false },
-  gameObject: { type: mongoose.Schema.Types.Mixed, required: true },
-});
+const gameSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true },
+    userId: { type: String, required: true },
+    isPublic: { type: Boolean, default: false },
+    gameObject: { type: mongoose.Schema.Types.Mixed, required: true },
+  },
+  { timestamps: true }
+);
 
 // Game Class
 export const Game = mongoose.model("Game", gameSchema);

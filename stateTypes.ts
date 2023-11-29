@@ -84,6 +84,7 @@ type DailyDoubleObject = {
 };
 
 export interface ClientToServerEvents {
+  ["Delete the player"]: (roomId: string, socketId: string) => void;
   ["Set ping of a phone buzzer"]: (roomId: string, timestamp: number) => void;
   ["ping"]: (timestamp: number) => void;
   ["old player rejoined"]: (roomId: string, playerName?: string | null) => void;

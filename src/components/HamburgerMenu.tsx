@@ -129,7 +129,7 @@ export const HamburgerMenu = ({
                     : "hover:underline focus:underline"
                 }
               >
-                Add Teams
+                Buttons & Buzzers
               </NavLink>
             </li>
             <li>
