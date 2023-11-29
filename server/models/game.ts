@@ -49,7 +49,9 @@ function convertToObject(publicGames: GameInMongoose) {
 
 export async function getPublicGames(opts = {}) {
   try {
-    const publicGames = await Game.find({ isPublic: true, ...opts });
+    const publicGames = await Game.find({ isPublic: true, ...opts }).sort({
+      updatedAt: -1,
+    });
 
     const result = convertToObject(publicGames);
 
@@ -66,7 +68,7 @@ export async function getUserGames(userId: string) {
   try {
     const publicGames = await Game.find({
       $or: [{ isPublic: true }, { userId }],
-    });
+    }).sort({ updatedAt: -1 });
 
     const result = convertToObject(publicGames);
 
