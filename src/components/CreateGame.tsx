@@ -455,7 +455,10 @@ function CreateGame() {
                 onBlur={() => {
                   setIsEditGameName(false);
 
-                  if (gameTitle.trim().length === 0) {
+                  if (
+                    gameTitle.trim().length === 0 ||
+                    gameTitle.trim() === gameState.name.trim()
+                  ) {
                     setGameTitle(gameState.name);
                     return;
                   }
@@ -576,7 +579,10 @@ const EditTitle = ({
           onBlur={() => {
             setIsEditing(false);
 
-            if (newTitle.trim().length === 0) {
+            if (
+              newTitle.trim().length === 0 ||
+              newTitle.trim() === title.trim()
+            ) {
               setNewTitle(title);
               return;
             }
