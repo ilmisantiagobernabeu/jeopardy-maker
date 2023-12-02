@@ -74,6 +74,8 @@ async function start() {
       ])
     );
 
+    console.log("publicGame keys", Object.keys(publicGames));
+
     return {
       name: specificGameName || publicGames[Object.keys(publicGames)[0]].name,
       games: publicGames,
@@ -489,7 +491,11 @@ async function start() {
           return;
         }
         // if they had a name and left, let them rejoin with old score
-        console.log("DISCONNECTED", socket.id, rooms[roomId].playersThatLeft);
+        console.log(
+          "DISCONNECTED",
+          rooms[roomId].players?.[socket.id]?.name,
+          rooms[roomId].playersThatLeft.map((player) => player.name)
+        );
         if (
           rooms[roomId].players?.[socket.id]?.name &&
           !rooms[roomId].playersThatLeft.find(
@@ -512,11 +518,11 @@ async function start() {
 
           if (existingGame) {
             try {
-              const editedGame = await updateGame(game);
+              await updateGame(game);
               rooms[roomId].games[game.name] = game;
               console.log(
                 `Updated the ${game.name} game successfully!`,
-                editedGame
+                game.name
               );
               io.to(roomId).emit("gameState updated", rooms[roomId]);
             } catch (err: any) {

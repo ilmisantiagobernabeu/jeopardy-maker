@@ -45,7 +45,7 @@ app.post("/api/uploadImage", upload.single("image"), async (req, res) => {
 app.post("/api/uploadAudio", upload.single("mp3"), async (req, res) => {
   const audioName = crypto.randomBytes(32).toString("hex");
 
-  console.log("audio file:", req?.file?.buffer);
+  console.log("audio file:", audioName);
   if (req?.file?.buffer) {
     const params = {
       Bucket: AWS_BUCKET_NAME,
