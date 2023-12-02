@@ -21,7 +21,7 @@ function preloadResources(clues: Clue[]): void {
 function App() {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const game = queryParams.get("game") || "";
+  const gameQueryParam = queryParams.get("game") || "";
   const round = Number(queryParams.get("round")) || 1;
   const { gameState, socket } = useGlobalState();
   const [roundOver, setRoundOver] = useState(false);
@@ -44,11 +44,11 @@ function App() {
     if (
       localStorage.getItem("bz-roomId") &&
       localStorage.getItem("dt-gameName") &&
-      game === localStorage.getItem("dt-gameName")
+      gameQueryParam === localStorage.getItem("dt-gameName")
     ) {
       socket?.emit(
         "Host loads the game board for the first time",
-        game,
+        gameQueryParam,
         localStorage.getItem("bz-roomId") || ""
       );
     } else if (
@@ -56,16 +56,16 @@ function App() {
       localStorage.getItem("dt-gameName") &&
       socket
     ) {
-      localStorage.setItem("dt-gameName", game);
+      localStorage.setItem("dt-gameName", gameQueryParam);
       socket?.emit(
         "Host changes the game",
-        game,
+        gameQueryParam,
         gameState?.players,
         localStorage.getItem("bz-roomId") || "",
         localStorage.getItem("bz-userId") || ""
       );
     }
-  }, [socket, location, game]);
+  }, [socket, location, gameQueryParam]);
 
   useEffect(() => {
     if (localStorage.getItem("bz-roomId")) {
@@ -95,8 +95,6 @@ function App() {
     (clue) => clue?.alreadyPlayed || !clue.text || !clue.answer
   );
 
-  const numOfRounds = gameState?.games[game].rounds.length || 0;
-
   useEffect(() => {
     let timeout = 0;
     if (isEveryCluePlayed) {
@@ -109,6 +107,23 @@ function App() {
       clearTimeout(timeout);
     };
   }, [round, isEveryCluePlayed]);
+
+  const numOfRounds = gameState?.games[gameQueryParam]?.rounds.length || 0;
+
+  if (!numOfRounds) {
+    return (
+      <div className="Game">
+        <div className="h-screen flex justify-center items-center text-white max-w-5xl mx-auto">
+          <div className="flex flex-col justify-center items-center gap-4 ">
+            <p>This game is not available.</p>
+            <Link to="/" className="primary-btn">
+              Back to Homepage
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -138,7 +153,7 @@ function App() {
           <div className="h-screen flex justify-center items-center">
             <Link
               className="text-white h-full w-full flex justify-center items-center text-9xl bg-[#060ce9]"
-              to={`/board?game=${game}&round=${round + 1}`}
+              to={`/board?game=${gameQueryParam}&round=${round + 1}`}
               onClick={() => {
                 setRoundOver(false);
               }}

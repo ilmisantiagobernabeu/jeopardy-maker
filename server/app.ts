@@ -178,7 +178,7 @@ async function start() {
           roomId,
           userId
         ) => {
-          if (!rooms[roomId]) {
+          if (!rooms[roomId] || !rooms[roomId].games[gameName]) {
             return;
           }
           console.log("Host changes up the game", gameName, roomId, userId);
@@ -360,7 +360,7 @@ async function start() {
       socket.on(
         "Host loads the game board for the first time",
         (gameName = "steveo", roomId) => {
-          if (!rooms[roomId]) {
+          if (!rooms[roomId] || !rooms[roomId].games[gameName]) {
             return;
           }
           console.log(
