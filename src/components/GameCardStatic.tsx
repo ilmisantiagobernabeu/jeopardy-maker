@@ -104,7 +104,7 @@ const EditModal = ({
   round,
   localGameState,
 }: EditModalProps) => {
-  const { gameState, session, socket } = useGlobalState();
+  const { gameState, socket } = useGlobalState();
   const [isDailyDouble, setIsDailyDouble] = useState(
     clue.isDailyDouble || false
   );
@@ -376,6 +376,7 @@ const EditModal = ({
 
                 socket?.emit(
                   "create a new game",
+                  newGameState.name,
                   newGameState,
                   gameState?.guid || "",
                   localStorage.getItem("bz-userId") || ""

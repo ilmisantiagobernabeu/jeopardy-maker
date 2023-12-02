@@ -107,8 +107,11 @@ export async function createGame({
   }
 }
 
-export async function updateGame(game: SingleGame) {
-  return await Game.updateOne({ name: game.name }, { gameObject: game });
+export async function updateGame(previousGameName: string, game: SingleGame) {
+  return await Game.updateOne(
+    { name: previousGameName },
+    { name: game.name, gameObject: game }
+  );
 }
 
 export async function deleteGame(gameName: string) {

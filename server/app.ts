@@ -281,6 +281,13 @@ async function start() {
           if (playerThatScored && rooms[roomId].players[playerThatScored]) {
             rooms[roomId].players[playerThatScored].score += updatedScore;
 
+            console.log(
+              `The player ${playerThatScored} score changed: `,
+              rooms[roomId].players[playerThatScored].score,
+              updatedScore,
+              new Date().toLocaleTimeString()
+            );
+
             const player = rooms[roomId].players[playerThatScored!];
 
             rooms[roomId].history.push({
@@ -509,49 +516,53 @@ async function start() {
         io.to(roomId).emit("gameState updated", rooms[roomId]);
       });
 
-      socket.on("create a new game", async function (game, roomId, userId) {
-        if (!rooms[roomId] && !userId) {
-          return;
-        }
-        try {
-          const existingGame = await Game.findOne({ name: game.name });
-
-          if (existingGame) {
-            try {
-              await updateGame(game);
-              rooms[roomId].games[game.name] = game;
-              console.log(
-                `Updated the ${game.name} game successfully!`,
-                game.name
-              );
-              io.to(roomId).emit("gameState updated", rooms[roomId]);
-            } catch (err: any) {
-              console.error(
-                "Error: There was an issue updating this game to the database...",
-                err?.message
-              );
-            }
+      socket.on(
+        "create a new game",
+        async function (previousGameName, game, roomId, userId) {
+          if (!rooms[roomId] && !userId) {
             return;
           }
+          try {
+            const existingGame = await Game.findOne({ name: previousGameName });
 
-          const newGame = await createGame({
-            name: game.name,
-            userId: userId,
-            isPublic: false,
-            gameObject: game,
-          });
+            if (existingGame) {
+              try {
+                await updateGame(previousGameName, game);
+                delete rooms[roomId].games[previousGameName];
+                rooms[roomId].games[game.name] = game;
+                console.log(
+                  `Updated the ${previousGameName} game to ${game.name} successfully!`,
+                  game.name
+                );
+                io.to(roomId).emit("gameState updated", rooms[roomId]);
+              } catch (err: any) {
+                console.error(
+                  "Error: There was an issue updating this game to the database...",
+                  err?.message
+                );
+              }
+              return;
+            }
 
-          if (newGame) {
-            rooms[roomId].games[newGame.name] = newGame.gameObject;
-            io.to(roomId).emit("gameState updated", rooms[roomId]);
+            const newGame = await createGame({
+              name: game.name,
+              userId: userId,
+              isPublic: false,
+              gameObject: game,
+            });
+
+            if (newGame) {
+              rooms[roomId].games[newGame.name] = newGame.gameObject;
+              io.to(roomId).emit("gameState updated", rooms[roomId]);
+            }
+          } catch (err: any) {
+            console.error(
+              "Error: There was an issue saving this game to the database...",
+              err?.message
+            );
           }
-        } catch (err: any) {
-          console.error(
-            "Error: There was an issue saving this game to the database...",
-            err?.message
-          );
         }
-      });
+      );
 
       socket.on("delete a game", function (gameFileName, roomId) {
         if (!rooms[roomId]) {

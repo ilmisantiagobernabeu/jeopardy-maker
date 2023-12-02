@@ -151,6 +151,7 @@ export interface ClientToServerEvents {
   ) => void;
   ["Team selects a daily double clue"]: (roomId: string) => void;
   ["create a new game"]: (
+    previousGameName: string,
     game: SingleGame,
     roomId: string,
     userId: string

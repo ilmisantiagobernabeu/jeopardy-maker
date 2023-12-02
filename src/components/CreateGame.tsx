@@ -393,6 +393,7 @@ function CreateGame() {
     getInitialGameState(gameName)
   );
   const [isEditGameName, setIsEditGameName] = useState(false);
+  const [gameTitle, setGameTitle] = useState(gameState.name);
 
   useGetUpdatedGameState();
 
@@ -446,23 +447,33 @@ function CreateGame() {
                 type="text"
                 className="font-bold text-4xl font-korinna uppercase text-gold text-center bg-transparent"
                 style={{ textShadow: "rgb(0, 0, 0) 0.08em 0.08em" }}
-                value={gameState.name}
+                value={gameTitle}
                 autoFocus
                 onChange={(e) => {
-                  setGameState((prevGameState) => ({
-                    ...prevGameState,
-                    name: e.target.value.replace(" ", "-"),
-                  }));
+                  setGameTitle(e.target.value.replace(" ", "-"));
                 }}
                 onBlur={() => {
                   setIsEditGameName(false);
 
-                  socket?.emit(
-                    "create a new game",
-                    gameState,
-                    localStorage.getItem("bz-roomId") || "",
-                    localStorage.getItem("bz-userId") || ""
-                  );
+                  if (gameTitle.trim().length === 0) {
+                    setGameTitle(gameState.name);
+                    return;
+                  }
+
+                  setGameState((prevGameState) => {
+                    const newGameState = structuredClone(prevGameState);
+                    newGameState.name = gameTitle;
+
+                    socket?.emit(
+                      "create a new game",
+                      gameState.name,
+                      newGameState,
+                      globalGameState?.guid || "",
+                      localStorage.getItem("bz-userId") || ""
+                    );
+
+                    return newGameState;
+                  });
                 }}
               />
             ) : (
@@ -543,6 +554,7 @@ const EditTitle = ({
   round,
   catIndex,
 }: EditTitleProps) => {
+  const { gameState, socket } = useGlobalState();
   const [newTitle, setNewTitle] = useState(title);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -563,9 +575,24 @@ const EditTitle = ({
           }}
           onBlur={() => {
             setIsEditing(false);
+
+            if (newTitle.trim().length === 0) {
+              setNewTitle(title);
+              return;
+            }
+
             setGameState((prevGameState) => {
               const newGameState = structuredClone(prevGameState);
               newGameState.rounds[round - 1][catIndex].category = newTitle;
+
+              socket?.emit(
+                "create a new game",
+                newGameState.name,
+                newGameState,
+                gameState?.guid || "",
+                localStorage.getItem("bz-userId") || ""
+              );
+
               return newGameState;
             });
           }}
