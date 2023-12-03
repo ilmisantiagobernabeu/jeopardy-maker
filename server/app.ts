@@ -519,7 +519,7 @@ async function start() {
       socket.on(
         "create a new game",
         async function (previousGameName, game, roomId, userId) {
-          if (!rooms[roomId] && !userId) {
+          if (!rooms[roomId] || !userId) {
             return;
           }
           try {
@@ -537,7 +537,7 @@ async function start() {
                 io.to(roomId).emit("gameState updated", rooms[roomId]);
               } catch (err: any) {
                 console.error(
-                  "Error: There was an issue updating this game to the database...",
+                  `Error: There was an issue updating the ${previousGameName} game to the database...`,
                   err?.message
                 );
               }
