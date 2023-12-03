@@ -124,7 +124,7 @@ async function start() {
       });
 
       socket.on("Get user created boards", async (roomId, userId) => {
-        if (!roomId && !rooms[roomId] && !userId) {
+        if (!roomId || !rooms[roomId] || !userId) {
           return;
         }
         const games = await createDefaultGameState({
