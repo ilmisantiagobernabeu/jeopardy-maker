@@ -55,7 +55,6 @@ const GlobalStateProvider = ({ children }: { children: React.ReactNode }) => {
     });
 
     socket?.on("Buzzers are activated", function () {
-      // alert("hi");
       setGameState((prevGameState) => ({
         ...(prevGameState as any),
         isBuzzerActive: true,
