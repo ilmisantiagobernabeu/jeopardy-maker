@@ -127,12 +127,10 @@ async function start() {
         if (!roomId || !rooms[roomId] || !userId) {
           return;
         }
-        const games = await createDefaultGameState({
-          newRoomId: roomId,
-          userId,
-          previousPlayers: rooms[roomId].players,
-        });
-        rooms[roomId] = games;
+        const currentGameName = rooms[roomId].name;
+        const currentGame = rooms[roomId].games[currentGameName];
+        const games = await getUserGames(userId);
+        rooms[roomId].games = { ...games, [currentGameName]: currentGame };
         console.log("Get user created boards", { userId, roomId });
         io.to(roomId).emit("gameState updated", rooms[roomId]);
       });
@@ -378,8 +376,8 @@ async function start() {
         if (!rooms[roomId]) {
           return;
         }
-        rooms[roomId].isBuzzerActive = !rooms[roomId].isBuzzerActive;
-        io.to(roomId).emit("gameState updated", rooms[roomId]);
+        rooms[roomId].isBuzzerActive = true;
+        io.to(roomId).emit("Buzzers are activated");
       });
 
       socket.on("A player hits the buzzer", (roomId) => {

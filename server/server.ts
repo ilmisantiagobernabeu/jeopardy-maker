@@ -5,6 +5,7 @@ import crypto from "crypto";
 import sharp from "sharp";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { AWS_BUCKET_NAME, s3 } from "./constants";
+import { getUserGames } from "./models/game";
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
@@ -67,5 +68,12 @@ app.post("/api/uploadAudio", upload.single("mp3"), async (req, res) => {
 
   res.send(audioName);
 });
+
+// app.get("/api/getUserBoards/:userId", async (req, res) => {
+//   const {params: {userId}} = req;
+//   const games = await getUserGames(userId)
+
+//   res.send(games)
+// })
 
 export default app;

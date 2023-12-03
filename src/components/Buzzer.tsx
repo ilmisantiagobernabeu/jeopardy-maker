@@ -54,6 +54,18 @@ const Buzzer = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const handleDisconnect = () => {
+      window.location.reload();
+    };
+
+    socket?.on("disconnect", handleDisconnect);
+
+    return () => {
+      socket?.off("disconnect", handleDisconnect);
+    };
+  }, [socket]);
+
   const isActivePlayer =
     gameState?.activePlayer && gameState?.activePlayer === socket!.id;
 

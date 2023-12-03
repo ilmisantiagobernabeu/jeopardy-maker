@@ -53,6 +53,14 @@ const GlobalStateProvider = ({ children }: { children: React.ReactNode }) => {
       setGameState(gameStateFromServer);
       localStorage.setItem("bz-roomId", gameStateFromServer.guid);
     });
+
+    socket?.on("Buzzers are activated", function () {
+      // alert("hi");
+      setGameState((prevGameState) => ({
+        ...(prevGameState as any),
+        isBuzzerActive: true,
+      }));
+    });
   }, [socket]);
 
   useEffect(() => {

@@ -75,6 +75,7 @@ export interface ServerToClientEvents {
   ["pong"]: (timestamp: number) => void;
   ["gameState updated"]: (gameStateFromServer: GameState) => void;
   ["player successfully added to game"]: () => void;
+  ["Buzzers are activated"]: () => void;
 }
 
 type DailyDoubleObject = {
