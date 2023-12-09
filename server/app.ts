@@ -74,10 +74,14 @@ async function start() {
       ])
     );
 
-    console.log("publicGame keys", Object.keys(publicGames));
+    const selectedGame =
+      specificGameName && publicGames[specificGameName]
+        ? publicGames[specificGameName]
+        : publicGames[Object.keys(publicGames)[0]];
+    console.log("publicGame keys", { specificGameName }, selectedGame);
 
     return {
-      name: specificGameName || publicGames[Object.keys(publicGames)[0]].name,
+      name: selectedGame.name,
       games: publicGames,
       guid: gameId,
       isBuzzerActive: false,
@@ -88,8 +92,7 @@ async function start() {
       activeClue: null,
       playersThatLeft: [],
       players: previousPlayersWithoutScores || {},
-      gameBoard:
-        publicGames[specificGameName || Object.keys(publicGames)[0]].rounds[0],
+      gameBoard: publicGames[selectedGame.name].rounds[0],
       incorrectGuesses: [],
       history: [],
     };
@@ -158,7 +161,7 @@ async function start() {
         if (!rooms[roomId]) {
           return;
         }
-        console.log("Host restarts the game", roomId, gameName);
+        console.log("Host restarts the game", roomId, gameName, userId);
         rooms[roomId] = await createDefaultGameState({
           newRoomId: roomId,
           specificGameName: gameName,
