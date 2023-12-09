@@ -78,7 +78,7 @@ async function start() {
       specificGameName && publicGames[specificGameName]
         ? publicGames[specificGameName]
         : publicGames[Object.keys(publicGames)[0]];
-    console.log("publicGame keys", { specificGameName }, selectedGame);
+    console.log("publicGame keys", { specificGameName, userId });
 
     return {
       name: selectedGame.name,
@@ -360,7 +360,7 @@ async function start() {
 
       socket.on(
         "Host loads the game board for the first time",
-        (gameName = "steveo", roomId) => {
+        (gameName = "Animals", roomId) => {
           if (!rooms[roomId] || !rooms[roomId].games[gameName]) {
             return;
           }
@@ -409,7 +409,7 @@ async function start() {
       );
 
       socket.on("Host navigates to another round", (round, roomId) => {
-        if (!rooms[roomId]) {
+        if (!rooms[roomId] || !rooms[roomId].games[rooms[roomId].name]) {
           return;
         }
         console.log("Host navigates to another round, round: ", round);
