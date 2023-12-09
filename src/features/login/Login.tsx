@@ -28,6 +28,7 @@ export function Login() {
               supabaseClient={supabase}
               appearance={{ theme: ThemeSupa }}
               providers={[]}
+              redirectTo="https://buzzinga.io"
             />
           </div>
         </div>
