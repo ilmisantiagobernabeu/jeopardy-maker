@@ -66,6 +66,7 @@ const GlobalStateProvider = ({ children }: { children: React.ReactNode }) => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
         localStorage.setItem("bz-session", JSON.stringify(session));
+        console.log("Session found!", session?.user.id);
       } else {
         localStorage.removeItem("bz-session");
       }
@@ -78,6 +79,7 @@ const GlobalStateProvider = ({ children }: { children: React.ReactNode }) => {
     } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session) {
         localStorage.setItem("bz-session", JSON.stringify(session));
+        console.log("Session updated!", session?.user.id);
       } else {
         localStorage.removeItem("bz-session");
       }

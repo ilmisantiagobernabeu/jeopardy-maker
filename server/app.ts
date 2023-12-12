@@ -37,6 +37,12 @@ server.listen(port, () => {
   console.log(`Server is listening on port ${port}`);
 });
 
+const mem = process.memoryUsage();
+
+setInterval(() => {
+  console.log("Memory usage:", mem);
+}, 300000);
+
 async function start() {
   try {
     await mongoose.connect(process.env.MONGO_URI!);
@@ -78,7 +84,6 @@ async function start() {
       specificGameName && publicGames[specificGameName]
         ? publicGames[specificGameName]
         : publicGames[Object.keys(publicGames)[0]];
-    console.log("publicGame keys", { specificGameName, userId });
 
     return {
       name: selectedGame.name,
@@ -147,6 +152,9 @@ async function start() {
           const roomId = gameState.guid;
           rooms[roomId] = gameState;
           socket.join(roomId);
+          if (previousRoomId) {
+            delete rooms[previousRoomId];
+          }
           console.log("Host refreshes the room code", newRoomId, {
             roomId,
           });
@@ -532,7 +540,7 @@ async function start() {
                 delete rooms[roomId].games[previousGameName];
                 rooms[roomId].games[game.name] = game;
                 console.log(
-                  `Updated the ${previousGameName} game to ${game.name} successfully!`,
+                  `Updated the ${game.name} game successfully!`,
                   game.name
                 );
                 io.to(roomId).emit("gameState updated", rooms[roomId]);
@@ -543,6 +551,11 @@ async function start() {
                 );
               }
               return;
+            } else {
+              console.log(
+                `Created the new ${game.name} game successfully!`,
+                game.name
+              );
             }
 
             const newGame = await createGame({
