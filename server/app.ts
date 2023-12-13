@@ -429,15 +429,18 @@ async function start() {
 
       socket.on(
         "No player knows the answer",
-        ({ clueText, arrayIndex }, roomId) => {
+        ({ clueIndex, arrayIndex }, roomId) => {
           if (!rooms[roomId]) {
             return;
           }
           rooms[roomId].incorrectGuesses = [];
           rooms[roomId].isBuzzerActive = false;
-          const clueIndex = rooms[roomId].gameBoard[arrayIndex].clues.findIndex(
-            (clue) => clue.text === clueText
+
+          console.log(
+            "No player knows the answer",
+            rooms[roomId].gameBoard[arrayIndex].clues[clueIndex]
           );
+
           rooms[roomId].gameBoard[arrayIndex].clues[clueIndex].alreadyPlayed =
             true;
           io.to(roomId).emit("gameState updated", rooms[roomId]);

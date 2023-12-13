@@ -111,7 +111,7 @@ export interface ClientToServerEvents {
   ["No player knows the answer"]: (
     clueObject: {
       arrayIndex: number;
-      clueText: string;
+      clueIndex: number;
     },
     roomId: string
   ) => void;

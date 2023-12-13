@@ -38,6 +38,8 @@ const GameCard = ({ clue, index, round }: Props) => {
   const [dailyDoubleAmount, setDailyDoubleAmount] = useState(0);
   const [showDailyDoubleScreen, setShowDailyDoubleScreen] = useState(false);
 
+  const clueIndex = Math.floor(index / 6);
+
   const [{ seconds }, { start, reset }] = useCountDown({
     // Start time in milliseconds
     startTimeMilliseconds: COUNTDOWN_SECONDS * 1000,
@@ -212,7 +214,7 @@ const GameCard = ({ clue, index, round }: Props) => {
     socket?.emit(
       "No player knows the answer",
       {
-        clueText: clue.text,
+        clueIndex,
         arrayIndex: index % 6,
       },
       localStorage.getItem("bz-roomId") || ""
