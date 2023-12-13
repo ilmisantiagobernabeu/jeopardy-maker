@@ -37,15 +37,15 @@ server.listen(port, () => {
   console.log(`Server is listening on port ${port}`);
 });
 
-const mem = process.memoryUsage();
-
-setInterval(() => {
-  console.log("Memory usage:", mem);
-}, 300000);
-
 async function start() {
   try {
-    await mongoose.connect(process.env.MONGO_URI!);
+    await mongoose.connect(process.env.MONGO_URI || "", {
+      writeConcern: {
+        w: "majority",
+        j: true,
+        wtimeoutMS: 1000,
+      },
+    });
     console.log("Connected to MongoDB...");
   } catch (err) {
     console.error("Failed to connect to MongoDB...", err);
@@ -539,10 +539,7 @@ async function start() {
                 await updateGame(previousGameName, game);
                 delete rooms[roomId].games[previousGameName];
                 rooms[roomId].games[game.name] = game;
-                console.log(
-                  `Updated the ${game.name} game successfully!`,
-                  game.name
-                );
+                console.log(`Updated the ${game.name} game successfully!`);
                 io.to(roomId).emit("gameState updated", rooms[roomId]);
               } catch (err: any) {
                 console.error(
@@ -552,10 +549,7 @@ async function start() {
               }
               return;
             } else {
-              console.log(
-                `Created the new ${game.name} game successfully!`,
-                game.name
-              );
+              console.log(`Created the new ${game.name} game successfully!`);
             }
 
             const newGame = await createGame({
