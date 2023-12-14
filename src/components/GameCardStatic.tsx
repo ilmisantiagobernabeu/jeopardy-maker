@@ -4,6 +4,7 @@ import CloseIcon from "../icons/CloseIcon";
 import { Clue, ClueType, SingleGame } from "../../stateTypes";
 import { useGlobalState } from "./GlobalStateProvider";
 import axios from "axios";
+import { apiUrl } from "../api/constants";
 
 type Props = {
   clue: Clue;
@@ -93,8 +94,6 @@ type EditModalProps = {
   round: number;
   localGameState: SingleGame;
 };
-
-const apiUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 
 const EditModal = ({
   setIsFlipped,

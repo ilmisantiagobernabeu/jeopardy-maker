@@ -3,8 +3,7 @@ import { PageWrapper } from "./PageWrapper";
 import { useGlobalState } from "./GlobalStateProvider";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-
-const apiUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+import { apiUrl } from "../api/constants";
 
 export const Contact = () => {
   const { session } = useGlobalState();

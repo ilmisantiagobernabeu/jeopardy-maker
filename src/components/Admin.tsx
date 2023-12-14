@@ -5,6 +5,7 @@ import { PageWrapper } from "./PageWrapper";
 import axios from "axios";
 import { Game } from "../../stateTypes";
 import { Link } from "react-router-dom";
+import { apiUrl } from "../api/constants";
 
 export const Admin = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -32,7 +33,9 @@ export const Admin = () => {
 
     const fetchPrivateBoards = async () => {
       try {
-        const { data: privateBoards } = await axios.get(`api/getPrivateBoards`);
+        const { data: privateBoards } = await axios.get(
+          `${apiUrl}/api/getPrivateBoards`
+        );
         setGameBoards(privateBoards);
       } catch (error) {
         console.error("Error fetching users:", error);
