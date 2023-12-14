@@ -14,6 +14,7 @@ import Teams from "./Teams";
 import buzzerSound from "../sounds/buzzer.mp3";
 import { Debug } from "./Debug";
 import { Login } from "../features/login/Login";
+import { Admin } from "./Admin";
 
 const AppContainer = () => {
   const { gameState, socket } = useGlobalState();
@@ -83,6 +84,8 @@ const AppContainer = () => {
 
   const isAuthenticated = localStorage.getItem("bz-userId") || "";
 
+  const { session } = useGlobalState();
+
   return (
     <>
       <Routes>
@@ -105,6 +108,18 @@ const AppContainer = () => {
         <Route path="/debug" element={<Debug />} />
         <Route path="/qr" element={<QRCode className="p-12 w-full h-full" />} />
         <Route path="/login" element={<Login />} />
+        <Route
+          path="/admin"
+          element={
+            session?.user &&
+            session.user.id === import.meta.env.VITE_SUPABASE_ADMIN_ID ? (
+              <Admin />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        <Route path="/private" element={<CreateGame />} />
       </Routes>
     </>
   );

@@ -335,12 +335,13 @@ const EditModal = ({
             </label>
           </div>
           <p className="italic text-sm normal-case font-korinna">
+            1 of{" "}
             {
               localGameState.rounds[round - 1]
                 .flatMap((game) => game.clues)
                 .filter((clue) => clue.isDailyDouble).length
             }{" "}
-            out of 2 Daily Doubles in round {round}.
+            Daily Doubles in round {round}.
           </p>
         </div>
         <div className="flex flex-wrap gap-4">

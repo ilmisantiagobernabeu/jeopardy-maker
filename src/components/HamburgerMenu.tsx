@@ -84,6 +84,21 @@ export const HamburgerMenu = ({
                 Home
               </NavLink>
             </li>
+            {import.meta.env.VITE_SUPABASE_ADMIN_ID ===
+              localStorage.getItem("bz-userId") && (
+              <li>
+                <NavLink
+                  to="/admin"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "text-gold hover:underline focus:underline"
+                      : "hover:underline focus:underline"
+                  }
+                >
+                  Admin
+                </NavLink>
+              </li>
+            )}
             <li>
               <NavLink
                 to={`/board${gameState?.name ? `?game=${gameState.name}` : ""}`}

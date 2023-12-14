@@ -380,6 +380,10 @@ const getInitialGameState = (gameName: string) => ({
   ],
 });
 
+type StateType = {
+  data: SingleGame;
+};
+
 function CreateGame() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -389,8 +393,11 @@ function CreateGame() {
 
   const { socket, gameState: globalGameState, session } = useGlobalState();
 
+  const state = location.state as StateType;
+  const data = state?.data;
+
   const [gameState, setGameState] = useState<SingleGame>(
-    getInitialGameState(gameName)
+    data || getInitialGameState(gameName)
   );
   const [isEditGameName, setIsEditGameName] = useState(false);
   const [gameTitle, setGameTitle] = useState(gameState.name);
@@ -430,11 +437,13 @@ function CreateGame() {
   }, [globalGameState, location]);
 
   useEffect(() => {
-    const queryParams = new URLSearchParams(location.search);
-    queryParams.set("name", gameState.name);
+    if (!data) {
+      const queryParams = new URLSearchParams(location.search);
+      queryParams.set("name", gameState.name);
 
-    navigate(`${location.pathname}?${queryParams.toString()}`);
-  }, [gameState.name]);
+      navigate(`${location.pathname}?${queryParams.toString()}`);
+    }
+  }, [data, gameState.name]);
 
   return (
     <>
