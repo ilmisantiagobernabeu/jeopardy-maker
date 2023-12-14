@@ -16,6 +16,7 @@ import { Debug } from "./Debug";
 import { Login } from "../features/login/Login";
 import { Admin } from "./Admin";
 import { Contact } from "./Contact";
+import { Settings } from "./Settings";
 
 const AppContainer = () => {
   const { gameState, socket } = useGlobalState();
@@ -122,6 +123,7 @@ const AppContainer = () => {
         />
         <Route path="/private" element={<CreateGame />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/settings" element={<Settings />} />
       </Routes>
     </>
   );

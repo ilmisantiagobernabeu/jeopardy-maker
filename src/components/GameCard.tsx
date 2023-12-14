@@ -8,12 +8,10 @@ import wrongAnswerSound from "../sounds/wronganswer.mp3";
 import dailyDoubleSound from "../sounds/dailydouble.mp3";
 import hahaSound from "../sounds/haha.mp3";
 import Answer from "./Answer";
-import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import { Clue, ClueType } from "../../stateTypes";
 import { ActivateBuzzersButton } from "./ActivateBuzzersButton";
-
-const COUNTDOWN_SECONDS = 25;
+import { useGameSettings } from "./GameSettingsProvider";
 
 type Props = {
   clue: Clue;
@@ -40,9 +38,11 @@ const GameCard = ({ clue, index, round }: Props) => {
 
   const clueIndex = Math.floor(index / 6);
 
+  const { settingsState } = useGameSettings();
+
   const [{ seconds }, { start, reset }] = useCountDown({
     // Start time in milliseconds
-    startTimeMilliseconds: COUNTDOWN_SECONDS * 1000,
+    startTimeMilliseconds: settingsState.countdownTimeToAnswer * 1000,
     // Decrement to update the timer with
     interval: 1000,
     // Callback triggered when the timer reaches 0
@@ -55,10 +55,27 @@ const GameCard = ({ clue, index, round }: Props) => {
     },
   });
 
+  const [{ seconds: audioSeconds }, { start: audioStart, reset: audioReset }] =
+    useCountDown({
+      // Start time in milliseconds
+      startTimeMilliseconds: settingsState.audioClueDelay * 1000 || 1,
+      // Decrement to update the timer with
+      interval: 100,
+      // Callback triggered when the timer reaches 0
+      onCountDownEnd: () => {
+        // this will run for every game card instance
+        // so we only want to mark incorrect for the currently flipped one
+        if (isFlipped && !clue.alreadyPlayed) {
+          handleBuzzerToggle();
+          audioReset();
+        }
+      },
+    });
+
   const [{ seconds: imageSeconds }, { start: imageStart, reset: imageReset }] =
     useCountDown({
       // Start time in milliseconds
-      startTimeMilliseconds: 5000,
+      startTimeMilliseconds: settingsState.imageClueDelay * 1000 || 1,
       // Decrement to update the timer with
       interval: 100,
       // Callback triggered when the timer reaches 0
@@ -120,6 +137,7 @@ const GameCard = ({ clue, index, round }: Props) => {
         setStyles(undefined);
         setIsFlipped(false);
         imageReset();
+        audioReset();
         socket?.emit(
           "Host deselects a clue",
           localStorage.getItem("bz-roomId") || ""
@@ -153,15 +171,9 @@ const GameCard = ({ clue, index, round }: Props) => {
     }
   }, [gameState]);
 
-  const isAudioClue =
-    clue.type === ClueType.AUDIO || clue.text.trim().endsWith("mp3");
+  const isAudioClue = clue.type === ClueType.AUDIO;
 
-  const isImageClue =
-    clue.type === ClueType.IMAGE ||
-    clue.text.trim().endsWith("gif") ||
-    clue.text.trim().endsWith("jpg") ||
-    clue.text.trim().endsWith("jpeg") ||
-    clue.text.trim().endsWith("png");
+  const isImageClue = clue.type === ClueType.IMAGE;
 
   const handleIncorrect = () => {
     const audio = new Audio(wrongAnswerSound);
@@ -256,9 +268,10 @@ const GameCard = ({ clue, index, round }: Props) => {
       setTimeout(() => {
         audioRef.current?.play();
       });
-      imageStart();
+      audioStart();
     } else if (isImageClue) {
-      handleBuzzerToggle();
+      console.log("image started!!!");
+      imageStart();
     }
   };
 
@@ -292,8 +305,7 @@ const GameCard = ({ clue, index, round }: Props) => {
     !gameState?.isBuzzerActive &&
       !gameState?.activePlayer &&
       !showDailyDoubleScreen &&
-      !Boolean(gameState?.dailyDoubleAmount) &&
-      !isImageClue
+      !Boolean(gameState?.dailyDoubleAmount)
   );
 
   return (
@@ -377,7 +389,11 @@ const GameCard = ({ clue, index, round }: Props) => {
                     "fixed top-0 right-0 w-full h-24 bg-red-500 text-white",
                     { "animate-pulse": seconds <= 10 }
                   )}
-                  style={{ width: `${(seconds / COUNTDOWN_SECONDS) * 100}%` }}
+                  style={{
+                    width: `${
+                      (seconds / settingsState.countdownTimeToAnswer) * 100
+                    }%`,
+                  }}
                 ></div>
               )}
               <p className="fixed top-4 w-full text-center text-6xl text-white">
@@ -405,8 +421,10 @@ const GameCard = ({ clue, index, round }: Props) => {
           )}
           {showActivateBuzzersButton && (
             <ActivateBuzzersButton
+              audioSeconds={audioSeconds}
               imageSeconds={imageSeconds}
               isAudioClue={isAudioClue}
+              isImageClue={isImageClue}
               onClick={handleBuzzerToggle}
             />
           )}
