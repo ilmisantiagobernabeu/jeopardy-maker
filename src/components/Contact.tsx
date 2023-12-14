@@ -4,6 +4,8 @@ import { useGlobalState } from "./GlobalStateProvider";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
+const apiUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+
 export const Contact = () => {
   const { session } = useGlobalState();
   const [email, setEmail] = useState(session?.user.email || "");
@@ -16,7 +18,7 @@ export const Contact = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      await axios.post(`api/contact`, {
+      await axios.post(`${apiUrl}/api/contact`, {
         email,
         body: feedback,
       });
