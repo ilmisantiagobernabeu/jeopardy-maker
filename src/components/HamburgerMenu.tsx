@@ -101,6 +101,18 @@ export const HamburgerMenu = ({
             )}
             <li>
               <NavLink
+                to={`/contact`}
+                className={({ isActive }) =>
+                  isActive
+                    ? "text-gold hover:underline focus:underline"
+                    : "hover:underline focus:underline"
+                }
+              >
+                Contact
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
                 to={`/board${gameState?.name ? `?game=${gameState.name}` : ""}`}
                 className={({ isActive }) =>
                   isActive

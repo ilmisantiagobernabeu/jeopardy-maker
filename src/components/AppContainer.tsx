@@ -15,6 +15,7 @@ import buzzerSound from "../sounds/buzzer.mp3";
 import { Debug } from "./Debug";
 import { Login } from "../features/login/Login";
 import { Admin } from "./Admin";
+import { Contact } from "./Contact";
 
 const AppContainer = () => {
   const { gameState, socket } = useGlobalState();
@@ -120,6 +121,7 @@ const AppContainer = () => {
           }
         />
         <Route path="/private" element={<CreateGame />} />
+        <Route path="/contact" element={<Contact />} />
       </Routes>
     </>
   );

@@ -6,6 +6,8 @@ import sharp from "sharp";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { AWS_BUCKET_NAME, s3 } from "./constants";
 import { getPublicGames, getUserGames } from "./models/game";
+import nodemailer from "nodemailer";
+import { sendEmail } from "./utilities";
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
@@ -13,6 +15,9 @@ const upload = multer({ storage });
 const app = express();
 
 app.use(cors());
+// Middleware to parse JSON and URL-encoded data
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.post("/api/uploadImage", upload.single("image"), async (req, res) => {
   // resize image
@@ -73,6 +78,13 @@ app.get("/api/getPrivateBoards", async (req, res) => {
   const games = await getPublicGames({ isPublic: false });
 
   res.send(games);
+});
+
+app.post("/api/contact", async (req, res) => {
+  const { email, body } = req.body;
+  sendEmail(email, body);
+
+  res.status(200).send("Success");
 });
 
 // app.get("/api/getUserBoards/:userId", async (req, res) => {
