@@ -86,7 +86,7 @@ export const Contact = () => {
               <button
                 type="submit"
                 className="primary-btn"
-                disabled={amRobot || isLoading || !email || !feedback}
+                disabled={amRobot || isLoading || !feedback}
               >
                 Send
               </button>
