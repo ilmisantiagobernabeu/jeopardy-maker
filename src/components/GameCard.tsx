@@ -12,6 +12,7 @@ import "react-circular-progressbar/dist/styles.css";
 import { Clue, ClueType } from "../../stateTypes";
 import { ActivateBuzzersButton } from "./ActivateBuzzersButton";
 import { useGameSettings } from "./GameSettingsProvider";
+import { Image, Music } from "lucide-react";
 
 type Props = {
   clue: Clue;
@@ -320,6 +321,22 @@ const GameCard = ({ clue, index, round }: Props) => {
         <div className="GameCard-front">
           <span className="GameCard-dollarSign">$</span>
           {value}
+          {clue.type === ClueType.IMAGE && (
+            <span
+              title="Daily Double"
+              className="absolute bottom-0 right-0 w-9 h-9 text-lg [text-shadow:none] flex items-center m-2 text-white opacity-80"
+            >
+              <Image />
+            </span>
+          )}
+          {clue.type === ClueType.AUDIO && (
+            <span
+              title="Daily Double"
+              className="absolute bottom-0 right-0 w-9 h-9 text-lg [text-shadow:none] flex items-center m-2 text-white opacity-80"
+            >
+              <Music />
+            </span>
+          )}
         </div>
         {isFlipped && (
           <>

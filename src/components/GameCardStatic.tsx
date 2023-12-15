@@ -5,6 +5,7 @@ import { Clue, ClueType, SingleGame } from "../../stateTypes";
 import { useGlobalState } from "./GlobalStateProvider";
 import axios from "axios";
 import { apiUrl } from "../api/constants";
+import { Image, Music } from "lucide-react";
 
 type Props = {
   clue: Clue;
@@ -45,6 +46,8 @@ const GameCardStatic = ({
     }
   };
 
+  const isClueFilled = clue.text && clue.answer;
+
   return (
     <>
       <button
@@ -55,7 +58,7 @@ const GameCardStatic = ({
       >
         <div
           className={cx("GameCard-front", {
-            "opacity-50": !clue.text || !clue.answer,
+            "opacity-50": !isClueFilled,
           })}
         >
           <span className="GameCard-dollarSign">$</span>
@@ -66,6 +69,22 @@ const GameCardStatic = ({
               className="absolute bottom-0 right-0 p-2 w-9 h-9 text-lg [text-shadow:none] rounded-full flex items-center border-2 bg-[#d69f4c] text-[#060ce9] m-2 drop-shadow-lg"
             >
               DD
+            </span>
+          )}
+          {isClueFilled && clue.type === ClueType.IMAGE && (
+            <span
+              title="Daily Double"
+              className="absolute top-0 right-0 w-9 h-9 text-lg [text-shadow:none] flex items-center m-2 drop-shadow-lg text-white"
+            >
+              <Image />
+            </span>
+          )}
+          {isClueFilled && clue.type === ClueType.AUDIO && (
+            <span
+              title="Daily Double"
+              className="absolute top-0 right-0 w-9 h-9 text-lg [text-shadow:none] flex items-center m-2 drop-shadow-lg text-white"
+            >
+              <Music />
             </span>
           )}
         </div>
