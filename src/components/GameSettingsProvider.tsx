@@ -20,14 +20,18 @@ export const useGameSettings = () => {
 };
 
 const GameSettingsProvider = ({ children }: { children: React.ReactNode }) => {
+  const initialSettingsState = {
+    countdownTimeToAnswer: 25,
+    audioClueDelay: 3,
+    imageClueDelay: 0,
+  };
   const [settingsState, setSettingsState] = useState<SettingsState>(
     localStorage.getItem("bz-gameSettings")
-      ? JSON.parse(localStorage.getItem("bz-gameSettings") || "")
-      : {
-          countdownTimeToAnswer: 25,
-          audioClueDelay: 3,
-          imageClueDelay: 0,
+      ? {
+          ...initialSettingsState,
+          ...JSON.parse(localStorage.getItem("bz-gameSettings") || ""),
         }
+      : initialSettingsState
   );
 
   return (
