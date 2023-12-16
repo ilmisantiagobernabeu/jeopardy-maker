@@ -138,28 +138,38 @@ function App() {
           }}
         />
         {roundOver && isEveryCluePlayed && round === numOfRounds ? (
-          <div className="h-screen flex justify-center items-center">
-            <Link
-              className="text-white h-full w-full flex justify-center items-center text-9xl bg-[#060ce9]"
-              to={`/scoreboard`}
-              onClick={() => {
-                setRoundOver(false);
-              }}
-            >
-              Game Over
-            </Link>
+          <div className="h-screen flex flex-col gap-8 justify-center items-center bg-[#060ce9]">
+            <div className="flex flex-col gap-4 justify-center items-center max-w-sm">
+              <h2 className="font-bold text-5xl leading-none text-center normal-case mb-2 text-white">
+                Game over
+              </h2>
+              <Link
+                className="primary-btn w-auto"
+                to={`/scoreboard`}
+                onClick={() => {
+                  setRoundOver(false);
+                }}
+              >
+                Show final scores
+              </Link>
+            </div>
           </div>
         ) : roundOver ? (
-          <div className="h-screen flex justify-center items-center">
-            <Link
-              className="text-white h-full w-full flex justify-center items-center text-9xl bg-[#060ce9]"
-              to={`/board?game=${gameQueryParam}&round=${round + 1}`}
-              onClick={() => {
-                setRoundOver(false);
-              }}
-            >
-              Double Jeopardy Round Next
-            </Link>
+          <div className="h-screen flex flex-col gap-8 justify-center items-center bg-[#060ce9]">
+            <div className="flex flex-col gap-4 justify-center items-center max-w-xxl">
+              <h2 className="font-bold text-5xl leading-none text-center normal-case mb-2 text-white">
+                Double Jeopardy Round Next
+              </h2>
+              <Link
+                className="primary-btn w-auto flex-none"
+                to={`/board?game=${gameQueryParam}&round=${round + 1}`}
+                onClick={() => {
+                  setRoundOver(false);
+                }}
+              >
+                Continue
+              </Link>
+            </div>
           </div>
         ) : (
           <div className="Game-grid">
