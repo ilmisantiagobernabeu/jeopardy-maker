@@ -15,6 +15,7 @@ import {
   Lock,
   Mail,
   Settings,
+  Trophy,
   X,
 } from "lucide-react";
 
@@ -168,7 +169,7 @@ export const HamburgerMenu = ({
                     : "flex gap-2 items-center hover:underline focus:underline"
                 }
               >
-                <FlaskConical /> Scores
+                <Trophy /> Scores
               </NavLink>
             </li>
             <li>
