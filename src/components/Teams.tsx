@@ -7,12 +7,12 @@ import { KeyDetectVeil } from "./KeyDetectVeil";
 import { KeysDisplay } from "./KeysDisplay";
 import DeleteIcon from "../icons/DeleteIcon";
 import buzzerSound from "../sounds/buzzer.mp3";
+import { useBuzzers } from "../hooks/useBuzzers";
 
 const Teams = () => {
   const { gameState, socket } = useGlobalState() || {};
   const { name } = useParams();
   const [playerName, setPlayerName] = useState("");
-  const [teamBuzzedIn, setTeamBuzzedIn] = useState("");
   const [keys, setKeys] = useState<string[]>([]);
   const [showKeyDetectVeil, setShowKeyDetectVeil] = useState(false);
 
@@ -22,46 +22,7 @@ const Teams = () => {
     (player) => Boolean(player.name && player?.keys?.length)
   );
 
-  // Logic for physical buttons
-  useEffect(() => {
-    if (playersWithButtons.length === 0) {
-      return;
-    }
-
-    let keyState: { [key: string]: boolean } = {};
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      // Track the key state
-      keyState[event.key] = true;
-
-      playersWithButtons.forEach((player) => {
-        // Check if all keys for the current player are pressed
-        const allKeysPressed = player?.keys?.every((key) => keyState[key]);
-        const playerName = player.name || "";
-
-        if (allKeysPressed) {
-          // Do something for the current player
-          console.log(`${player.name} buzzed in!`);
-          const sound = new Audio(buzzerSound);
-          sound.play();
-          setTeamBuzzedIn(playerName);
-        }
-      });
-    };
-
-    function handleKeyUp(): void {
-      // Empty the key state
-      keyState = {};
-    }
-
-    window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("keyup", handleKeyUp);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("keyup", handleKeyUp);
-    };
-  }, [gameState, socket, playersWithButtons]);
+  const { teamBuzzedIn } = useBuzzers();
 
   const addPlayer = (keys: string[]) => {
     const newPlayer = {
