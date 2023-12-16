@@ -447,24 +447,19 @@ async function start() {
         }
       );
 
-      socket.on(
-        "Host adds a team with a button",
-        ({ playerName, keys }, roomId) => {
-          if (!rooms[roomId]) {
-            return;
-          }
-          rooms[roomId].players[playerName] = {
-            name: playerName,
-            socketId: playerName,
-            keys,
-            score: 0,
-            ping: 0,
-          };
-          console.log("Host adds a team with a button", playerName);
-          // emit to EVERYONE the update game state
-          io.to(roomId).emit("gameState updated", rooms[roomId]);
+      socket.on("Host adds a team with a button", (teamObjects, roomId) => {
+        if (!rooms[roomId]) {
+          return;
         }
-      );
+
+        for (const teamObject of teamObjects) {
+          rooms[roomId].players[teamObject.name] = teamObject;
+          console.log("Host adds a team with a button", teamObject.name);
+        }
+
+        // emit to EVERYONE the update game state
+        io.to(roomId).emit("gameState updated", rooms[roomId]);
+      });
 
       socket.on("Team selects a daily double clue", (roomId) => {
         if (!rooms[roomId]) {

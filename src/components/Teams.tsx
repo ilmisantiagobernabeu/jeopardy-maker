@@ -1,16 +1,18 @@
 import { useParams } from "react-router-dom";
 import { useGlobalState } from "./GlobalStateProvider";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PageWrapper } from "./PageWrapper";
 import { useGetUpdatedGameState } from "../hooks/useGetUpdatedGameState";
 import { KeyDetectVeil } from "./KeyDetectVeil";
 import { KeysDisplay } from "./KeysDisplay";
 import DeleteIcon from "../icons/DeleteIcon";
+import buzzerSound from "../sounds/buzzer.mp3";
 
 const Teams = () => {
   const { gameState, socket } = useGlobalState() || {};
   const { name } = useParams();
   const [playerName, setPlayerName] = useState("");
+  const [teamBuzzedIn, setTeamBuzzedIn] = useState("");
   const [keys, setKeys] = useState<string[]>([]);
   const [showKeyDetectVeil, setShowKeyDetectVeil] = useState(false);
 
@@ -20,16 +22,70 @@ const Teams = () => {
     (player) => Boolean(player.name && player?.keys?.length)
   );
 
+  // Logic for physical buttons
+  useEffect(() => {
+    if (playersWithButtons.length === 0) {
+      return;
+    }
+
+    let keyState: { [key: string]: boolean } = {};
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Track the key state
+      keyState[event.key] = true;
+
+      playersWithButtons.forEach((player) => {
+        // Check if all keys for the current player are pressed
+        const allKeysPressed = player?.keys?.every((key) => keyState[key]);
+        const playerName = player.name || "";
+
+        if (allKeysPressed) {
+          // Do something for the current player
+          console.log(`${player.name} buzzed in!`);
+          const sound = new Audio(buzzerSound);
+          sound.play();
+          setTeamBuzzedIn(playerName);
+        }
+      });
+    };
+
+    function handleKeyUp(): void {
+      // Empty the key state
+      keyState = {};
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
+    };
+  }, [gameState, socket, playersWithButtons]);
+
   const addPlayer = (keys: string[]) => {
+    const newPlayer = {
+      name: playerName,
+      keys,
+      ping: 0,
+      score: 0,
+      socketId: playerName,
+    };
     socket?.emit(
       "Host adds a team with a button",
-      {
-        playerName,
-        keys,
-      },
+      [newPlayer],
       gameState?.guid || ""
     );
 
+    localStorage.setItem(
+      "bz-teamsWithBuzzers",
+      JSON.stringify([
+        ...Object.values(gameState?.players || {}).filter(
+          (player) => player.keys?.length
+        ),
+        newPlayer,
+      ])
+    );
     // reset state
     setPlayerName("");
     setKeys([]);
@@ -42,6 +98,15 @@ const Teams = () => {
   return (
     <PageWrapper>
       <div className="GameCard flex flex-col gap-4">
+        {teamBuzzedIn && (
+          <div className="font-swiss">
+            <div className="fixed top-0 right-0 w-full h-24 bg-red-500 text-white w-full"></div>
+
+            <p className="fixed left-0 top-4 w-full text-center text-6xl text-white">
+              Buzzed In: <span className="text-green-500"> {teamBuzzedIn}</span>
+            </p>
+          </div>
+        )}
         <h2 className="font-bold text-2xl leading-none text-center normal-case mb-2">
           Add Teams with Physical Buttons
         </h2>
@@ -73,6 +138,23 @@ const Teams = () => {
               Detect Keys
             </button>
           </div>
+          {localStorage.getItem("bz-teamsWithBuzzers") &&
+            playersWithButtons.length === 0 && (
+              <button
+                className="secondary-btn"
+                onClick={() => {
+                  socket?.emit(
+                    "Host adds a team with a button",
+                    JSON.parse(
+                      localStorage.getItem("bz-teamsWithBuzzers") || ""
+                    ),
+                    gameState?.guid || ""
+                  );
+                }}
+              >
+                Add buttons from last time
+              </button>
+            )}
         </div>
         {showKeyDetectVeil && (
           <KeyDetectVeil

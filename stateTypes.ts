@@ -145,9 +145,12 @@ export interface ClientToServerEvents {
   ) => void;
   ["Host adds a team with a button"]: (
     teamObject: {
-      playerName: string;
+      name: string;
       keys: string[];
-    },
+      ping: number;
+      score: number;
+      socketId: string;
+    }[],
     roomId: string
   ) => void;
   ["Team selects a daily double clue"]: (roomId: string) => void;
