@@ -15,8 +15,9 @@ export const LogoutButton = () => {
         localStorage.removeItem("bz-userId");
         localStorage.removeItem("bz-session");
         navigate("/");
-        window.location.reload();
-        // You can redirect or perform additional actions upon successful logout
+        setTimeout(() => {
+          window.location.reload();
+        }, 0);
       }
     } catch (error) {
       console.error("Error signing out:", (error as any)?.message);

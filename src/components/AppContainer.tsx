@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import App from "./App";
 import { useGlobalState } from "./GlobalStateProvider";
 import Scoreboard from "./Scoreboard";
@@ -17,6 +17,7 @@ import { Login } from "../features/login/Login";
 import { Admin } from "./Admin";
 import { Contact } from "./Contact";
 import { Settings } from "./Settings";
+import { RequireAuth } from "./RequireAuth";
 
 const AppContainer = () => {
   const { gameState, socket } = useGlobalState();
@@ -84,10 +85,6 @@ const AppContainer = () => {
     };
   }, [gameState, socket, playersWithButtons]);
 
-  const isAuthenticated = localStorage.getItem("bz-userId") || "";
-
-  const { session } = useGlobalState();
-
   return (
     <>
       <Routes>
@@ -96,7 +93,9 @@ const AppContainer = () => {
         <Route
           path="/create"
           element={
-            isAuthenticated ? <CreateGame /> : <Navigate to="/login" replace />
+            <RequireAuth>
+              <CreateGame />
+            </RequireAuth>
           }
         />
         <Route path="/board" element={<App />} />
@@ -113,12 +112,9 @@ const AppContainer = () => {
         <Route
           path="/admin"
           element={
-            session?.user &&
-            session.user.id === import.meta.env.VITE_SUPABASE_ADMIN_ID ? (
+            <RequireAuth requiresAdmin>
               <Admin />
-            ) : (
-              <Navigate to="/login" />
-            )
+            </RequireAuth>
           }
         />
         <Route path="/private" element={<CreateGame />} />
