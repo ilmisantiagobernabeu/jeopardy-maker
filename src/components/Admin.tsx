@@ -21,7 +21,6 @@ export const Admin = () => {
         if (error) {
           throw error;
         }
-        console.log(data);
         setUsers(data.users);
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -81,7 +80,7 @@ export const Admin = () => {
                             <Link
                               key={game.name + index}
                               className="block hover:underline focus:underline"
-                              to={`/private`}
+                              to={`/preview`}
                               state={{ data: game }}
                             >
                               {game.name}

@@ -384,7 +384,7 @@ type StateType = {
   data: SingleGame;
 };
 
-function CreateGame() {
+function CreateGame({ isPreview = false }: { isPreview?: boolean }) {
   const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -472,6 +472,8 @@ function CreateGame() {
     });
   };
 
+  const path = isPreview ? "/preview" : "/create";
+
   return (
     <>
       <HamburgerMenu />
@@ -503,20 +505,22 @@ function CreateGame() {
                 >
                   {gameState.name.replaceAll("-", " ")}
                 </h2>
-                <button
-                  onClick={() => {
-                    setIsEditGameName(true);
-                  }}
-                >
-                  <Edit width={20} />
-                </button>
+                {!isPreview && (
+                  <button
+                    onClick={() => {
+                      setIsEditGameName(true);
+                    }}
+                  >
+                    <Edit width={20} />
+                  </button>
+                )}
               </>
             )}
           </div>
           <div className="flex gap-4">
             <p>
               <Link
-                to={`/create?name=${gameState.name}&round=1`}
+                to={`${path}?name=${gameState.name}&round=1`}
                 className="block border rounded-md py-1 px-2"
               >
                 Round 1
@@ -524,7 +528,7 @@ function CreateGame() {
             </p>
             <p>
               <Link
-                to={`/create?name=${gameState.name}&round=2`}
+                to={`${path}?name=${gameState.name}&round=2`}
                 className="block border rounded-md py-1 px-2"
               >
                 Round 2
@@ -540,6 +544,7 @@ function CreateGame() {
               catIndex={catIndex}
               setGameState={setGameState}
               round={round}
+              isPreview={isPreview}
             />
           ))}
           {clues?.map((clue, index) => {
@@ -551,6 +556,7 @@ function CreateGame() {
                 round={round}
                 setGameState={setGameState}
                 localGameState={gameState}
+                isPreview={isPreview}
               />
             );
           })}
@@ -565,6 +571,7 @@ type EditTitleProps = {
   setGameState: React.Dispatch<React.SetStateAction<SingleGame>>;
   round: number;
   catIndex: number;
+  isPreview: boolean;
 };
 
 const EditTitle = ({
@@ -572,6 +579,7 @@ const EditTitle = ({
   setGameState,
   round,
   catIndex,
+  isPreview,
 }: EditTitleProps) => {
   const { gameState, socket } = useGlobalState();
   const [newTitle, setNewTitle] = useState(title);
@@ -627,6 +635,9 @@ const EditTitle = ({
       ) : (
         <button
           onClick={() => {
+            if (isPreview) {
+              return false;
+            }
             setIsEditing(true);
           }}
           className="uppercase"

@@ -117,7 +117,14 @@ const AppContainer = () => {
             </RequireAuth>
           }
         />
-        <Route path="/private" element={<CreateGame />} />
+        <Route
+          path="/preview"
+          element={
+            <RequireAuth requiresAdmin>
+              <CreateGame isPreview />
+            </RequireAuth>
+          }
+        />
         <Route path="/contact" element={<Contact />} />
         <Route path="/settings" element={<Settings />} />
       </Routes>

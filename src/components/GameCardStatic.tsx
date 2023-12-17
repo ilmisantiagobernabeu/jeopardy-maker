@@ -13,6 +13,7 @@ type Props = {
   round: number;
   setGameState: React.Dispatch<React.SetStateAction<SingleGame>>;
   localGameState: SingleGame;
+  isPreview: boolean;
 };
 
 const GameCardStatic = ({
@@ -21,6 +22,7 @@ const GameCardStatic = ({
   round,
   setGameState,
   localGameState,
+  isPreview,
 }: Props) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
@@ -97,6 +99,7 @@ const GameCardStatic = ({
               index={index}
               round={round}
               localGameState={localGameState}
+              isPreview={isPreview}
             />
           </>
         )}
@@ -112,6 +115,7 @@ type EditModalProps = {
   index: number;
   round: number;
   localGameState: SingleGame;
+  isPreview: boolean;
 };
 
 const EditModal = ({
@@ -121,6 +125,7 @@ const EditModal = ({
   index,
   round,
   localGameState,
+  isPreview,
 }: EditModalProps) => {
   const { gameState, socket } = useGlobalState();
   const [isDailyDouble, setIsDailyDouble] = useState(
@@ -201,44 +206,46 @@ const EditModal = ({
           <div className="flex flex-col gap-1">
             <div className="flex justify-between items-baseline">
               <label htmlFor={`clue-${clue.text}`}>Clue</label>
-              <ul className="flex gap-2 list-none lowercase font-korinna text-xs">
-                <li>
-                  <button
-                    onClick={() => {
-                      setClueType(ClueType.TEXT);
-                    }}
-                    className={cx("p-1", {
-                      border: clueType === ClueType.TEXT,
-                    })}
-                  >
-                    Text
-                  </button>
-                </li>
-                <li>
-                  <button
-                    onClick={() => {
-                      setClueType(ClueType.IMAGE);
-                    }}
-                    className={cx("p-1", {
-                      border: clueType === ClueType.IMAGE,
-                    })}
-                  >
-                    Image
-                  </button>
-                </li>
-                <li>
-                  <button
-                    onClick={() => {
-                      setClueType(ClueType.AUDIO);
-                    }}
-                    className={cx("p-1", {
-                      border: clueType === ClueType.AUDIO,
-                    })}
-                  >
-                    Audio
-                  </button>
-                </li>
-              </ul>
+              {!isPreview && (
+                <ul className="flex gap-2 list-none lowercase font-korinna text-xs">
+                  <li>
+                    <button
+                      onClick={() => {
+                        setClueType(ClueType.TEXT);
+                      }}
+                      className={cx("p-1", {
+                        border: clueType === ClueType.TEXT,
+                      })}
+                    >
+                      Text
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => {
+                        setClueType(ClueType.IMAGE);
+                      }}
+                      className={cx("p-1", {
+                        border: clueType === ClueType.IMAGE,
+                      })}
+                    >
+                      Image
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => {
+                        setClueType(ClueType.AUDIO);
+                      }}
+                      className={cx("p-1", {
+                        border: clueType === ClueType.AUDIO,
+                      })}
+                    >
+                      Audio
+                    </button>
+                  </li>
+                </ul>
+              )}
             </div>
             {clueType === ClueType.TEXT ? (
               <textarea
@@ -347,6 +354,7 @@ const EditModal = ({
               onChange={(e) => {
                 setIsDailyDouble(e.target.checked);
               }}
+              disabled={isPreview}
             />
             <label htmlFor={`clue-${clue.isDailyDouble}`}>
               Is Daily Double
@@ -374,40 +382,44 @@ const EditModal = ({
               <CloseIcon width={16} /> Close
             </span>
           </button>
-          <button
-            className="primary-btn !text-3xl mt-4 !w-36"
-            onClick={() => {
-              setGameState((prevGameState) => {
-                const newGameState = structuredClone(prevGameState);
-                newGameState.rounds[round - 1][catIndex].clues[clueIndex].type =
-                  clueType;
-                newGameState.rounds[round - 1][catIndex].clues[clueIndex].text =
-                  clueText;
-                newGameState.rounds[round - 1][catIndex].clues[
-                  clueIndex
-                ].answer = answer;
-                newGameState.rounds[round - 1][catIndex].clues[
-                  clueIndex
-                ].isDailyDouble = isDailyDouble;
-                newGameState.rounds[round - 1][catIndex].clues[
-                  clueIndex
-                ].alreadyPlayed = false;
+          {!isPreview && (
+            <button
+              className="primary-btn !text-3xl mt-4 !w-36"
+              onClick={() => {
+                setGameState((prevGameState) => {
+                  const newGameState = structuredClone(prevGameState);
+                  newGameState.rounds[round - 1][catIndex].clues[
+                    clueIndex
+                  ].type = clueType;
+                  newGameState.rounds[round - 1][catIndex].clues[
+                    clueIndex
+                  ].text = clueText;
+                  newGameState.rounds[round - 1][catIndex].clues[
+                    clueIndex
+                  ].answer = answer;
+                  newGameState.rounds[round - 1][catIndex].clues[
+                    clueIndex
+                  ].isDailyDouble = isDailyDouble;
+                  newGameState.rounds[round - 1][catIndex].clues[
+                    clueIndex
+                  ].alreadyPlayed = false;
 
-                socket?.emit(
-                  "create a new game",
-                  newGameState.name,
-                  newGameState,
-                  gameState?.guid || "",
-                  localStorage.getItem("bz-userId") || ""
-                );
+                  socket?.emit(
+                    "create a new game",
+                    newGameState.name,
+                    newGameState,
+                    gameState?.guid || "",
+                    localStorage.getItem("bz-userId") || ""
+                  );
 
-                return newGameState;
-              });
-            }}
-            disabled={noChanges}
-          >
-            Save
-          </button>
+                  return newGameState;
+                });
+              }}
+              disabled={noChanges}
+            >
+              Save
+            </button>
+          )}
         </div>
       </div>
     </div>
