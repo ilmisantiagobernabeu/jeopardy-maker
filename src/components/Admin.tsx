@@ -57,6 +57,9 @@ export const Admin = () => {
               <th>Email</th>
               <th>Id</th>
               <td>Games</td>
+              <td>Created</td>
+              <td>Updated</td>
+              <td>Verified</td>
             </tr>
           </thead>
           <tbody>
@@ -69,20 +72,27 @@ export const Admin = () => {
                 <td>{user.email}</td>
                 <td>{user.id}</td>
                 <td>
-                  {gameBoards &&
-                    Object.values(gameBoards)
-                      .filter((game) => game.userId === user.id)
-                      .map((game, index) => (
-                        <Link
-                          key={game.name + index}
-                          className="block"
-                          to={`/private`}
-                          state={{ data: game }}
-                        >
-                          {game.name}
-                        </Link>
-                      ))}
+                  <ul className="list-disc pl-4">
+                    {gameBoards &&
+                      Object.values(gameBoards)
+                        .filter((game) => game.userId === user.id)
+                        .map((game, index) => (
+                          <li>
+                            <Link
+                              key={game.name + index}
+                              className="block hover:underline focus:underline"
+                              to={`/private`}
+                              state={{ data: game }}
+                            >
+                              {game.name}
+                            </Link>
+                          </li>
+                        ))}
+                  </ul>
                 </td>
+                <td>{new Date(user.created_at).toLocaleDateString()}</td>
+                <td>{new Date(user.updated_at || "").toLocaleDateString()}</td>
+                <td>{Boolean(user.confirmed_at).toString()}</td>
               </tr>
             ))}
           </tbody>
