@@ -2,11 +2,11 @@ import "./App.scss";
 import { useGlobalState } from "./GlobalStateProvider";
 import GameCardStatic from "./GameCardStatic";
 import { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ClueType, SingleGame } from "../../stateTypes";
-import EditIcon from "../icons/EditIcon";
 import { HamburgerMenu } from "./HamburgerMenu";
 import { useGetUpdatedGameState } from "../hooks/useGetUpdatedGameState";
+import { Edit } from "lucide-react";
 
 const getInitialGameState = (gameName: string) => ({
   name: gameName,
@@ -445,6 +445,33 @@ function CreateGame() {
     }
   }, [data, gameState.name]);
 
+  const handleEdit = () => {
+    setIsEditGameName(false);
+
+    if (
+      gameTitle.trim().length === 0 ||
+      gameTitle.trim() === gameState.name.trim()
+    ) {
+      setGameTitle(gameState.name);
+      return;
+    }
+
+    setGameState((prevGameState) => {
+      const newGameState = structuredClone(prevGameState);
+      newGameState.name = gameTitle;
+
+      socket?.emit(
+        "create a new game",
+        gameState.name,
+        newGameState,
+        globalGameState?.guid || "",
+        localStorage.getItem("bz-userId") || ""
+      );
+
+      return newGameState;
+    });
+  };
+
   return (
     <>
       <HamburgerMenu />
@@ -461,31 +488,11 @@ function CreateGame() {
                 onChange={(e) => {
                   setGameTitle(e.target.value.replace(" ", "-"));
                 }}
-                onBlur={() => {
-                  setIsEditGameName(false);
-
-                  if (
-                    gameTitle.trim().length === 0 ||
-                    gameTitle.trim() === gameState.name.trim()
-                  ) {
-                    setGameTitle(gameState.name);
-                    return;
+                onBlur={handleEdit}
+                onKeyUp={(e) => {
+                  if (e.key === "Enter") {
+                    handleEdit();
                   }
-
-                  setGameState((prevGameState) => {
-                    const newGameState = structuredClone(prevGameState);
-                    newGameState.name = gameTitle;
-
-                    socket?.emit(
-                      "create a new game",
-                      gameState.name,
-                      newGameState,
-                      globalGameState?.guid || "",
-                      localStorage.getItem("bz-userId") || ""
-                    );
-
-                    return newGameState;
-                  });
                 }}
               />
             ) : (
@@ -501,7 +508,7 @@ function CreateGame() {
                     setIsEditGameName(true);
                   }}
                 >
-                  <EditIcon width={20} />
+                  <Edit width={20} />
                 </button>
               </>
             )}
@@ -574,6 +581,30 @@ const EditTitle = ({
     setNewTitle(title);
   }, [title]);
 
+  const handleEdit = () => {
+    setIsEditing(false);
+
+    if (newTitle.trim().length === 0 || newTitle.trim() === title.trim()) {
+      setNewTitle(title);
+      return;
+    }
+
+    setGameState((prevGameState) => {
+      const newGameState = structuredClone(prevGameState);
+      newGameState.rounds[round - 1][catIndex].category = newTitle;
+
+      socket?.emit(
+        "create a new game",
+        newGameState.name,
+        newGameState,
+        gameState?.guid || "",
+        localStorage.getItem("bz-userId") || ""
+      );
+
+      return newGameState;
+    });
+  };
+
   return (
     <div className="Game-category" key={title}>
       {isEditing ? (
@@ -585,31 +616,11 @@ const EditTitle = ({
             setIsEditing(true);
             setNewTitle(e.target.value);
           }}
-          onBlur={() => {
-            setIsEditing(false);
-
-            if (
-              newTitle.trim().length === 0 ||
-              newTitle.trim() === title.trim()
-            ) {
-              setNewTitle(title);
-              return;
+          onBlur={handleEdit}
+          onKeyUp={(e) => {
+            if (e.key === "Enter") {
+              handleEdit();
             }
-
-            setGameState((prevGameState) => {
-              const newGameState = structuredClone(prevGameState);
-              newGameState.rounds[round - 1][catIndex].category = newTitle;
-
-              socket?.emit(
-                "create a new game",
-                newGameState.name,
-                newGameState,
-                gameState?.guid || "",
-                localStorage.getItem("bz-userId") || ""
-              );
-
-              return newGameState;
-            });
           }}
           autoFocus
         />

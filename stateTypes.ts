@@ -25,7 +25,7 @@ export interface GameObject {
 export interface PlayerObject {
   socketId: string;
   score: number;
-  name?: string;
+  name: string;
   keys?: string[];
   ping: number;
 }
@@ -86,6 +86,11 @@ type DailyDoubleObject = {
 
 export interface ClientToServerEvents {
   ["Delete the player"]: (roomId: string, socketId: string) => void;
+  ["Edit player name"]: (
+    roomId: string,
+    socketId: string,
+    newPlayerName: string
+  ) => void;
   ["Set ping of a phone buzzer"]: (roomId: string, timestamp: number) => void;
   ["ping"]: (timestamp: number) => void;
   ["old player rejoined"]: (roomId: string, playerName?: string | null) => void;

@@ -594,7 +594,21 @@ async function start() {
           return;
         }
 
+        console.log("delete the player", socketId);
+
         delete rooms[roomId].players[socketId];
+        io.to(roomId).emit("gameState updated", rooms[roomId]);
+      });
+
+      socket.on("Edit player name", async (roomId, socketId, newPlayerName) => {
+        if (!rooms[roomId]) {
+          return;
+        }
+
+        rooms[roomId].players[socketId] = {
+          ...rooms[roomId].players[socketId],
+          name: newPlayerName,
+        };
         io.to(roomId).emit("gameState updated", rooms[roomId]);
       });
     }

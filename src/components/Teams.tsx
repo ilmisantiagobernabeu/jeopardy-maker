@@ -1,13 +1,11 @@
 import { useParams } from "react-router-dom";
 import { useGlobalState } from "./GlobalStateProvider";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { PageWrapper } from "./PageWrapper";
 import { useGetUpdatedGameState } from "../hooks/useGetUpdatedGameState";
 import { KeyDetectVeil } from "./KeyDetectVeil";
-import { KeysDisplay } from "./KeysDisplay";
-import DeleteIcon from "../icons/DeleteIcon";
-import buzzerSound from "../sounds/buzzer.mp3";
 import { useBuzzers } from "../hooks/useBuzzers";
+import { PlayerWithButton } from "./PlayerWIthButton";
 
 const Teams = () => {
   const { gameState, socket } = useGlobalState() || {};
@@ -140,30 +138,7 @@ const Teams = () => {
               </thead>
               <tbody>
                 {playersWithButtons.map((player) => (
-                  <tr
-                    key={player.name?.toString()}
-                    className="even:bg-gray-900 even:!bg-opacity-30 "
-                  >
-                    <td>{player.name}</td>
-                    <td>
-                      <KeysDisplay keys={player?.keys} />
-                    </td>
-                    <td>
-                      <div className="flex gap-4 justify-center">
-                        <button
-                          onClick={() => {
-                            socket?.emit(
-                              "Delete the player",
-                              localStorage.getItem("bz-roomId") || "",
-                              player.socketId
-                            );
-                          }}
-                        >
-                          <DeleteIcon width={20} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
+                  <PlayerWithButton key={player.name} player={player} />
                 ))}
               </tbody>
             </table>

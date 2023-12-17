@@ -46,11 +46,11 @@ export const Admin = () => {
 
   return (
     <PageWrapper>
-      <div className="GameCard">
+      <div className="GameCard w-full">
         <h2 className="font-bold text-2xl leading-none text-center normal-case mb-2">
           Admin <span className="text-sm">({users.length} users)</span>
         </h2>
-        <table className="text-left text-base" cellPadding={10}>
+        <table className="text-left text-base max-w-full" cellPadding={10}>
           <thead className="border-b">
             <tr>
               <th>No.</th>
