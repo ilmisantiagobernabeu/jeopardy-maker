@@ -379,7 +379,9 @@ const GameCard = ({ clue, index, round }: Props) => {
                   <div
                     className="flex justify-center items-center w-[50vw] h-[50vh]"
                     style={{
-                      transform: `scale(${scale?.x / (scale?.x * scale?.x)})`,
+                      transform: `scale(${scale?.x / (scale?.x * scale?.x)}, ${
+                        scale?.y / (scale?.y * scale?.y)
+                      })`,
                     }}
                   >
                     <img
