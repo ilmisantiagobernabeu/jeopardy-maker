@@ -174,6 +174,14 @@ async function start() {
           newRoomId: roomId,
           specificGameName: gameName,
           userId,
+          previousPlayers: Object.fromEntries(
+            Object.entries(rooms[roomId].players).map(
+              ([socketId, playerObject]) => [
+                socketId,
+                { ...playerObject, score: 0 },
+              ]
+            )
+          ),
         });
 
         io.to(roomId).emit("gameState updated", rooms[roomId]);

@@ -87,6 +87,10 @@ const Buzzer = () => {
     );
   }, [socket]);
 
+  const noOneHasGoneYet = gameState?.gameBoard.every((cat) =>
+    cat.clues.every((clue) => !clue.alreadyPlayed)
+  );
+
   return (
     <div className="fixed inset-0 h-full w-full bg-white font-korinna">
       <button
@@ -170,7 +174,10 @@ const Buzzer = () => {
             .map(([s, { name, score }], index) => (
               <li key={name} className="flex justify-between w-full">
                 <span>
-                  {name} {index === 0 ? "👑" : ""}
+                  {name} {index === 0 ? "👑" : ""}{" "}
+                  {index === 0 && noOneHasGoneYet
+                    ? " (This team goes first!)"
+                    : undefined}
                 </span>{" "}
                 <span>{score}</span>
               </li>
