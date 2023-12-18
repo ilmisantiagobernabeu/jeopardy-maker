@@ -1,5 +1,5 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import ReactDOM from "react-dom/client";
 import "./index.css";
 import { BrowserRouter } from "react-router-dom";
 import AppContainer from "./components/AppContainer";
@@ -9,7 +9,11 @@ import GameSettingsProvider from "./components/GameSettingsProvider";
 
 const client = new QueryClient();
 
-ReactDOM.render(
+const container = document.getElementById("root") as HTMLElement;
+
+const root = ReactDOM.createRoot(container);
+
+root.render(
   <React.StrictMode>
     <QueryClientProvider client={client}>
       <GameSettingsProvider>
@@ -20,6 +24,5 @@ ReactDOM.render(
         </GlobalStateProvider>
       </GameSettingsProvider>
     </QueryClientProvider>
-  </React.StrictMode>,
-  document.getElementById("root")
+  </React.StrictMode>
 );
