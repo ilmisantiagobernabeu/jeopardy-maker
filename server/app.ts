@@ -326,7 +326,7 @@ async function start() {
 
       socket.on("Host modifies the score", (player) => {
         const { roomId } = player;
-        if (!rooms[roomId]) {
+        if (!rooms[roomId] || !rooms[roomId].players[player.socket]) {
           return;
         }
         rooms[roomId].players[player.socket].score += player.score;
@@ -486,7 +486,7 @@ async function start() {
       socket.on(
         "update player score manually",
         (socketId, newScore, roomId) => {
-          if (!rooms[roomId]) {
+          if (!rooms[roomId] || !rooms[roomId].players[socketId]) {
             return;
           }
           const oldScore = rooms[roomId].players[socketId].score;
@@ -609,7 +609,7 @@ async function start() {
       });
 
       socket.on("Edit player name", async (roomId, socketId, newPlayerName) => {
-        if (!rooms[roomId]) {
+        if (!rooms[roomId] || !rooms[roomId].players[socketId]) {
           return;
         }
 
