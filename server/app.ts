@@ -533,7 +533,7 @@ async function start() {
 
       socket.on(
         "create a new game",
-        async function (previousGameName, game, roomId, userId) {
+        async function (previousGameName, game, roomId, userId, clueType) {
           if (!rooms[roomId] || !userId) {
             return;
           }
@@ -545,7 +545,10 @@ async function start() {
                 await updateGame(previousGameName, game);
                 delete rooms[roomId].games[previousGameName];
                 rooms[roomId].games[game.name] = game;
-                console.log(`Updated the ${game.name} game successfully!`);
+                console.log(
+                  `Updated the ${game.name} game successfully!`,
+                  clueType
+                );
                 io.to(roomId).emit("gameState updated", rooms[roomId]);
               } catch (err: any) {
                 console.error(

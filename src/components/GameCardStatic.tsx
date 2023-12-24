@@ -409,7 +409,8 @@ const EditModal = ({
                     newGameState.name,
                     newGameState,
                     gameState?.guid || "",
-                    localStorage.getItem("bz-userId") || ""
+                    localStorage.getItem("bz-userId") || "",
+                    clue.type
                   );
 
                   return newGameState;

@@ -163,7 +163,8 @@ export interface ClientToServerEvents {
     previousGameName: string,
     game: SingleGame,
     roomId: string,
-    userId: string
+    userId: string,
+    clueType?: string
   ) => void;
   ["delete a game"]: (gameName: string, roomId: string) => void;
   ["update player score manually"]: (

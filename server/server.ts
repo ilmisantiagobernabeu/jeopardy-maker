@@ -5,8 +5,7 @@ import crypto from "crypto";
 import sharp from "sharp";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { AWS_BUCKET_NAME, s3 } from "./constants";
-import { getPublicGames, getUserGames } from "./models/game";
-import nodemailer from "nodemailer";
+import { getPublicGames } from "./models/game";
 import { sendEmail } from "./utilities";
 
 const storage = multer.memoryStorage();
@@ -31,6 +30,7 @@ app.post("/api/uploadImage", upload.single("image"), async (req, res) => {
       .toBuffer();
 
     const imageName = crypto.randomBytes(32).toString("hex");
+    console.log("uploaded image file:", imageName);
 
     const params = {
       Bucket: AWS_BUCKET_NAME,
@@ -51,7 +51,7 @@ app.post("/api/uploadImage", upload.single("image"), async (req, res) => {
 app.post("/api/uploadAudio", upload.single("mp3"), async (req, res) => {
   const audioName = crypto.randomBytes(32).toString("hex");
 
-  console.log("audio file:", audioName);
+  console.log("uploaded audio file:", audioName);
   if (req?.file?.buffer) {
     const params = {
       Bucket: AWS_BUCKET_NAME,
