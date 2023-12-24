@@ -21,6 +21,7 @@ type Props = {
 };
 
 const GameCard = ({ clue, index, round }: Props) => {
+  const { socket, gameState } = useGlobalState() || {};
   const audioRef = useRef<HTMLAudioElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [isFlipped, setIsFlipped] = useState(false);
@@ -44,6 +45,24 @@ const GameCard = ({ clue, index, round }: Props) => {
   const [{ seconds }, { start, reset }] = useCountDown({
     // Start time in milliseconds
     startTimeMilliseconds: settingsState.countdownTimeToAnswer * 1000,
+    // Decrement to update the timer with
+    interval: 1000,
+    // Callback triggered when the timer reaches 0
+    onCountDownEnd: () => {
+      // this will run for every game card instance
+      // so we only want to mark incorrect for the currently flipped one
+      if (isFlipped && !clue.alreadyPlayed) {
+        handleIncorrect();
+      }
+    },
+  });
+
+  const [
+    { seconds: dailyDoubleSeconds },
+    { start: dailyDoubleCountdownStart, reset: dailyDoubleCountdownReset },
+  ] = useCountDown({
+    // Start time in milliseconds
+    startTimeMilliseconds: settingsState.dailyDoubleCountdownTime * 1000,
     // Decrement to update the timer with
     interval: 1000,
     // Callback triggered when the timer reaches 0
@@ -155,8 +174,6 @@ const GameCard = ({ clue, index, round }: Props) => {
 
   const value = Math.max(1, Math.ceil((index + 1) / 6)) * 100 * (round * 2);
 
-  const { socket, gameState } = useGlobalState() || {};
-
   const buzzedInUserExists = Boolean(
     gameState?.activePlayer || gameState?.dailyDoubleAmount
   );
@@ -164,11 +181,16 @@ const GameCard = ({ clue, index, round }: Props) => {
   useEffect(() => {
     // if buzzed in user exists
     if (buzzedInUserExists) {
-      start();
+      if (gameState?.dailyDoubleAmount) {
+        dailyDoubleCountdownStart();
+      } else {
+        start();
+      }
       audioRef.current?.pause();
     } else {
       audioRef.current?.play();
       reset();
+      dailyDoubleCountdownReset();
     }
   }, [gameState]);
 
@@ -281,7 +303,7 @@ const GameCard = ({ clue, index, round }: Props) => {
   };
 
   const handleSetWager = () => {
-    // seend daily double amount ot server
+    // send daily double amount to server
     socket?.emit(
       "A player sets daily double wager",
       {
@@ -291,7 +313,6 @@ const GameCard = ({ clue, index, round }: Props) => {
       },
       localStorage.getItem("bz-roomId") || ""
     );
-    // socket?.emit("Host activates the buzzers");
 
     setShowDailyDoubleScreen(false);
     setDailyDoubleAmount(0);
@@ -308,6 +329,14 @@ const GameCard = ({ clue, index, round }: Props) => {
       !showDailyDoubleScreen &&
       !Boolean(gameState?.dailyDoubleAmount)
   );
+
+  const countdownSeconds = gameState?.dailyDoubleAmount
+    ? dailyDoubleSeconds
+    : seconds;
+
+  const countdownTime = gameState?.dailyDoubleAmount
+    ? settingsState.dailyDoubleCountdownTime
+    : settingsState.countdownTimeToAnswer;
 
   return (
     <>
@@ -402,16 +431,14 @@ const GameCard = ({ clue, index, round }: Props) => {
         <div className="fixed z-10 bottom-0 left-0 right-0 flex justify-center align-center p-5 gap-x-8">
           {buzzedInUserExists && (
             <>
-              {seconds > 0 && (
+              {countdownSeconds > 0 && (
                 <div
                   className={cx(
                     "fixed top-0 right-0 w-full h-24 bg-red-500 text-white",
-                    { "animate-pulse": seconds <= 10 }
+                    { "animate-pulse": countdownSeconds <= 10 }
                   )}
                   style={{
-                    width: `${
-                      (seconds / settingsState.countdownTimeToAnswer) * 100
-                    }%`,
+                    width: `${(countdownSeconds / countdownTime) * 100}%`,
                   }}
                 ></div>
               )}

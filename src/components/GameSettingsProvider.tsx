@@ -4,6 +4,7 @@ type SettingsState = {
   countdownTimeToAnswer: number;
   audioClueDelay: number;
   imageClueDelay: number;
+  dailyDoubleCountdownTime: number;
 };
 
 export type SettingsContextType = {
@@ -24,12 +25,20 @@ const GameSettingsProvider = ({ children }: { children: React.ReactNode }) => {
     countdownTimeToAnswer: 25,
     audioClueDelay: 3,
     imageClueDelay: 0,
+    dailyDoubleCountdownTime: 25,
   };
+  const parsedSettings = localStorage.getItem("bz-gameSettings")
+    ? JSON.parse(localStorage.getItem("bz-gameSettings") || "")
+    : {};
   const [settingsState, setSettingsState] = useState<SettingsState>(
     localStorage.getItem("bz-gameSettings")
       ? {
           ...initialSettingsState,
-          ...JSON.parse(localStorage.getItem("bz-gameSettings") || ""),
+          ...parsedSettings,
+          dailyDoubleCountdownTime:
+            parsedSettings?.dailyDoubleCountdownTime ||
+            parsedSettings?.countdownTimeToAnswer ||
+            initialSettingsState.dailyDoubleCountdownTime,
         }
       : initialSettingsState
   );

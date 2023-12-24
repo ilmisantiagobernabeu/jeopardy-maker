@@ -55,6 +55,38 @@ export const Settings = () => {
           </div>
           <div className="flex justify-between items-baseline">
             <label
+              htmlFor="startDailyDoubleTimerAutomatically"
+              className="text-base font-bold flex gap-2 items-center"
+            >
+              Daily Double Countdown
+              <Tooltip
+                placement="bottom"
+                title="For daily double clues, the time a team has to give a response once shown the clue."
+              >
+                <button>
+                  <InfoIcon width={20} height={20} />
+                </button>
+              </Tooltip>
+            </label>
+            <div className="flex gap-2 items-baseline">
+              <input
+                id="startDailyDoubleTimerAutomatically"
+                type="number"
+                className="appearance-none rounded-sm p-2 text-base text-black w-20"
+                value={localState.dailyDoubleCountdownTime}
+                min={0}
+                onChange={(e) => {
+                  setLocalState((prevState) => ({
+                    ...prevState,
+                    dailyDoubleCountdownTime: Number(e.target.value),
+                  }));
+                }}
+              />
+              <p>seconds</p>
+            </div>
+          </div>
+          <div className="flex justify-between items-baseline">
+            <label
               htmlFor="imageClueDelay"
               className="text-base font-bold flex gap-2 items-center"
             >
