@@ -360,7 +360,7 @@ const GameCard = ({ clue, index, round }: Props) => {
                     max={Math.max(
                       gameState?.players[gameState?.lastActivePlayer || ""]
                         ?.score || 0,
-                      1000
+                      round * 1000
                     )}
                   />
                   <p>${dailyDoubleAmount}</p>
