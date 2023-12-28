@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import MenuIcon from "../icons/MenuIcon";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import CloseIcon from "../icons/CloseIcon";
 import cx from "classnames";
 import { useGlobalState } from "./GlobalStateProvider";
 import { LogoutButton } from "../features/login/LogoutButton";
@@ -9,7 +8,6 @@ import {
   AlertTriangleIcon,
   ArrowRightCircle,
   Cable,
-  FlaskConical,
   HistoryIcon,
   Home,
   Lock,
@@ -239,6 +237,16 @@ export const HamburgerMenu = ({
                 </button>
               </li>
             )}
+            <li>
+              <a
+                href="https://www.buymeacoffee.com/steved"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="primary-btn"
+              >
+                Donate
+              </a>
+            </li>
           </ul>
         </div>
       </div>
