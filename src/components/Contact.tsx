@@ -50,13 +50,16 @@ export const Contact = () => {
             </p>
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               <div className="flex flex-col">
-                <label htmlFor="email">Email</label>
+                <label htmlFor="email">
+                  Email <span className="text-red-500">*</span>
+                </label>
                 <input
                   id="email"
                   type="text"
                   className="appearance-none rounded-sm p-2 text-base text-black"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  required
                 />
               </div>
               <div className="flex flex-col">
@@ -86,7 +89,7 @@ export const Contact = () => {
               <button
                 type="submit"
                 className="primary-btn"
-                disabled={amRobot || isLoading || !feedback}
+                disabled={amRobot || isLoading || !feedback || !email}
               >
                 Send
               </button>

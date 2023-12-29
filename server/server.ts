@@ -5,8 +5,17 @@ import crypto from "crypto";
 import sharp from "sharp";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { AWS_BUCKET_NAME, s3 } from "./constants";
-import { getPublicGames } from "./models/game";
+import {
+  Game,
+  createGame,
+  deleteGame,
+  getPublicGames,
+  getUserGames,
+  updateGame,
+} from "./models/game";
 import { sendEmail } from "./utilities";
+import { rooms } from "./rooms";
+import { io } from "./io";
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
@@ -30,7 +39,11 @@ app.post("/api/uploadImage", upload.single("image"), async (req, res) => {
       .toBuffer();
 
     const imageName = crypto.randomBytes(32).toString("hex");
-    console.log("uploaded image file:", imageName);
+    console.log(
+      "uploaded image file:",
+      imageName,
+      req?.file?.buffer ? `${req.file.buffer.length / (1024 * 1024)}MB` : null
+    );
 
     const params = {
       Bucket: AWS_BUCKET_NAME,
@@ -51,7 +64,11 @@ app.post("/api/uploadImage", upload.single("image"), async (req, res) => {
 app.post("/api/uploadAudio", upload.single("mp3"), async (req, res) => {
   const audioName = crypto.randomBytes(32).toString("hex");
 
-  console.log("uploaded audio file:", audioName);
+  console.log(
+    "uploaded audio file:",
+    audioName,
+    req?.file?.buffer ? `${req.file.buffer.length / (1024 * 1024)}MB` : null
+  );
   if (req?.file?.buffer) {
     const params = {
       Bucket: AWS_BUCKET_NAME,
@@ -87,11 +104,124 @@ app.post("/api/contact", async (req, res) => {
   res.status(200).send("Success");
 });
 
-// app.get("/api/getUserBoards/:userId", async (req, res) => {
-//   const {params: {userId}} = req;
-//   const games = await getUserGames(userId)
+app.get("/api/getUserBoards/:roomId", async (req, res) => {
+  const {
+    params: { roomId },
+    query: { userId },
+  } = req;
 
-//   res.send(games)
-// })
+  if (!roomId || !rooms[roomId]) {
+    return res.status(404).json({ error: "Data not found" });
+  }
+
+  const games = userId
+    ? await getUserGames(userId.toString())
+    : await getPublicGames();
+
+  const currentGameName = rooms[roomId].name;
+  const currentGame = rooms[roomId].games[currentGameName];
+  console.log("Get user created boards", { userId });
+
+  rooms[roomId].games = currentGameName
+    ? { ...games, [currentGameName]: currentGame }
+    : games;
+
+  io.to(roomId).emit("gameState updated", rooms[roomId]);
+
+  res.send(games);
+});
+
+app.get("/api/getGameboard/:roomId/:gameName", async (req, res) => {
+  const {
+    params: { gameName, roomId },
+  } = req;
+
+  if (!roomId || !rooms[roomId] || !rooms[roomId].games[gameName]) {
+    return res.status(404).json({ error: "Data not found" });
+  }
+
+  console.log("Host loads the game board for the first time", gameName, roomId);
+
+  rooms[roomId].name = gameName;
+  rooms[roomId].gameBoard = rooms[roomId].games[gameName].rounds[0];
+  io.to(roomId).emit("gameState updated", rooms[roomId]);
+
+  return res.status(200).send("Success");
+});
+
+app.delete("/api/deleteUserBoard/:roomId/:gameName", async (req, res) => {
+  const {
+    params: { gameName, roomId },
+  } = req;
+
+  if (!rooms[roomId] || !rooms[roomId].games) {
+    return res.status(404).json({ error: "Data not found" });
+  }
+
+  try {
+    deleteGame(gameName);
+    const updatedGames = { ...rooms[roomId].games };
+    delete updatedGames[gameName];
+    rooms[roomId].games = updatedGames;
+    io.to(roomId).emit("gameState updated", rooms[roomId]);
+  } catch (err) {
+    console.error("Error: couldn't delete the game: ", gameName, err);
+  }
+
+  res.send("success");
+});
+
+app.post("/api/createNewBoard", async (req, res) => {
+  const { roomId, userId, previousGameName, game, clueType } = req.body;
+
+  if (!rooms[roomId] || !userId) {
+    return res.status(404).json({ error: "Data not found" });
+  }
+  try {
+    const existingGame = await Game.findOne({ name: previousGameName });
+
+    if (existingGame) {
+      try {
+        await updateGame(previousGameName, game);
+        delete rooms[roomId].games[previousGameName];
+        rooms[roomId].games[game.name] = game;
+        console.log(`Updated the ${game.name} game successfully!`, clueType);
+        io.to(roomId).emit("gameState updated", rooms[roomId]);
+      } catch (err: any) {
+        console.error(
+          `Error: There was an issue updating the ${previousGameName} game to the database...`,
+          err?.message
+        );
+      }
+      return res.send("Updated board successfully");
+    }
+
+    console.log(`Created the new ${game.name} game successfully!`);
+
+    const newGame = await createGame({
+      name: game.name,
+      userId: userId,
+      isPublic: false,
+      gameObject: game,
+    });
+
+    if (newGame) {
+      rooms[roomId].games[newGame.name] = newGame.gameObject;
+      io.to(roomId).emit("gameState updated", rooms[roomId]);
+    }
+
+    return res.send("Created board successfully");
+  } catch (err: any) {
+    console.error(
+      "Error: There was an issue saving this game to the database...",
+      err?.message
+    );
+    return res
+      .status(404)
+      .json({
+        error: `Error: There was an issue saving this game to the database...${err?.message}`,
+      });
+  }
+});
 
 export default app;

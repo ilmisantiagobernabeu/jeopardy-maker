@@ -175,8 +175,14 @@ const Buzzer = () => {
               <li key={name} className="flex justify-between w-full">
                 <span>
                   {name} {index === 0 ? "👑" : ""}{" "}
-                  {index === 0 && noOneHasGoneYet
+                  {gameState?.round === 1 && index === 0 && noOneHasGoneYet
                     ? " (This team goes first!)"
+                    : gameState?.round !== 1 &&
+                      noOneHasGoneYet &&
+                      name ===
+                        gameState?.players[gameState?.lastActivePlayer || ""]
+                          ?.name
+                    ? `(This team goes first in round ${gameState.round})`
                     : undefined}
                 </span>{" "}
                 <span>{score}</span>

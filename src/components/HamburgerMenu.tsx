@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import MenuIcon from "../icons/MenuIcon";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import cx from "classnames";
 import { useGlobalState } from "./GlobalStateProvider";
 import { LogoutButton } from "../features/login/LogoutButton";
@@ -28,8 +28,7 @@ export const HamburgerMenu = ({
 }: HamburgerMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isVisibleLocal, setIsVisibleLocal] = useState(isVisible);
-  const { gameState, session, socket } = useGlobalState();
-  const navigate = useNavigate();
+  const { gameState, session, socket, setRoundOver } = useGlobalState();
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -194,24 +193,6 @@ export const HamburgerMenu = ({
                 <Cable /> Buttons & Buzzers
               </NavLink>
             </li>
-            <li>
-              <button
-                onClick={() => {
-                  const response = confirm(
-                    "Are you sure you want to reveal the answer to everyone?"
-                  );
-
-                  if (response) {
-                    navigate(`/answer`);
-                  }
-                }}
-              >
-                <span className="flex gap-2">
-                  <AlertTriangleIcon className="text-red-500" />
-                  Show Answer
-                </span>
-              </button>
-            </li>
             {gameState?.name && (
               <li>
                 <button
@@ -228,6 +209,8 @@ export const HamburgerMenu = ({
                         localStorage.getItem("bz-roomId") || "",
                         localStorage.getItem("bz-userId") || ""
                       );
+                      setIsOpen(false);
+                      setRoundOver(false);
                     }
                   }}
                 >

@@ -57,6 +57,7 @@ export type Game = {
 export interface GameState {
   name: string;
   guid: string;
+  round: number;
   games: Game;
   players: Players;
   playersThatLeft: PlayerObject[];
@@ -98,7 +99,7 @@ export interface ClientToServerEvents {
   ["A player answers the clue"]: (clueObject: {
     value: number;
     arrayIndex: number;
-    clueText?: string;
+    clueIndex: number;
     roomId: string;
   }) => void;
   ["Host modifies the score"]: (playerObject: {
@@ -140,8 +141,7 @@ export interface ClientToServerEvents {
     roomId: string | null,
     previousRoomId: string | null
   ) => void;
-  ["Get user created boards"]: (roomId: string, userId: string) => void;
-  ["Host reloads the board page"]: (roomId: string) => void;
+  ["User gets updated game state"]: (roomId: string) => void;
   ["Host changes the game"]: (
     gameName: string,
     players: Players | undefined,
@@ -159,14 +159,6 @@ export interface ClientToServerEvents {
     roomId: string
   ) => void;
   ["Team selects a daily double clue"]: (roomId: string) => void;
-  ["create a new game"]: (
-    previousGameName: string,
-    game: SingleGame,
-    roomId: string,
-    userId: string,
-    clueType?: string
-  ) => void;
-  ["delete a game"]: (gameName: string, roomId: string) => void;
   ["update player score manually"]: (
     socketId: string,
     score: number,

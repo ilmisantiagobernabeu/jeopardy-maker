@@ -16,6 +16,8 @@ export type ContextType = {
   setSocket: any;
   session: Session | null;
   setSession: React.Dispatch<React.SetStateAction<Session | null>>;
+  roundOver: boolean;
+  setRoundOver: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const GlobalStateContext = React.createContext<ContextType | null>(
@@ -36,6 +38,8 @@ const GlobalStateProvider = ({ children }: { children: React.ReactNode }) => {
     ? JSON.parse(localStorage.getItem("bz-session") || "")
     : null;
   const [session, setSession] = useState<Session | null>(localSession);
+
+  const [roundOver, setRoundOver] = useState(false);
 
   useEffect(() => {
     // connect to the socket server
@@ -99,6 +103,8 @@ const GlobalStateProvider = ({ children }: { children: React.ReactNode }) => {
         setSocket,
         session,
         setSession,
+        roundOver,
+        setRoundOver,
       }}
     >
       {children}

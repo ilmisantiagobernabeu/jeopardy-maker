@@ -1,39 +1,20 @@
 import dotenv from "dotenv";
 dotenv.config();
-import { Server, Socket } from "socket.io";
+import { Socket } from "socket.io";
 import mongoose from "mongoose";
-import http from "http";
-import app from "./server";
 import {
   ClientToServerEvents,
-  GameState,
   Players,
   ServerToClientEvents,
 } from "../stateTypes";
-import {
-  getPublicGames,
-  createGame,
-  Game,
-  updateGame,
-  deleteGame,
-  getUserGames,
-} from "./models/game";
-
-const server = http.createServer(app);
-
-// Start the websocket server
-const io = new Server(server, {
-  cors: {
-    origin: `*`,
-    methods: ["GET", "POST"],
-  },
-  pingInterval: 10000,
-  pingTimeout: 300000,
-});
+import { rooms } from "./rooms";
+import { io } from "./io";
+import { httpServer } from "./httpServer";
+import { createDefaultGameState } from "./createDefaultGameState";
 
 // Start the server
 const port = Number(process.env.PORT || 5000);
-server.listen(port, () => {
+httpServer.listen(port, () => {
   console.log(`Server is listening on port ${port}`);
 });
 
@@ -51,61 +32,6 @@ async function start() {
     console.error("Failed to connect to MongoDB...", err);
   }
 
-  const createDefaultGameState = async ({
-    newRoomId = "",
-    previousRoomId,
-    specificGameName,
-    previousPlayers,
-    userId,
-  }: Partial<{
-    newRoomId: string;
-    previousRoomId?: string | null;
-    specificGameName?: string;
-    previousPlayers?: Players | undefined;
-    userId?: string;
-  }> = {}): Promise<GameState> => {
-    const publicGames = userId
-      ? await getUserGames(userId)
-      : await getPublicGames();
-
-    const gameId = previousRoomId || newRoomId;
-
-    const previousPlayersWithoutScores: Players = Object.fromEntries(
-      Object.entries(previousPlayers || {}).map(([guid, player]) => [
-        guid,
-        {
-          ...player,
-          score: 0,
-        },
-      ])
-    );
-
-    const selectedGame =
-      specificGameName && publicGames[specificGameName]
-        ? publicGames[specificGameName]
-        : publicGames[Object.keys(publicGames)[0]];
-
-    return {
-      name: selectedGame.name,
-      games: publicGames,
-      guid: gameId,
-      isBuzzerActive: false,
-      activePlayer: null,
-      lastActivePlayer: null,
-      dailyDoubleAmount: 0,
-      previousClue: null,
-      activeClue: null,
-      playersThatLeft: [],
-      players: previousPlayersWithoutScores || {},
-      gameBoard: publicGames[selectedGame.name].rounds[0],
-      incorrectGuesses: [],
-      history: [],
-    };
-  };
-
-  // global state
-  const rooms: { [roomId: string]: GameState } = {};
-
   io.on(
     "connect",
     function (
@@ -122,25 +48,14 @@ async function start() {
         }
         rooms[roomId].players[socket.id].ping = timestamp;
       });
-      socket.on("Host reloads the board page", async (roomId) => {
+
+      socket.on("User gets updated game state", async (roomId) => {
         if (!rooms[roomId]) {
           rooms[roomId] = await createDefaultGameState({ newRoomId: roomId });
         }
         socket.join(roomId);
-        console.log("Host reloads the board page", roomId);
+        console.log("User gets updated game state", roomId);
         socket.emit("gameState updated", rooms[roomId]);
-      });
-
-      socket.on("Get user created boards", async (roomId, userId) => {
-        if (!roomId || !rooms[roomId] || !userId) {
-          return;
-        }
-        const currentGameName = rooms[roomId].name;
-        const currentGame = rooms[roomId].games[currentGameName];
-        const games = await getUserGames(userId);
-        rooms[roomId].games = { ...games, [currentGameName]: currentGame };
-        console.log("Get user created boards", { userId, roomId });
-        io.to(roomId).emit("gameState updated", rooms[roomId]);
       });
 
       socket.on(
@@ -195,7 +110,11 @@ async function start() {
           roomId,
           userId
         ) => {
-          if (!rooms[roomId] || !rooms[roomId].games[gameName]) {
+          if (
+            !rooms[roomId] ||
+            !rooms[roomId].games[gameName] ||
+            gameName === rooms[roomId].name
+          ) {
             return;
           }
           console.log("Host changes up the game", gameName, roomId, userId);
@@ -246,10 +165,12 @@ async function start() {
 
       socket.on(
         "A player answers the clue",
-        ({ value: score, clueText, arrayIndex, roomId }) => {
+        ({ value: score, clueIndex, arrayIndex, roomId }) => {
           if (!rooms[roomId]) {
             return;
           }
+
+          // answered incorrectly
           if (score < 0) {
             if (rooms[roomId].activePlayer) {
               rooms[roomId].incorrectGuesses.push(
@@ -266,9 +187,6 @@ async function start() {
               rooms[roomId].incorrectGuesses.length === activePlayers.length ||
               rooms[roomId].dailyDoubleAmount
             ) {
-              const clueIndex = rooms[roomId].gameBoard[
-                arrayIndex
-              ].clues.findIndex((clue) => clue.text === clueText);
               rooms[roomId].gameBoard[arrayIndex].clues[
                 clueIndex
               ].alreadyPlayed = true;
@@ -278,13 +196,10 @@ async function start() {
                 (rooms[roomId].dailyDoubleAmount as number) *= -1;
               }
             }
+            // answered correctly
           } else {
             rooms[roomId].incorrectGuesses = [];
             rooms[roomId].isBuzzerActive = false;
-
-            const clueIndex = rooms[roomId].gameBoard[
-              arrayIndex
-            ].clues.findIndex((clue) => clue.text === clueText);
             rooms[roomId].gameBoard[arrayIndex].clues[clueIndex].alreadyPlayed =
               true;
           }
@@ -374,23 +289,6 @@ async function start() {
         }
       );
 
-      socket.on(
-        "Host loads the game board for the first time",
-        (gameName = "Animals", roomId) => {
-          if (!rooms[roomId] || !rooms[roomId].games[gameName]) {
-            return;
-          }
-          console.log(
-            "Host loads the game board for the first time",
-            gameName,
-            roomId
-          );
-          rooms[roomId].name = gameName;
-          rooms[roomId].gameBoard = rooms[roomId].games[gameName].rounds[0];
-          io.to(roomId).emit("gameState updated", rooms[roomId]);
-        }
-      );
-
       socket.on("Host activates the buzzers", (roomId) => {
         if (!rooms[roomId]) {
           return;
@@ -425,11 +323,16 @@ async function start() {
       );
 
       socket.on("Host navigates to another round", (round, roomId) => {
-        if (!rooms[roomId] || !rooms[roomId].games[rooms[roomId].name]) {
+        if (
+          !rooms[roomId] ||
+          !rooms[roomId].games[rooms[roomId].name] ||
+          rooms[roomId].round === round
+        ) {
           return;
         }
         console.log("Host navigates to another round, round: ", round);
         // console.log("navigate 1st round", data);
+        rooms[roomId].round = round;
         rooms[roomId].gameBoard =
           rooms[roomId].games[rooms[roomId].name].rounds[round - 1];
         io.to(roomId).emit("gameState updated", rooms[roomId]);
@@ -529,75 +432,6 @@ async function start() {
         delete rooms[roomId].players[socket.id];
         // emit to EVERYONE the update game state
         io.to(roomId).emit("gameState updated", rooms[roomId]);
-      });
-
-      socket.on(
-        "create a new game",
-        async function (previousGameName, game, roomId, userId, clueType) {
-          if (!rooms[roomId] || !userId) {
-            return;
-          }
-          try {
-            const existingGame = await Game.findOne({ name: previousGameName });
-
-            if (existingGame) {
-              try {
-                await updateGame(previousGameName, game);
-                delete rooms[roomId].games[previousGameName];
-                rooms[roomId].games[game.name] = game;
-                console.log(
-                  `Updated the ${game.name} game successfully!`,
-                  clueType
-                );
-                io.to(roomId).emit("gameState updated", rooms[roomId]);
-              } catch (err: any) {
-                console.error(
-                  `Error: There was an issue updating the ${previousGameName} game to the database...`,
-                  err?.message
-                );
-              }
-              return;
-            } else {
-              console.log(`Created the new ${game.name} game successfully!`);
-            }
-
-            const newGame = await createGame({
-              name: game.name,
-              userId: userId,
-              isPublic: false,
-              gameObject: game,
-            });
-
-            if (newGame) {
-              rooms[roomId].games[newGame.name] = newGame.gameObject;
-              io.to(roomId).emit("gameState updated", rooms[roomId]);
-            }
-          } catch (err: any) {
-            console.error(
-              "Error: There was an issue saving this game to the database...",
-              err?.message
-            );
-          }
-        }
-      );
-
-      socket.on("delete a game", function (gameFileName, roomId) {
-        if (!rooms[roomId]) {
-          return;
-        }
-        try {
-          deleteGame(gameFileName);
-          const updatedGames = { ...rooms[roomId].games };
-          delete updatedGames[gameFileName];
-          rooms[roomId].games = updatedGames;
-          io.to(roomId).emit("gameState updated", rooms[roomId]);
-        } catch (err) {
-          console.log(
-            "Error: couldn't delete game file: ",
-            gameFileName + ".json",
-            err
-          );
-        }
       });
 
       socket.on("Delete the player", async (roomId, socketId) => {

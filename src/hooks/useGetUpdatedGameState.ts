@@ -6,7 +6,7 @@ export const useGetUpdatedGameState = () => {
   useEffect(() => {
     if (localStorage.getItem("bz-roomId")) {
       socket?.emit(
-        "Host reloads the board page",
+        "User gets updated game state",
         localStorage.getItem("bz-roomId") || ""
       );
     }

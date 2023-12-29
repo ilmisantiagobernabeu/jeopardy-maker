@@ -7,7 +7,11 @@ import GlobalStateProvider from "./components/GlobalStateProvider";
 import { QueryClient, QueryClientProvider } from "react-query";
 import GameSettingsProvider from "./components/GameSettingsProvider";
 
-const client = new QueryClient();
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: { refetchOnWindowFocus: false },
+  },
+});
 
 const container = document.getElementById("root") as HTMLElement;
 
@@ -15,7 +19,7 @@ const root = ReactDOM.createRoot(container);
 
 root.render(
   <React.StrictMode>
-    <QueryClientProvider client={client}>
+    <QueryClientProvider client={queryClient}>
       <GameSettingsProvider>
         <GlobalStateProvider>
           <BrowserRouter>

@@ -108,15 +108,24 @@ export async function createGame({
 }
 
 export async function updateGame(previousGameName: string, game: SingleGame) {
-  return await Game.updateOne(
-    { name: previousGameName },
-    { name: game.name, gameObject: game }
-  );
+  try {
+    await Game.updateOne(
+      { name: previousGameName },
+      { name: game.name, gameObject: game }
+    );
+  } catch (err) {
+    console.error(
+      "There was an issue updating a game board ",
+      previousGameName,
+      game.name
+    );
+  }
 }
 
 export async function deleteGame(gameName: string) {
   try {
     await Game.deleteOne({ name: gameName });
+    console.log(`Successfully deleted the ${gameName} game`);
   } catch (err) {
     console.error("There was an deleting a game from the database...", err);
   }

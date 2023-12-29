@@ -206,7 +206,7 @@ const GameCard = ({ clue, index, round }: Props) => {
         ? gameState.dailyDoubleAmount * -1
         : value * -1,
       arrayIndex: index % 6,
-      clueText: clue.text,
+      clueIndex,
       roomId: localStorage.getItem("bz-roomId") || "",
     });
 
@@ -227,7 +227,7 @@ const GameCard = ({ clue, index, round }: Props) => {
     socket?.emit("A player answers the clue", {
       value: gameState?.dailyDoubleAmount || value,
       arrayIndex: index % 6,
-      clueText: clue.text,
+      clueIndex,
       roomId: localStorage.getItem("bz-roomId") || "",
     });
 

@@ -2,10 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import GameCard from "./GameCard";
 import "./App.scss";
 import { useGlobalState } from "./GlobalStateProvider";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { HamburgerMenu } from "./HamburgerMenu";
 import { useGetUpdatedGameState } from "../hooks/useGetUpdatedGameState";
 import { Clue, ClueType } from "../../stateTypes";
+import { useGetGameBoard } from "../api/useGetGameBoard";
+import { Loader } from "lucide-react";
+import { useGetUserBoards } from "../api/useGetUserBoards";
 
 function preloadResources(clues: Clue[]): void {
   clues.forEach((clue) => {
@@ -23,12 +26,24 @@ function App() {
   const queryParams = new URLSearchParams(location.search);
   const gameQueryParam = queryParams.get("game") || "";
   const round = Number(queryParams.get("round")) || 1;
-  const { gameState, socket } = useGlobalState();
-  const [roundOver, setRoundOver] = useState(false);
+  const { gameState, socket, roundOver, setRoundOver, session } =
+    useGlobalState();
   const [pointerOver, setPointerOver] = useState(false);
   const timeout = useRef<NodeJS.Timeout | null>(null);
+  const { data: userBoards } = useGetUserBoards(
+    localStorage.getItem("bz-roomId") || "",
+    session?.user.id || ""
+  );
 
   useGetUpdatedGameState();
+
+  const { data: gameBoardData, isLoading } = useGetGameBoard(
+    localStorage.getItem("bz-roomId") || "",
+    gameQueryParam,
+    !!localStorage.getItem("bz-roomId") &&
+      !!localStorage.getItem("dt-gameName") &&
+      gameQueryParam === localStorage.getItem("dt-gameName")
+  );
 
   useEffect(() => {
     const resourceClues = gameState?.gameBoard
@@ -39,33 +54,6 @@ function App() {
       preloadResources(resourceClues);
     }
   }, [gameState?.gameBoard]);
-
-  useEffect(() => {
-    if (
-      localStorage.getItem("bz-roomId") &&
-      localStorage.getItem("dt-gameName") &&
-      gameQueryParam === localStorage.getItem("dt-gameName")
-    ) {
-      socket?.emit(
-        "Host loads the game board for the first time",
-        gameQueryParam,
-        localStorage.getItem("bz-roomId") || ""
-      );
-    } else if (
-      localStorage.getItem("bz-roomId") &&
-      localStorage.getItem("dt-gameName") &&
-      socket
-    ) {
-      localStorage.setItem("dt-gameName", gameQueryParam);
-      socket?.emit(
-        "Host changes the game",
-        gameQueryParam,
-        gameState?.players,
-        localStorage.getItem("bz-roomId") || "",
-        localStorage.getItem("bz-userId") || ""
-      );
-    }
-  }, [socket, location, gameQueryParam]);
 
   useEffect(() => {
     if (localStorage.getItem("bz-roomId")) {
@@ -95,9 +83,17 @@ function App() {
     (clue) => clue?.alreadyPlayed || !clue.text || !clue.answer
   );
 
+  const isEveryCluePlayedInAllRounds = gameState?.games[
+    gameQueryParam
+  ]?.rounds.every((round) =>
+    round.every((column) =>
+      column.clues.every((clue) => clue.alreadyPlayed || !clue.answer)
+    )
+  );
+
   useEffect(() => {
     let timeout = 0;
-    if (isEveryCluePlayed) {
+    if (isEveryCluePlayed || isEveryCluePlayedInAllRounds) {
       timeout = window.setTimeout(() => {
         setRoundOver(true);
       }, 3000);
@@ -106,9 +102,22 @@ function App() {
     return () => {
       clearTimeout(timeout);
     };
-  }, [round, isEveryCluePlayed]);
+  }, [round, isEveryCluePlayed, isEveryCluePlayedInAllRounds]);
 
   const numOfRounds = gameState?.games[gameQueryParam]?.rounds.length || 0;
+
+  if (isLoading) {
+    return (
+      <div className="Game">
+        <div className="h-screen flex justify-center items-center text-white max-w-5xl mx-auto">
+          <div className="w-full flex gap-2 justify-center">
+            <Loader className="animate-spin" />
+            <p className="font-semibold">Loading board...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (!numOfRounds) {
     return (
@@ -137,7 +146,7 @@ function App() {
             }
           }}
         />
-        {roundOver && isEveryCluePlayed && round === numOfRounds ? (
+        {roundOver && isEveryCluePlayedInAllRounds ? (
           <div className="h-screen flex flex-col gap-8 justify-center items-center bg-[#060ce9]">
             <div className="flex flex-col gap-4 justify-center items-center max-w-sm">
               <h2 className="font-bold text-5xl leading-none text-center normal-case mb-2 text-white">
@@ -199,7 +208,7 @@ function App() {
             {clues?.map((clue, index) => {
               return (
                 <GameCard
-                  key={round + index}
+                  key={round + index + clue.text + clue.answer}
                   clue={clue}
                   index={index}
                   round={round}

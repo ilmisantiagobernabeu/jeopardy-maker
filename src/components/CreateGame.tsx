@@ -7,6 +7,8 @@ import { ClueType, SingleGame } from "../../stateTypes";
 import { HamburgerMenu } from "./HamburgerMenu";
 import { useGetUpdatedGameState } from "../hooks/useGetUpdatedGameState";
 import { Edit } from "lucide-react";
+import { useCreateNewBoard } from "../api/useCreateNewBoard";
+import { useGetUserBoards } from "../api/useGetUserBoards";
 
 const getInitialGameState = (gameName: string) => ({
   name: gameName,
@@ -385,13 +387,19 @@ type StateType = {
 };
 
 function CreateGame({ isPreview = false }: { isPreview?: boolean }) {
+  const createNewBoard = useCreateNewBoard();
   const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const round = Number(queryParams.get("round") || 1);
   const gameName = queryParams.get("name") || "";
 
-  const { socket, gameState: globalGameState, session } = useGlobalState();
+  const { gameState: globalGameState, session } = useGlobalState();
+
+  const { data: userBoards } = useGetUserBoards(
+    localStorage.getItem("bz-roomId") || "",
+    session?.user.id || ""
+  );
 
   const state = location.state as StateType;
   const data = state?.data;
@@ -460,15 +468,15 @@ function CreateGame({ isPreview = false }: { isPreview?: boolean }) {
       const newGameState = structuredClone(prevGameState);
       newGameState.name = gameTitle;
 
-      socket?.emit(
-        "create a new game",
-        gameState.name,
-        newGameState,
-        globalGameState?.guid || "",
-        localStorage.getItem("bz-userId") || ""
-      );
-
       return newGameState;
+    });
+
+    createNewBoard.mutate({
+      previousGameName: gameState.name,
+      game: { ...gameState, name: gameTitle },
+      roomId: globalGameState?.guid || "",
+      userId: localStorage.getItem("bz-userId") || "",
+      clueType: undefined,
     });
   };
 
@@ -550,7 +558,7 @@ function CreateGame({ isPreview = false }: { isPreview?: boolean }) {
           {clues?.map((clue, index) => {
             return (
               <GameCardStatic
-                key={round + index}
+                key={round + index + clue.text + clue.answer}
                 clue={clue}
                 index={index}
                 round={round}
@@ -581,7 +589,8 @@ const EditTitle = ({
   catIndex,
   isPreview,
 }: EditTitleProps) => {
-  const { gameState, socket } = useGlobalState();
+  const createNewBoard = useCreateNewBoard();
+  const { gameState: globalGameState } = useGlobalState();
   const [newTitle, setNewTitle] = useState(title);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -601,13 +610,13 @@ const EditTitle = ({
       const newGameState = structuredClone(prevGameState);
       newGameState.rounds[round - 1][catIndex].category = newTitle;
 
-      socket?.emit(
-        "create a new game",
-        newGameState.name,
-        newGameState,
-        gameState?.guid || "",
-        localStorage.getItem("bz-userId") || ""
-      );
+      createNewBoard.mutate({
+        previousGameName: newGameState.name,
+        game: newGameState,
+        roomId: globalGameState?.guid || "",
+        userId: localStorage.getItem("bz-userId") || "",
+        clueType: undefined,
+      });
 
       return newGameState;
     });

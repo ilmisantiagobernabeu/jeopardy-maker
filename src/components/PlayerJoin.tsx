@@ -17,8 +17,11 @@ const PlayerJoin = () => {
 
   function handleSubmission(localPlayerName: string) {
     socket?.emit("player signed up", localPlayerName.trim(), sessionName || "");
-    localStorage.setItem(`dt-${sessionName}-playerName`, localPlayerName);
-    localStorage.setItem(`dt-playerName`, localPlayerName);
+    localStorage.setItem(
+      `dt-${sessionName}-playerName`,
+      localPlayerName.trim()
+    );
+    localStorage.setItem(`dt-playerName`, localPlayerName.trim());
   }
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {

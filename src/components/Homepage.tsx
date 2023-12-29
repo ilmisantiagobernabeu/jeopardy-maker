@@ -8,7 +8,13 @@ import { PageWrapper } from "./PageWrapper";
 import EditIcon from "../icons/EditIcon";
 import DeleteIcon from "../icons/DeleteIcon";
 import { v4 as uuidv4 } from "uuid";
-import { RefreshIcon } from "../icons/RefreshIcon";
+import { useDeleteUserBoard } from "../api/useDeleteUserBoard";
+import { queryClient } from "../main";
+import {
+  getUserBoardsQueryKey,
+  useGetUserBoards,
+} from "../api/useGetUserBoards";
+import { Loader } from "lucide-react";
 
 function generateRandomString(length = 5) {
   const characters =
@@ -22,24 +28,23 @@ function generateRandomString(length = 5) {
 }
 
 const Homepage = () => {
-  const { gameState, socket } = useGlobalState();
+  const { gameState, socket, session } = useGlobalState();
+  const { mutate: deleteGame } = useDeleteUserBoard({
+    onSuccess() {
+      queryClient.invalidateQueries([getUserBoardsQueryKey]);
+    },
+  });
+
+  const { data: userBoards } = useGetUserBoards(
+    localStorage.getItem("bz-roomId") || "",
+    session?.user.id || ""
+  );
 
   useEffect(() => {
     if (!localStorage.getItem("bz-roomId")) {
       socket?.emit("Host refreshes the room code", uuidv4().slice(0, 5), null);
     }
   }, [socket]);
-
-  // when logged in, find user boards
-  useEffect(() => {
-    if (gameState?.guid && localStorage.getItem("bz-userId")) {
-      socket?.emit(
-        "Get user created boards",
-        gameState?.guid || "",
-        localStorage.getItem("bz-userId") || ""
-      );
-    }
-  }, [socket, gameState?.guid]);
 
   return (
     <PageWrapper>
@@ -63,20 +68,6 @@ const Homepage = () => {
           <p className="font-bold text-lg leading-none justify-center flex gap-2">
             Session Name:{" "}
             <span className="text-center gold-text">{gameState?.guid}</span>
-            {gameState?.guid && (
-              <button
-                title="Refresh the session"
-                onClick={() => {
-                  socket?.emit(
-                    "Host refreshes the room code",
-                    uuidv4().slice(0, 5),
-                    gameState?.guid!
-                  );
-                }}
-              >
-                <RefreshIcon width={20} className="text-white" />
-              </button>
-            )}
           </p>
         </div>
         <div className="flex flex-col gap-4 w-full sm:w-auto">
@@ -84,14 +75,17 @@ const Homepage = () => {
             <DesktopIcon width={22} className="fill-white" />
             Host
           </h2>
-          {Object.keys(gameState?.games || {}).length === 0 ? (
-            <p>No existing games found</p>
+          {Object.keys(userBoards || {}).length === 0 ? (
+            <div className="w-full flex gap-2 justify-center">
+              <Loader className="animate-spin" />
+              <p className="font-semibold">Loading games...</p>
+            </div>
           ) : (
             <>
               <div>
                 <h3 className="font-bold gold-text ">Public boards</h3>
                 <ul className="flex flex-col gap-2 list-disc list-inside max-h-52 overflow-auto">
-                  {Object.values(gameState?.games || {})
+                  {Object.values(userBoards || {})
                     .filter((game) => game.isPublic)
                     .map((game, index) => (
                       <li
@@ -130,11 +124,11 @@ const Homepage = () => {
                                 );
 
                                 if (response) {
-                                  socket?.emit(
-                                    "delete a game",
-                                    game.name,
-                                    gameState?.guid || ""
-                                  );
+                                  deleteGame({
+                                    roomId:
+                                      localStorage.getItem("bz-roomId") || "",
+                                    gameName: game.name || "",
+                                  });
                                 }
                               }}
                             >
@@ -147,13 +141,12 @@ const Homepage = () => {
                 </ul>
               </div>
               {localStorage.getItem("bz-session") &&
-                Object.values(gameState?.games || {}).filter(
-                  (game) => !game.isPublic
-                ).length > 0 && (
+                Object.values(userBoards || {}).filter((game) => !game.isPublic)
+                  .length > 0 && (
                   <div>
                     <h3 className="font-bold gold-text">Your boards</h3>
                     <ul className="flex flex-col gap-2 list-disc list-inside max-h-52 overflow-auto">
-                      {Object.values(gameState?.games || {})
+                      {Object.values(userBoards || {})
                         .filter((game) => !game.isPublic)
                         .map((game) => (
                           <li
@@ -177,7 +170,7 @@ const Homepage = () => {
                               }}
                               className="hover:text-gold focus:text-gold font-semibold transition-colors duration-200 text-left flex-grow"
                             >
-                              &bull; {game.name}
+                              &bull; {game.name.replaceAll("-", " ")}
                             </button>
                             <div className="flex gap-3">
                               <Link
@@ -194,11 +187,11 @@ const Homepage = () => {
                                   );
 
                                   if (response) {
-                                    socket?.emit(
-                                      "delete a game",
-                                      game.name,
-                                      gameState?.guid || ""
-                                    );
+                                    deleteGame({
+                                      roomId:
+                                        localStorage.getItem("bz-roomId") || "",
+                                      gameName: game.name || "",
+                                    });
                                   }
                                 }}
                               >

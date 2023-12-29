@@ -41,6 +41,7 @@ const Scoreboard = () => {
             {!singlePlayerStats &&
               Object.values(gameState?.players || {})
                 .filter(({ name }) => name)
+                .sort((a, b) => (a.score > b.score ? -1 : 1))
                 .map(({ score, name, socketId }, index) => (
                   <div key={name! + index}>
                     <p className="text-7xl text-white my-4 border-b-4 line-clamp-2">

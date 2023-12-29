@@ -40,7 +40,7 @@ export const Settings = () => {
               <input
                 id="timeToAnswer"
                 type="number"
-                className="appearance-none rounded-sm p-2 text-base text-black w-20"
+                className="appearance-none rounded-sm p-2 text-base text-black w-16"
                 value={localState.countdownTimeToAnswer}
                 min={0}
                 onChange={(e) => {
@@ -72,7 +72,7 @@ export const Settings = () => {
               <input
                 id="startDailyDoubleTimerAutomatically"
                 type="number"
-                className="appearance-none rounded-sm p-2 text-base text-black w-20"
+                className="appearance-none rounded-sm p-2 text-base text-black w-16"
                 value={localState.dailyDoubleCountdownTime}
                 min={0}
                 onChange={(e) => {
@@ -104,7 +104,7 @@ export const Settings = () => {
               <input
                 id="imageClueDelay"
                 type="number"
-                className="appearance-none rounded-sm p-2 text-base text-black w-20"
+                className="appearance-none rounded-sm p-2 text-base text-black w-16"
                 value={localState.imageClueDelay}
                 min={0}
                 onChange={(e) => {
@@ -136,7 +136,7 @@ export const Settings = () => {
               <input
                 id="audioClueDelay"
                 type="number"
-                className="appearance-none rounded-sm p-2 text-base text-black w-20"
+                className="appearance-none rounded-sm p-2 text-base text-black w-16"
                 value={localState.audioClueDelay}
                 min={0}
                 onChange={(e) => {

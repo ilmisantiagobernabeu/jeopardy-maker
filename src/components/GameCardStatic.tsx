@@ -6,6 +6,7 @@ import { useGlobalState } from "./GlobalStateProvider";
 import axios from "axios";
 import { apiUrl } from "../api/constants";
 import { Image, Music } from "lucide-react";
+import { useCreateNewBoard } from "../api/useCreateNewBoard";
 
 type Props = {
   clue: Clue;
@@ -127,6 +128,7 @@ const EditModal = ({
   localGameState,
   isPreview,
 }: EditModalProps) => {
+  const createNewBoard = useCreateNewBoard();
   const { gameState, socket } = useGlobalState();
   const [isDailyDouble, setIsDailyDouble] = useState(
     clue.isDailyDouble || false
@@ -404,14 +406,13 @@ const EditModal = ({
                     clueIndex
                   ].alreadyPlayed = false;
 
-                  socket?.emit(
-                    "create a new game",
-                    newGameState.name,
-                    newGameState,
-                    gameState?.guid || "",
-                    localStorage.getItem("bz-userId") || "",
-                    clue.type
-                  );
+                  createNewBoard.mutate({
+                    previousGameName: newGameState.name,
+                    game: newGameState,
+                    roomId: gameState?.guid || "",
+                    userId: localStorage.getItem("bz-userId") || "",
+                    clueType: clue.type,
+                  });
 
                   return newGameState;
                 });
