@@ -42,7 +42,9 @@ app.post("/api/uploadImage", upload.single("image"), async (req, res) => {
     console.log(
       "uploaded image file:",
       imageName,
-      req?.file?.buffer ? `${req.file.buffer.length / (1024 * 1024)}MB` : null
+      req?.file?.buffer
+        ? `${(req.file.buffer.length / (1024 * 1024)).toFixed(2)}MB`
+        : null
     );
 
     const params = {
@@ -67,7 +69,9 @@ app.post("/api/uploadAudio", upload.single("mp3"), async (req, res) => {
   console.log(
     "uploaded audio file:",
     audioName,
-    req?.file?.buffer ? `${req.file.buffer.length / (1024 * 1024)}MB` : null
+    req?.file?.buffer
+      ? `${(req.file.buffer.length / (1024 * 1024)).toFixed(2)}MB`
+      : null
   );
   if (req?.file?.buffer) {
     const params = {
@@ -216,11 +220,9 @@ app.post("/api/createNewBoard", async (req, res) => {
       "Error: There was an issue saving this game to the database...",
       err?.message
     );
-    return res
-      .status(404)
-      .json({
-        error: `Error: There was an issue saving this game to the database...${err?.message}`,
-      });
+    return res.status(404).json({
+      error: `Error: There was an issue saving this game to the database...${err?.message}`,
+    });
   }
 });
 

@@ -271,6 +271,7 @@ const EditModal = ({
                   <input
                     onChange={(e) => setImageFile(e?.target?.files?.[0])}
                     type="file"
+                    name="image"
                     accept="image/*"
                   />
                   <button
@@ -303,6 +304,7 @@ const EditModal = ({
                     }}
                     type="file"
                     accept=".mp3"
+                    name="mp3"
                   />
                   <button
                     className="primary-btn !text-3xl mt-4"
