@@ -53,7 +53,6 @@ export interface GameState {
   name: string;
   guid: string;
   round: number;
-  games: Game;
   game: SingleGame;
   players: Players;
   playersThatLeft: PlayerObject[];

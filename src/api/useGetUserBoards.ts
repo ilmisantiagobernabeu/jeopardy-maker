@@ -3,7 +3,7 @@ import { useQuery } from "react-query";
 import { apiUrl } from "./constants";
 import { Game } from "../../stateTypes";
 
-const getUserBoards = async (roomId: string, userId: string) => {
+const getUserBoards = async (roomId: string, userId: string): Promise<Game> => {
   const response = await axios.get(
     `${apiUrl}/api/getUserBoards/${roomId}${userId ? `?userId=${userId}` : ""}`
   );

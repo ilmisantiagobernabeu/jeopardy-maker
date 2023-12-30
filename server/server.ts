@@ -122,13 +122,7 @@ app.get("/api/getUserBoards/:roomId", async (req, res) => {
     ? await getUserGames(userId.toString())
     : await getPublicGames();
 
-  const currentGameName = rooms[roomId].name;
-  const currentGame = rooms[roomId].games[currentGameName];
   console.log("Get user created boards", { userId });
-
-  rooms[roomId].games = currentGameName
-    ? { ...games, [currentGameName]: currentGame }
-    : games;
 
   io.to(roomId).emit("gameState updated", rooms[roomId]);
 
@@ -140,14 +134,22 @@ app.get("/api/getGameboard/:roomId/:gameName", async (req, res) => {
     params: { gameName, roomId },
   } = req;
 
-  if (!roomId || !rooms[roomId] || !rooms[roomId].games[gameName]) {
+  if (!roomId || !rooms[roomId]) {
     return res.status(404).json({ error: "Data not found" });
+  }
+
+  // prevents us from restarting the state of the game if we pick
+  // the current game we already have going
+  if (rooms[roomId].name === gameName) {
+    return res.status(200).send("Game already in state!");
   }
 
   console.log("Host loads the game board for the first time", gameName, roomId);
 
+  const game = await Game.findOne({ name: gameName });
+
   rooms[roomId].name = gameName;
-  rooms[roomId].game = rooms[roomId].games[gameName];
+  rooms[roomId].game = game?.gameObject || {};
   io.to(roomId).emit("gameState updated", rooms[roomId]);
 
   return res.status(200).send("Success");
@@ -158,16 +160,12 @@ app.delete("/api/deleteUserBoard/:roomId/:gameName", async (req, res) => {
     params: { gameName, roomId },
   } = req;
 
-  if (!rooms[roomId] || !rooms[roomId].games) {
+  if (!rooms[roomId]) {
     return res.status(404).json({ error: "Data not found" });
   }
 
   try {
     deleteGame(gameName);
-    const updatedGames = { ...rooms[roomId].games };
-    delete updatedGames[gameName];
-    rooms[roomId].games = updatedGames;
-    io.to(roomId).emit("gameState updated", rooms[roomId]);
   } catch (err) {
     console.error("Error: couldn't delete the game: ", gameName, err);
   }
@@ -187,10 +185,7 @@ app.post("/api/createNewBoard", async (req, res) => {
     if (existingGame) {
       try {
         await updateGame(previousGameName, game);
-        delete rooms[roomId].games[previousGameName];
-        rooms[roomId].games[game.name] = game;
         console.log(`Updated the ${game.name} game successfully!`, clueType);
-        io.to(roomId).emit("gameState updated", rooms[roomId]);
       } catch (err: any) {
         console.error(
           `Error: There was an issue updating the ${previousGameName} game to the database...`,
@@ -202,17 +197,12 @@ app.post("/api/createNewBoard", async (req, res) => {
 
     console.log(`Created the new ${game.name} game successfully!`);
 
-    const newGame = await createGame({
+    await createGame({
       name: game.name,
       userId: userId,
       isPublic: false,
       gameObject: game,
     });
-
-    if (newGame) {
-      rooms[roomId].games[newGame.name] = newGame.gameObject;
-      io.to(roomId).emit("gameState updated", rooms[roomId]);
-    }
 
     return res.send("Created board successfully");
   } catch (err: any) {

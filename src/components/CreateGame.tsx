@@ -435,7 +435,7 @@ function CreateGame({ isPreview = false }: { isPreview?: boolean }) {
     const queryParams = new URLSearchParams(location.search);
     const gameName = queryParams.get("name");
 
-    const existingGame = Object.values(globalGameState?.games || {})?.find(
+    const existingGame = Object.values(userBoards || {})?.find(
       (game) => game.name === gameName
     );
 
@@ -558,7 +558,7 @@ function CreateGame({ isPreview = false }: { isPreview?: boolean }) {
           {clues?.map((clue, index) => {
             return (
               <GameCardStatic
-                key={round + index + clue.text + clue.answer}
+                key={round + index}
                 clue={clue}
                 index={index}
                 round={round}

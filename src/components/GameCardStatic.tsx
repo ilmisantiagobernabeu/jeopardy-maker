@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import cx from "classnames";
 import CloseIcon from "../icons/CloseIcon";
 import { Clue, ClueType, SingleGame } from "../../stateTypes";
@@ -7,6 +7,7 @@ import axios from "axios";
 import { apiUrl } from "../api/constants";
 import { Image, Music } from "lucide-react";
 import { useCreateNewBoard } from "../api/useCreateNewBoard";
+import ReactDOM from "react-dom";
 
 type Props = {
   clue: Clue;
@@ -201,233 +202,238 @@ const EditModal = ({
     setIsUploading(false);
   };
 
-  return (
-    <div className="ClueModal w-full h-full left-0 right-0 text-3xl">
-      <div className="w-full max-w-3xl flex justify-center items-center flex-col gap-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 w-full">
-          <div className="flex flex-col gap-1">
-            <div className="flex justify-between items-baseline">
-              <label htmlFor={`clue-${clue.text}`}>Clue</label>
+  return ReactDOM.createPortal(
+    <div className="Game-grid">
+      <div className="GameCard">
+        <div className="ClueModal w-full h-full left-0 right-0 text-3xl">
+          <div className="w-full max-w-3xl flex justify-center items-center flex-col gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 w-full">
+              <div className="flex flex-col gap-1">
+                <div className="flex justify-between items-baseline">
+                  <label htmlFor={`clue-${clue.text}`}>Clue</label>
+                  {!isPreview && (
+                    <ul className="flex gap-2 list-none lowercase font-korinna text-xs">
+                      <li>
+                        <button
+                          onClick={() => {
+                            setClueType(ClueType.TEXT);
+                          }}
+                          className={cx("p-1", {
+                            border: clueType === ClueType.TEXT,
+                          })}
+                        >
+                          Text
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          onClick={() => {
+                            setClueType(ClueType.IMAGE);
+                          }}
+                          className={cx("p-1", {
+                            border: clueType === ClueType.IMAGE,
+                          })}
+                        >
+                          Image
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          onClick={() => {
+                            setClueType(ClueType.AUDIO);
+                          }}
+                          className={cx("p-1", {
+                            border: clueType === ClueType.AUDIO,
+                          })}
+                        >
+                          Audio
+                        </button>
+                      </li>
+                    </ul>
+                  )}
+                </div>
+                {clueType === ClueType.TEXT ? (
+                  <textarea
+                    id={`clue-${clue.text}`}
+                    className="p-3   text-center border-white border rounded-sm flex-grow text-base text-black"
+                    value={clueText}
+                    onChange={(e) => {
+                      setClueText(e.target.value);
+                    }}
+                  />
+                ) : clueType === ClueType.IMAGE ? (
+                  <>
+                    {imageName && (
+                      <img
+                        src={`https://buzzinga.s3.us-east-2.amazonaws.com/${imageName}`}
+                        alt=""
+                        className="max-w-[50px] max-h-[50px] object-contain"
+                      />
+                    )}
+                    <form onSubmit={handleClueSubmitImage}>
+                      <input
+                        onChange={(e) => setImageFile(e?.target?.files?.[0])}
+                        type="file"
+                        name="image"
+                        accept="image/*"
+                      />
+                      <button
+                        className="primary-btn !text-3xl mt-4"
+                        type="submit"
+                        disabled={
+                          !imageFile ||
+                          isUploading ||
+                          (!!imageFile && imageFile === uploadedImageFile)
+                        }
+                      >
+                        Upload
+                      </button>
+                    </form>
+                  </>
+                ) : clueType === ClueType.AUDIO ? (
+                  <>
+                    {audioName && (
+                      <audio controls className="max-w-full">
+                        <source
+                          src={`https://buzzinga.s3.us-east-2.amazonaws.com/${audioName}`}
+                          type="audio/mpeg"
+                        />
+                      </audio>
+                    )}
+                    <form onSubmit={handleClueSubmitAudio}>
+                      <input
+                        onChange={(e) => {
+                          setAudioFile(e?.target?.files?.[0]);
+                        }}
+                        type="file"
+                        accept=".mp3"
+                        name="mp3"
+                      />
+                      <button
+                        className="primary-btn !text-3xl mt-4"
+                        type="submit"
+                        disabled={
+                          !audioFile ||
+                          isUploading ||
+                          (!!audioFile && audioFile === uploadedAudioFile)
+                        }
+                      >
+                        Upload
+                      </button>
+                    </form>
+                  </>
+                ) : null}
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <div className="flex justify-between items-baseline">
+                  <label htmlFor={`clue-${clue.answer}`}>Answer</label>
+                </div>
+                {answerType === ClueType.TEXT ? (
+                  <textarea
+                    id={`clue-${clue.answer}`}
+                    className="p-3   text-center border-white border rounded-sm flex-grow text-base text-black"
+                    value={answer}
+                    onChange={(e) => {
+                      setAnswer(e.target.value);
+                    }}
+                  />
+                ) : answerType === ClueType.IMAGE ? (
+                  <textarea
+                    id={`clue-${clue.answer}`}
+                    className="p-3   text-center border-white border rounded-sm flex-grow text-base text-black"
+                    value={answer}
+                    onChange={(e) => {
+                      setAnswer(e.target.value);
+                    }}
+                  />
+                ) : null}
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-1 items-center">
+              <div className="flex gap-4">
+                <input
+                  id={`clue-${clue.isDailyDouble}`}
+                  type="checkbox"
+                  className="ClueModal-text bg-transparent text-center border-white border rounded-sm"
+                  checked={isDailyDouble}
+                  onChange={(e) => {
+                    setIsDailyDouble(e.target.checked);
+                  }}
+                  disabled={isPreview}
+                />
+                <label htmlFor={`clue-${clue.isDailyDouble}`}>
+                  Is Daily Double
+                </label>
+              </div>
+              <p className="italic text-sm normal-case font-korinna">
+                1 of{" "}
+                {
+                  localGameState.rounds[round - 1]
+                    .flatMap((game) => game.clues)
+                    .filter((clue) => clue.isDailyDouble).length
+                }{" "}
+                Daily Doubles in round {round}.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-4">
+              <button
+                type="button"
+                className={cx("secondary-btn !text-3xl mt-4 !w-auto")}
+                onClick={() => {
+                  setIsFlipped(false);
+                }}
+              >
+                <span className="flex gap-2">
+                  <CloseIcon width={16} /> Close
+                </span>
+              </button>
               {!isPreview && (
-                <ul className="flex gap-2 list-none lowercase font-korinna text-xs">
-                  <li>
-                    <button
-                      onClick={() => {
-                        setClueType(ClueType.TEXT);
-                      }}
-                      className={cx("p-1", {
-                        border: clueType === ClueType.TEXT,
-                      })}
-                    >
-                      Text
-                    </button>
-                  </li>
-                  <li>
-                    <button
-                      onClick={() => {
-                        setClueType(ClueType.IMAGE);
-                      }}
-                      className={cx("p-1", {
-                        border: clueType === ClueType.IMAGE,
-                      })}
-                    >
-                      Image
-                    </button>
-                  </li>
-                  <li>
-                    <button
-                      onClick={() => {
-                        setClueType(ClueType.AUDIO);
-                      }}
-                      className={cx("p-1", {
-                        border: clueType === ClueType.AUDIO,
-                      })}
-                    >
-                      Audio
-                    </button>
-                  </li>
-                </ul>
+                <button
+                  type="button"
+                  className="primary-btn !text-3xl mt-4 !w-36"
+                  onClick={() => {
+                    setGameState((prevGameState) => {
+                      const newGameState = structuredClone(prevGameState);
+                      newGameState.rounds[round - 1][catIndex].clues[
+                        clueIndex
+                      ].type = clueType;
+                      newGameState.rounds[round - 1][catIndex].clues[
+                        clueIndex
+                      ].text = clueText;
+                      newGameState.rounds[round - 1][catIndex].clues[
+                        clueIndex
+                      ].answer = answer;
+                      newGameState.rounds[round - 1][catIndex].clues[
+                        clueIndex
+                      ].isDailyDouble = isDailyDouble;
+                      newGameState.rounds[round - 1][catIndex].clues[
+                        clueIndex
+                      ].alreadyPlayed = false;
+
+                      createNewBoard.mutate({
+                        previousGameName: newGameState.name,
+                        game: newGameState,
+                        roomId: gameState?.guid || "",
+                        userId: localStorage.getItem("bz-userId") || "",
+                        clueType: clue.type,
+                      });
+                      return newGameState;
+                    });
+                  }}
+                  disabled={noChanges}
+                >
+                  Save
+                </button>
               )}
             </div>
-            {clueType === ClueType.TEXT ? (
-              <textarea
-                id={`clue-${clue.text}`}
-                className="p-3   text-center border-white border rounded-sm flex-grow text-base text-black"
-                value={clueText}
-                onChange={(e) => {
-                  setClueText(e.target.value);
-                }}
-              />
-            ) : clueType === ClueType.IMAGE ? (
-              <>
-                {imageName && (
-                  <img
-                    src={`https://buzzinga.s3.us-east-2.amazonaws.com/${imageName}`}
-                    alt=""
-                    className="max-w-[50px] max-h-[50px] object-contain"
-                  />
-                )}
-                <form onSubmit={handleClueSubmitImage}>
-                  <input
-                    onChange={(e) => setImageFile(e?.target?.files?.[0])}
-                    type="file"
-                    name="image"
-                    accept="image/*"
-                  />
-                  <button
-                    className="primary-btn !text-3xl mt-4"
-                    type="submit"
-                    disabled={
-                      !imageFile ||
-                      isUploading ||
-                      (!!imageFile && imageFile === uploadedImageFile)
-                    }
-                  >
-                    Upload
-                  </button>
-                </form>
-              </>
-            ) : clueType === ClueType.AUDIO ? (
-              <>
-                {audioName && (
-                  <audio controls className="max-w-full">
-                    <source
-                      src={`https://buzzinga.s3.us-east-2.amazonaws.com/${audioName}`}
-                      type="audio/mpeg"
-                    />
-                  </audio>
-                )}
-                <form onSubmit={handleClueSubmitAudio}>
-                  <input
-                    onChange={(e) => {
-                      setAudioFile(e?.target?.files?.[0]);
-                    }}
-                    type="file"
-                    accept=".mp3"
-                    name="mp3"
-                  />
-                  <button
-                    className="primary-btn !text-3xl mt-4"
-                    type="submit"
-                    disabled={
-                      !audioFile ||
-                      isUploading ||
-                      (!!audioFile && audioFile === uploadedAudioFile)
-                    }
-                  >
-                    Upload
-                  </button>
-                </form>
-              </>
-            ) : null}
           </div>
-
-          <div className="flex flex-col gap-1">
-            <div className="flex justify-between items-baseline">
-              <label htmlFor={`clue-${clue.answer}`}>Answer</label>
-            </div>
-            {answerType === ClueType.TEXT ? (
-              <textarea
-                id={`clue-${clue.answer}`}
-                className="p-3   text-center border-white border rounded-sm flex-grow text-base text-black"
-                value={answer}
-                onChange={(e) => {
-                  setAnswer(e.target.value);
-                }}
-              />
-            ) : answerType === ClueType.IMAGE ? (
-              <textarea
-                id={`clue-${clue.answer}`}
-                className="p-3   text-center border-white border rounded-sm flex-grow text-base text-black"
-                value={answer}
-                onChange={(e) => {
-                  setAnswer(e.target.value);
-                }}
-              />
-            ) : null}
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-1 items-center">
-          <div className="flex gap-4">
-            <input
-              id={`clue-${clue.isDailyDouble}`}
-              type="checkbox"
-              className="ClueModal-text bg-transparent text-center border-white border rounded-sm"
-              checked={isDailyDouble}
-              onChange={(e) => {
-                setIsDailyDouble(e.target.checked);
-              }}
-              disabled={isPreview}
-            />
-            <label htmlFor={`clue-${clue.isDailyDouble}`}>
-              Is Daily Double
-            </label>
-          </div>
-          <p className="italic text-sm normal-case font-korinna">
-            1 of{" "}
-            {
-              localGameState.rounds[round - 1]
-                .flatMap((game) => game.clues)
-                .filter((clue) => clue.isDailyDouble).length
-            }{" "}
-            Daily Doubles in round {round}.
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-4">
-          <button
-            type="button"
-            className={cx("secondary-btn !text-3xl mt-4 !w-auto")}
-            onClick={() => {
-              setIsFlipped(false);
-            }}
-          >
-            <span className="flex gap-2">
-              <CloseIcon width={16} /> Close
-            </span>
-          </button>
-          {!isPreview && (
-            <button
-              className="primary-btn !text-3xl mt-4 !w-36"
-              onClick={() => {
-                setGameState((prevGameState) => {
-                  const newGameState = structuredClone(prevGameState);
-                  newGameState.rounds[round - 1][catIndex].clues[
-                    clueIndex
-                  ].type = clueType;
-                  newGameState.rounds[round - 1][catIndex].clues[
-                    clueIndex
-                  ].text = clueText;
-                  newGameState.rounds[round - 1][catIndex].clues[
-                    clueIndex
-                  ].answer = answer;
-                  newGameState.rounds[round - 1][catIndex].clues[
-                    clueIndex
-                  ].isDailyDouble = isDailyDouble;
-                  newGameState.rounds[round - 1][catIndex].clues[
-                    clueIndex
-                  ].alreadyPlayed = false;
-
-                  createNewBoard.mutate({
-                    previousGameName: newGameState.name,
-                    game: newGameState,
-                    roomId: gameState?.guid || "",
-                    userId: localStorage.getItem("bz-userId") || "",
-                    clueType: clue.type,
-                  });
-
-                  return newGameState;
-                });
-              }}
-              disabled={noChanges}
-            >
-              Save
-            </button>
-          )}
         </div>
       </div>
-    </div>
-  );
+    </div>,
+    document.getElementById("modals") as HTMLDivElement
+  ) as React.ReactNode;
 };
 
 export default GameCardStatic;

@@ -37,7 +37,6 @@ export const createDefaultGameState = async ({
 
   return {
     name: selectedGame.name,
-    games: publicGames,
     game: publicGames[selectedGame.name] || {},
     round: 1,
     guid: gameId,

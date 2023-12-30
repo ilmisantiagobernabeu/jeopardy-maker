@@ -87,7 +87,7 @@ const Buzzer = () => {
     );
   }, [socket]);
 
-  const noOneHasGoneYet = gameState?.game.rounds[gameState.round - 1].every(
+  const noOneHasGoneYet = gameState?.game.rounds?.[gameState.round - 1]?.every(
     (cat) => cat.clues.every((clue) => !clue.alreadyPlayed)
   );
 

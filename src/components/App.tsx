@@ -37,17 +37,19 @@ function App() {
 
   useGetUpdatedGameState();
 
-  const { data: gameBoardData, isLoading } = useGetGameBoard(
+  const {
+    data: gameBoardData,
+    isLoading,
+    error,
+  } = useGetGameBoard(
     localStorage.getItem("bz-roomId") || "",
     gameQueryParam,
-    !!localStorage.getItem("bz-roomId") &&
-      !!localStorage.getItem("dt-gameName") &&
-      gameQueryParam === localStorage.getItem("dt-gameName")
+    !!localStorage.getItem("bz-roomId") && !!localStorage.getItem("dt-gameName")
   );
 
   useEffect(() => {
-    const resourceClues = gameState?.game.rounds[gameState.round - 1]
-      .flatMap((round) => round.clues)
+    const resourceClues = gameState?.game?.rounds?.[gameState.round - 1]
+      ?.flatMap((round) => round.clues)
       .filter((clue) => [ClueType.AUDIO, ClueType.IMAGE].includes(clue.type));
 
     if (resourceClues) {
@@ -65,14 +67,14 @@ function App() {
     }
   }, [round, socket]);
 
-  const catTitles = gameState?.game.rounds[gameState.round - 1].map(
+  const catTitles = gameState?.game?.rounds?.[gameState.round - 1]?.map(
     (d) => d.category
   );
 
-  const clues = gameState?.game.rounds[gameState.round - 1]
-    .map((obj) => obj.clues)
+  const clues = gameState?.game?.rounds?.[gameState.round - 1]
+    ?.map((obj) => obj.clues)
     .reduce((newArr, _, index, ogArr) => {
-      for (const cat in gameState?.game.rounds[gameState.round - 1]) {
+      for (const cat in gameState?.game?.rounds?.[gameState.round - 1]) {
         if (ogArr[cat][index]) {
           newArr.push(ogArr[cat][index]);
         }
@@ -85,9 +87,7 @@ function App() {
     (clue) => clue?.alreadyPlayed || !clue.text || !clue.answer
   );
 
-  const isEveryCluePlayedInAllRounds = gameState?.games[
-    gameQueryParam
-  ]?.rounds.every((round) =>
+  const isEveryCluePlayedInAllRounds = gameState?.game?.rounds?.every((round) =>
     round.every((column) =>
       column.clues.every((clue) => clue.alreadyPlayed || !clue.answer)
     )
@@ -106,8 +106,6 @@ function App() {
     };
   }, [round, isEveryCluePlayed, isEveryCluePlayedInAllRounds]);
 
-  const numOfRounds = gameState?.games[gameQueryParam]?.rounds.length || 0;
-
   if (isLoading) {
     return (
       <div className="Game">
@@ -121,7 +119,7 @@ function App() {
     );
   }
 
-  if (!numOfRounds) {
+  if (!!error || Object.keys(gameState?.game || {}).length === 0) {
     return (
       <div className="Game">
         <div className="h-screen flex justify-center items-center text-white max-w-5xl mx-auto">
@@ -210,7 +208,7 @@ function App() {
             {clues?.map((clue, index) => {
               return (
                 <GameCard
-                  key={round + index + clue.text + clue.answer}
+                  key={round + index}
                   clue={clue}
                   index={index}
                   round={round}

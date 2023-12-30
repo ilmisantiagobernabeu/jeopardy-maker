@@ -92,11 +92,23 @@ export async function createGame({
   isPublic: boolean;
   gameObject: SingleGame;
 }) {
+  // stripping out 'alreadyPlayed' when saving to mongo
+  const formattedGameObject = { ...gameObject };
+  formattedGameObject.rounds.map((round) =>
+    round.map((col) => ({
+      ...col,
+      clues: col.clues.map((col) => {
+        const { alreadyPlayed, ...rest } = col;
+        return rest;
+      }),
+    }))
+  );
+
   const game = new Game({
     name,
     userId,
     isPublic,
-    gameObject,
+    gameObject: formattedGameObject,
   });
 
   try {
@@ -107,17 +119,32 @@ export async function createGame({
   }
 }
 
-export async function updateGame(previousGameName: string, game: SingleGame) {
+export async function updateGame(
+  previousGameName: string,
+  gameObject: SingleGame
+) {
+  // stripping out 'alreadyPlayed' when saving to mongo
+  const formattedGameObject = { ...gameObject };
+  formattedGameObject.rounds.map((round) =>
+    round.map((col) => ({
+      ...col,
+      clues: col.clues.map((col) => {
+        const { alreadyPlayed, ...rest } = col;
+        return rest;
+      }),
+    }))
+  );
+
   try {
     await Game.updateOne(
       { name: previousGameName },
-      { name: game.name, gameObject: game }
+      { name: gameObject.name, gameObject }
     );
   } catch (err) {
     console.error(
       "There was an issue updating a game board ",
       previousGameName,
-      game.name
+      gameObject.name
     );
   }
 }
