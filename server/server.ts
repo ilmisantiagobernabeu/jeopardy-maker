@@ -147,7 +147,7 @@ app.get("/api/getGameboard/:roomId/:gameName", async (req, res) => {
   console.log("Host loads the game board for the first time", gameName, roomId);
 
   rooms[roomId].name = gameName;
-  rooms[roomId].gameBoard = rooms[roomId].games[gameName].rounds[0];
+  rooms[roomId].game = rooms[roomId].games[gameName];
   io.to(roomId).emit("gameState updated", rooms[roomId]);
 
   return res.status(200).send("Success");

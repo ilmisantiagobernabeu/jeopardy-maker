@@ -46,14 +46,14 @@ function App() {
   );
 
   useEffect(() => {
-    const resourceClues = gameState?.gameBoard
+    const resourceClues = gameState?.game.rounds[gameState.round - 1]
       .flatMap((round) => round.clues)
       .filter((clue) => [ClueType.AUDIO, ClueType.IMAGE].includes(clue.type));
 
     if (resourceClues) {
       preloadResources(resourceClues);
     }
-  }, [gameState?.gameBoard]);
+  }, [gameState?.game, gameState?.round]);
 
   useEffect(() => {
     if (localStorage.getItem("bz-roomId")) {
@@ -65,12 +65,14 @@ function App() {
     }
   }, [round, socket]);
 
-  const catTitles = gameState?.gameBoard.map((d) => d.category);
+  const catTitles = gameState?.game.rounds[gameState.round - 1].map(
+    (d) => d.category
+  );
 
-  const clues = gameState?.gameBoard
+  const clues = gameState?.game.rounds[gameState.round - 1]
     .map((obj) => obj.clues)
     .reduce((newArr, _, index, ogArr) => {
-      for (const cat in gameState?.gameBoard) {
+      for (const cat in gameState?.game.rounds[gameState.round - 1]) {
         if (ogArr[cat][index]) {
           newArr.push(ogArr[cat][index]);
         }

@@ -38,6 +38,7 @@ export const createDefaultGameState = async ({
   return {
     name: selectedGame.name,
     games: publicGames,
+    game: publicGames[selectedGame.name] || {},
     round: 1,
     guid: gameId,
     isBuzzerActive: false,
@@ -48,7 +49,6 @@ export const createDefaultGameState = async ({
     activeClue: null,
     playersThatLeft: [],
     players: previousPlayersWithoutScores || {},
-    gameBoard: publicGames[selectedGame.name]?.rounds[0] || [],
     incorrectGuesses: [],
     history: [],
   };

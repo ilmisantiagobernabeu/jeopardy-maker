@@ -17,11 +17,6 @@ export interface GameBoard {
   clues: Clue[];
 }
 
-export interface GameObject {
-  isBuzzerActive: boolean;
-  gameBoard: GameBoard[];
-}
-
 export interface PlayerObject {
   socketId: string;
   score: number;
@@ -59,13 +54,13 @@ export interface GameState {
   guid: string;
   round: number;
   games: Game;
+  game: SingleGame;
   players: Players;
   playersThatLeft: PlayerObject[];
   isBuzzerActive: boolean;
   activePlayer: string | null;
   lastActivePlayer: string | null;
   incorrectGuesses: string[];
-  gameBoard: GameBoard[];
   activeClue: Clue | null;
   previousClue: Clue | null;
   dailyDoubleAmount?: number;

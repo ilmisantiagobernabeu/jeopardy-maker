@@ -110,11 +110,7 @@ async function start() {
           roomId,
           userId
         ) => {
-          if (
-            !rooms[roomId] ||
-            !rooms[roomId].games[gameName] ||
-            gameName === rooms[roomId].name
-          ) {
+          if (!rooms[roomId] || gameName === rooms[roomId].name) {
             return;
           }
           console.log("Host changes up the game", gameName, roomId, userId);
@@ -187,9 +183,9 @@ async function start() {
               rooms[roomId].incorrectGuesses.length === activePlayers.length ||
               rooms[roomId].dailyDoubleAmount
             ) {
-              rooms[roomId].gameBoard[arrayIndex].clues[
-                clueIndex
-              ].alreadyPlayed = true;
+              rooms[roomId].game.rounds[rooms[roomId].round - 1][
+                arrayIndex
+              ].clues[clueIndex].alreadyPlayed = true;
               rooms[roomId].incorrectGuesses = [];
               rooms[roomId].isBuzzerActive = false;
               if (rooms[roomId].dailyDoubleAmount) {
@@ -200,8 +196,9 @@ async function start() {
           } else {
             rooms[roomId].incorrectGuesses = [];
             rooms[roomId].isBuzzerActive = false;
-            rooms[roomId].gameBoard[arrayIndex].clues[clueIndex].alreadyPlayed =
-              true;
+            rooms[roomId].game.rounds[rooms[roomId].round - 1][
+              arrayIndex
+            ].clues[clueIndex].alreadyPlayed = true;
           }
 
           const updatedScore = rooms[roomId].dailyDoubleAmount || score;
@@ -323,18 +320,12 @@ async function start() {
       );
 
       socket.on("Host navigates to another round", (round, roomId) => {
-        if (
-          !rooms[roomId] ||
-          !rooms[roomId].games[rooms[roomId].name] ||
-          rooms[roomId].round === round
-        ) {
+        if (!rooms[roomId] || rooms[roomId].round === round) {
           return;
         }
         console.log("Host navigates to another round, round: ", round);
         // console.log("navigate 1st round", data);
         rooms[roomId].round = round;
-        rooms[roomId].gameBoard =
-          rooms[roomId].games[rooms[roomId].name].rounds[round - 1];
         io.to(roomId).emit("gameState updated", rooms[roomId]);
       });
 
@@ -349,11 +340,12 @@ async function start() {
 
           console.log(
             "No player knows the answer",
-            rooms[roomId].gameBoard[arrayIndex].clues[clueIndex]
+            rooms[roomId].game.rounds[rooms[roomId].round - 1][arrayIndex]
           );
 
-          rooms[roomId].gameBoard[arrayIndex].clues[clueIndex].alreadyPlayed =
-            true;
+          rooms[roomId].game.rounds[rooms[roomId].round - 1][arrayIndex].clues[
+            clueIndex
+          ].alreadyPlayed = true;
           io.to(roomId).emit("gameState updated", rooms[roomId]);
         }
       );

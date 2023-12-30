@@ -120,18 +120,22 @@ export const HamburgerMenu = ({
                 </NavLink>
               </li>
             )}
-            <li>
-              <NavLink
-                to={`/board${gameState?.name ? `?game=${gameState.name}` : ""}`}
-                className={({ isActive }) =>
-                  isActive
-                    ? "flex gap-2 items-center text-gold hover:underline focus:underline"
-                    : "flex gap-2 items-center hover:underline focus:underline"
-                }
-              >
-                <ArrowRightCircle /> Current Game
-              </NavLink>
-            </li>
+            {Object.keys(gameState?.game || {}).length > 0 && (
+              <li>
+                <NavLink
+                  to={`/board${
+                    gameState?.name ? `?game=${gameState.name}` : ""
+                  }`}
+                  className={({ isActive }) =>
+                    isActive
+                      ? "flex gap-2 items-center text-gold hover:underline focus:underline"
+                      : "flex gap-2 items-center hover:underline focus:underline"
+                  }
+                >
+                  <ArrowRightCircle /> Current Game
+                </NavLink>
+              </li>
+            )}
             <li>
               <NavLink
                 to={`/settings`}
