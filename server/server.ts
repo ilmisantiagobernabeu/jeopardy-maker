@@ -108,23 +108,16 @@ app.post("/api/contact", async (req, res) => {
   res.status(200).send("Success");
 });
 
-app.get("/api/getUserBoards/:roomId", async (req, res) => {
+app.get("/api/getUserBoards", async (req, res) => {
   const {
-    params: { roomId },
     query: { userId },
   } = req;
-
-  if (!roomId || !rooms[roomId]) {
-    return res.status(404).json({ error: "Data not found" });
-  }
 
   const games = userId
     ? await getUserGames(userId.toString())
     : await getPublicGames();
 
   console.log("Get user created boards", { userId });
-
-  io.to(roomId).emit("gameState updated", rooms[roomId]);
 
   res.send(games);
 });
@@ -155,14 +148,10 @@ app.get("/api/getGameboard/:roomId/:gameName", async (req, res) => {
   return res.status(200).send("Success");
 });
 
-app.delete("/api/deleteUserBoard/:roomId/:gameName", async (req, res) => {
+app.delete("/api/deleteUserBoard/:gameName", async (req, res) => {
   const {
-    params: { gameName, roomId },
+    params: { gameName },
   } = req;
-
-  if (!rooms[roomId]) {
-    return res.status(404).json({ error: "Data not found" });
-  }
 
   try {
     deleteGame(gameName);

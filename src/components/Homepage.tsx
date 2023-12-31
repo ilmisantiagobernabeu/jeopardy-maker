@@ -35,10 +35,7 @@ const Homepage = () => {
     },
   });
 
-  const { data: userBoards } = useGetUserBoards(
-    localStorage.getItem("bz-roomId") || "",
-    session?.user.id || ""
-  );
+  const { data: userBoards } = useGetUserBoards(session?.user.id || "");
 
   useEffect(() => {
     if (!localStorage.getItem("bz-roomId")) {
@@ -125,8 +122,6 @@ const Homepage = () => {
 
                                 if (response) {
                                   deleteGame({
-                                    roomId:
-                                      localStorage.getItem("bz-roomId") || "",
                                     gameName: game.name || "",
                                   });
                                 }
@@ -188,8 +183,6 @@ const Homepage = () => {
 
                                   if (response) {
                                     deleteGame({
-                                      roomId:
-                                        localStorage.getItem("bz-roomId") || "",
                                       gameName: game.name || "",
                                     });
                                   }

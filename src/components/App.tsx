@@ -30,10 +30,7 @@ function App() {
     useGlobalState();
   const [pointerOver, setPointerOver] = useState(false);
   const timeout = useRef<NodeJS.Timeout | null>(null);
-  const { data: userBoards } = useGetUserBoards(
-    localStorage.getItem("bz-roomId") || "",
-    session?.user.id || ""
-  );
+  const { data: userBoards } = useGetUserBoards(session?.user.id || "");
 
   useGetUpdatedGameState();
 

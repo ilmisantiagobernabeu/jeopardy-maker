@@ -341,6 +341,7 @@ async function start() {
           console.log(
             "No player knows the answer",
             rooms[roomId].game.rounds[rooms[roomId].round - 1][arrayIndex]
+              .clues[clueIndex].text
           );
 
           rooms[roomId].game.rounds[rooms[roomId].round - 1][arrayIndex].clues[

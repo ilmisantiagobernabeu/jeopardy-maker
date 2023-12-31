@@ -396,10 +396,7 @@ function CreateGame({ isPreview = false }: { isPreview?: boolean }) {
 
   const { gameState: globalGameState, session } = useGlobalState();
 
-  const { data: userBoards } = useGetUserBoards(
-    localStorage.getItem("bz-roomId") || "",
-    session?.user.id || ""
-  );
+  const { data: userBoards } = useGetUserBoards(session?.user.id || "");
 
   const state = location.state as StateType;
   const data = state?.data;

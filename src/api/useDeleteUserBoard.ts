@@ -2,15 +2,9 @@ import axios from "axios";
 import { UseMutationOptions, useMutation } from "react-query";
 import { apiUrl } from "./constants";
 
-const deleteUserBoard = async ({
-  roomId,
-  gameName,
-}: {
-  roomId: string;
-  gameName: string;
-}) => {
+const deleteUserBoard = async ({ gameName }: { gameName: string }) => {
   const response = await axios.delete(
-    `${apiUrl}/api/deleteUserBoard/${roomId}/${gameName}`
+    `${apiUrl}/api/deleteUserBoard/${gameName}`
   );
   return response.data;
 };
@@ -18,12 +12,7 @@ const deleteUserBoard = async ({
 export const useDeleteUserBoard = (
   options?:
     | Omit<
-        UseMutationOptions<
-          any,
-          unknown,
-          { roomId: string; gameName: string },
-          unknown
-        >,
+        UseMutationOptions<any, unknown, { gameName: string }, unknown>,
         "mutationFn"
       >
     | undefined
