@@ -6,7 +6,6 @@ import { SingleGame } from "../../stateTypes";
 const createNewBoard = async (data: {
   previousGameName: string;
   game: SingleGame;
-  roomId: string;
   userId: string;
   clueType: string | undefined;
 }) => {

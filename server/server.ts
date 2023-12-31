@@ -163,9 +163,9 @@ app.delete("/api/deleteUserBoard/:gameName", async (req, res) => {
 });
 
 app.post("/api/createNewBoard", async (req, res) => {
-  const { roomId, userId, previousGameName, game, clueType } = req.body;
+  const { userId, previousGameName, game, clueType } = req.body;
 
-  if (!rooms[roomId] || !userId) {
+  if (!userId) {
     return res.status(404).json({ error: "Data not found" });
   }
   try {

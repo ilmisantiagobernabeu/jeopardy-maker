@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import cx from "classnames";
 import CloseIcon from "../icons/CloseIcon";
 import { Clue, ClueType, SingleGame } from "../../stateTypes";
@@ -129,6 +129,8 @@ const EditModal = ({
   localGameState,
   isPreview,
 }: EditModalProps) => {
+  const imageFileInputRef = useRef<HTMLInputElement | null>(null);
+  const audioFileInputRef = useRef<HTMLInputElement | null>(null);
   const createNewBoard = useCreateNewBoard();
   const { gameState, socket } = useGlobalState();
   const [isDailyDouble, setIsDailyDouble] = useState(
@@ -206,13 +208,13 @@ const EditModal = ({
     <div className="Game-grid">
       <div className="GameCard">
         <div className="ClueModal w-full h-full left-0 right-0 text-3xl">
-          <div className="w-full max-w-3xl flex justify-center items-center flex-col gap-4">
+          <div className="w-full max-w-4xl flex justify-center items-center flex-col gap-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 w-full">
-              <div className="flex flex-col gap-1">
-                <div className="flex justify-between items-baseline">
+              <div className="flex flex-col gap-2">
+                <div className="flex justify-between items-center leading-none">
                   <label htmlFor={`clue-${clue.text}`}>Clue</label>
                   {!isPreview && (
-                    <ul className="flex gap-2 list-none lowercase font-korinna text-xs">
+                    <ul className="flex gap-2 list-none lowercase font-korinna text-xs items-center">
                       <li>
                         <button
                           onClick={() => {
@@ -262,36 +264,58 @@ const EditModal = ({
                     }}
                   />
                 ) : clueType === ClueType.IMAGE ? (
-                  <>
+                  <div className="flex flex-col gap-4 items-center flex-grow">
                     {imageName && (
-                      <img
-                        src={`https://buzzinga.s3.us-east-2.amazonaws.com/${imageName}`}
-                        alt=""
-                        className="max-w-[50px] max-h-[50px] object-contain"
-                      />
+                      <a
+                        href={`https://buzzinga.s3.us-east-2.amazonaws.com/${imageName}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block w-full h-full max-w-[200px] max-h-[100px]"
+                      >
+                        {" "}
+                        <img
+                          src={`https://buzzinga.s3.us-east-2.amazonaws.com/${imageName}`}
+                          alt=""
+                          className="w-full h-full object-contain"
+                        />
+                      </a>
                     )}
-                    <form onSubmit={handleClueSubmitImage}>
+                    <form
+                      onSubmit={handleClueSubmitImage}
+                      className="flex-grow flex gap-4 w-full"
+                    >
                       <input
                         onChange={(e) => setImageFile(e?.target?.files?.[0])}
                         type="file"
                         name="image"
                         accept="image/*"
+                        className="hidden"
+                        ref={imageFileInputRef}
                       />
                       <button
-                        className="primary-btn !text-3xl mt-4"
-                        type="submit"
-                        disabled={
-                          !imageFile ||
-                          isUploading ||
-                          (!!imageFile && imageFile === uploadedImageFile)
-                        }
+                        type="button"
+                        onClick={() => {
+                          imageFileInputRef.current?.click();
+                        }}
+                        className="secondary-btn w-full !text-3xl"
                       >
-                        Upload
+                        Choose file
                       </button>
+                      {imageFile && (
+                        <button
+                          className="primary-btn !text-3xl"
+                          type="submit"
+                          disabled={
+                            isUploading || imageFile === uploadedImageFile
+                          }
+                        >
+                          Upload
+                        </button>
+                      )}
                     </form>
-                  </>
+                  </div>
                 ) : clueType === ClueType.AUDIO ? (
-                  <>
+                  <div className="flex flex-col gap-4 items-center flex-grow">
                     {audioName && (
                       <audio controls className="max-w-full">
                         <source
@@ -300,7 +324,10 @@ const EditModal = ({
                         />
                       </audio>
                     )}
-                    <form onSubmit={handleClueSubmitAudio}>
+                    <form
+                      onSubmit={handleClueSubmitAudio}
+                      className="flex-grow flex gap-4 w-full"
+                    >
                       <input
                         onChange={(e) => {
                           setAudioFile(e?.target?.files?.[0]);
@@ -308,25 +335,36 @@ const EditModal = ({
                         type="file"
                         accept=".mp3"
                         name="mp3"
+                        className="hidden"
+                        ref={audioFileInputRef}
                       />
                       <button
-                        className="primary-btn !text-3xl mt-4"
-                        type="submit"
-                        disabled={
-                          !audioFile ||
-                          isUploading ||
-                          (!!audioFile && audioFile === uploadedAudioFile)
-                        }
+                        type="button"
+                        onClick={() => {
+                          audioFileInputRef.current?.click();
+                        }}
+                        className="secondary-btn w-full !text-3xl"
                       >
-                        Upload
+                        Choose file
                       </button>
+                      {audioFile && (
+                        <button
+                          className="primary-btn !text-3xl"
+                          type="submit"
+                          disabled={
+                            isUploading || audioFile === uploadedAudioFile
+                          }
+                        >
+                          Upload
+                        </button>
+                      )}
                     </form>
-                  </>
+                  </div>
                 ) : null}
               </div>
 
-              <div className="flex flex-col gap-1">
-                <div className="flex justify-between items-baseline">
+              <div className="flex flex-col gap-2">
+                <div className="flex justify-between items-baseline leading-none">
                   <label htmlFor={`clue-${clue.answer}`}>Answer</label>
                 </div>
                 {answerType === ClueType.TEXT ? (
@@ -380,7 +418,7 @@ const EditModal = ({
             <div className="flex flex-wrap gap-4">
               <button
                 type="button"
-                className={cx("secondary-btn !text-3xl mt-4 !w-auto")}
+                className={cx("secondary-btn !text-3xl !w-auto")}
                 onClick={() => {
                   setIsFlipped(false);
                 }}
@@ -392,7 +430,7 @@ const EditModal = ({
               {!isPreview && (
                 <button
                   type="button"
-                  className="primary-btn !text-3xl mt-4 !w-36"
+                  className="primary-btn !text-3xl !w-36"
                   onClick={() => {
                     setGameState((prevGameState) => {
                       const newGameState = structuredClone(prevGameState);
@@ -415,7 +453,6 @@ const EditModal = ({
                       createNewBoard.mutate({
                         previousGameName: newGameState.name,
                         game: newGameState,
-                        roomId: gameState?.guid || "",
                         userId: localStorage.getItem("bz-userId") || "",
                         clueType: clue.type,
                       });

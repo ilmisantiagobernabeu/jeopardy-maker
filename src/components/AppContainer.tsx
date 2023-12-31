@@ -8,7 +8,7 @@ import Homepage from "./Homepage";
 import Buzzer from "./Buzzer";
 import HostControls from "./HostControls";
 import { QRCode } from "./QR";
-import CreateGame from "./CreateGame";
+import CreateGame from "./CreateGame/CreateGame";
 import { useEffect } from "react";
 import Teams from "./Teams";
 import buzzerSound from "../sounds/buzzer.mp3";
