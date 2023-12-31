@@ -295,7 +295,6 @@ const GameCard = ({ clue, index, round }: Props) => {
       });
       audioStart();
     } else if (isImageClue) {
-      console.log("image started!!!");
       imageStart();
     }
   };
