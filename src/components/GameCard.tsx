@@ -188,7 +188,9 @@ const GameCard = ({ clue, index, round }: Props) => {
       }
       audioRef.current?.pause();
     } else {
-      audioRef.current?.play();
+      if (!audioRef.current?.ended) {
+        audioRef.current?.play();
+      }
       reset();
       dailyDoubleCountdownReset();
     }
