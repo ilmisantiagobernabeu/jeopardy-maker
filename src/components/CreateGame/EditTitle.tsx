@@ -54,7 +54,7 @@ export const EditTitle = ({
         <textarea
           key={title}
           value={newTitle}
-          className="bg-transparent text-center uppercase text-5xl w-full"
+          className="bg-transparent text-center uppercase text-5xl w-full [text-shadow:inherit]"
           onChange={(e) => {
             setIsEditing(true);
             setNewTitle(e.target.value);
@@ -75,7 +75,7 @@ export const EditTitle = ({
             }
             setIsEditing(true);
           }}
-          className="uppercase"
+          className="uppercase [text-shadow:inherit]"
         >
           {newTitle}
         </button>
