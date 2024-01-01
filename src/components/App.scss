@@ -23,9 +23,9 @@ $yellow: rgb(214, 159, 76);
     grid-template-columns: repeat(6, 1fr);
     grid-template-rows: repeat(6, 1fr);
     height: 100vh;
-    column-gap: 1em;
-    row-gap: 1em;
-    padding: 1em;
+    column-gap: 6px;
+    row-gap: 6px;
+    padding: 6px;
     font-family: "swiss911";
   }
 
@@ -40,6 +40,7 @@ $yellow: rgb(214, 159, 76);
     line-height: 1;
     font-size: 3rem;
     text-transform: uppercase;
+    text-shadow: rgb(0, 0, 0) 0.08em 0.08em;
   }
 
   &Card {
