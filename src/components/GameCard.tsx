@@ -210,6 +210,7 @@ const GameCard = ({ clue, index, round }: Props) => {
       arrayIndex: index % 6,
       clueIndex,
       roomId: localStorage.getItem("bz-roomId") || "",
+      userId: localStorage.getItem("bz-userId") || "",
     });
 
     // Only show answer if this is the last incorrect guess
@@ -231,6 +232,7 @@ const GameCard = ({ clue, index, round }: Props) => {
       arrayIndex: index % 6,
       clueIndex,
       roomId: localStorage.getItem("bz-roomId") || "",
+      userId: localStorage.getItem("bz-userId") || "",
     });
 
     const audio = new Audio(rightAnswerSound);

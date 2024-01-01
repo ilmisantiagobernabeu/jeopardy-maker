@@ -95,6 +95,7 @@ export interface ClientToServerEvents {
     arrayIndex: number;
     clueIndex: number;
     roomId: string;
+    userId: string;
   }) => void;
   ["Host modifies the score"]: (playerObject: {
     socket: string;

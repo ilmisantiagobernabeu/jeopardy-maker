@@ -54,7 +54,6 @@ async function start() {
           rooms[roomId] = await createDefaultGameState({ newRoomId: roomId });
         }
         socket.join(roomId);
-        console.log("User gets updated game state", roomId);
         socket.emit("gameState updated", rooms[roomId]);
       });
 
@@ -161,7 +160,7 @@ async function start() {
 
       socket.on(
         "A player answers the clue",
-        ({ value: score, clueIndex, arrayIndex, roomId }) => {
+        ({ value: score, clueIndex, arrayIndex, roomId, userId }) => {
           if (!rooms[roomId]) {
             return;
           }
@@ -211,10 +210,8 @@ async function start() {
             rooms[roomId].players[playerThatScored].score += updatedScore;
 
             console.log(
-              `The player ${playerThatScored} score changed: `,
-              rooms[roomId].players[playerThatScored].score,
-              updatedScore,
-              new Date().toLocaleTimeString()
+              `${rooms[roomId].players[playerThatScored].name} score changed from ${rooms[roomId].players[playerThatScored].score} to ${updatedScore}`,
+              { roomId, userId }
             );
 
             const player = rooms[roomId].players[playerThatScored!];
@@ -324,7 +321,6 @@ async function start() {
           return;
         }
         console.log("Host navigates to another round, round: ", round);
-        // console.log("navigate 1st round", data);
         rooms[roomId].round = round;
         io.to(roomId).emit("gameState updated", rooms[roomId]);
       });
