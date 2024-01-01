@@ -405,15 +405,17 @@ const EditModal = ({
                   Is Daily Double
                 </label>
               </div>
-              <p className="italic text-sm normal-case font-korinna">
-                1 of{" "}
-                {
-                  localGameState.rounds[round - 1]
-                    .flatMap((game) => game.clues)
-                    .filter((clue) => clue.isDailyDouble).length
-                }{" "}
-                Daily Doubles in round {round}.
-              </p>
+              {clue.isDailyDouble && (
+                <p className="italic text-sm normal-case font-korinna">
+                  1 of{" "}
+                  {
+                    localGameState.rounds[round - 1]
+                      .flatMap((game) => game.clues)
+                      .filter((clue) => clue.isDailyDouble).length
+                  }{" "}
+                  Daily Doubles in round {round}.
+                </p>
+              )}
             </div>
             <div className="flex flex-wrap gap-4">
               <button
