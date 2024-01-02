@@ -133,14 +133,18 @@ app.get("/api/getGameboard/:roomId/:gameName", async (req, res) => {
 
   // prevents us from restarting the state of the game if we pick
   // the current game we already have going
-  if (rooms[roomId].name === gameName) {
+  if (
+    rooms[roomId].name === gameName &&
+    rooms[roomId].game.rounds.some((round) =>
+      round.some((r) => r.clues.some((clue) => clue.alreadyPlayed))
+    )
+  ) {
     return res.status(200).send("Game already in state!");
   }
 
   console.log("Host loads the game board for the first time", gameName, roomId);
 
   const game = await Game.findOne({ name: gameName });
-
   rooms[roomId].name = gameName;
   rooms[roomId].game = game?.gameObject || {};
   io.to(roomId).emit("gameState updated", rooms[roomId]);
