@@ -6,7 +6,7 @@ import { useGetUpdatedGameState } from "../hooks/useGetUpdatedGameState";
 const getUrl = (roomId = "") =>
   import.meta.env.PROD
     ? `https://buzzinga.io/join/${roomId}`
-    : `http://${import.meta.env.VITE_STATIC_IP}:3000/join/${roomId}`;
+    : `http://${import.meta.env.VITE_STATIC_IP}:5173/join/${roomId}`;
 
 export const QRCode = ({ className = "" }: { className?: string }) => {
   useGetUpdatedGameState();

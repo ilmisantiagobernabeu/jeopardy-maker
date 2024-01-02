@@ -69,22 +69,33 @@ const Buzzer = () => {
   const isActivePlayer =
     gameState?.activePlayer && gameState?.activePlayer === socket!.id;
 
+  const teamIsConnected = gameState?.players?.[socket?.id || ""]?.name;
+
   // Disable the button if:
   // 1. the buzzer hasn't been activated by the host
   // 2. the buzzer HAS been activated, but it's not the current player.
   const disabled = Boolean(
     !gameState?.isBuzzerActive ||
       (gameState?.isBuzzerActive && isActivePlayer) ||
-      gameState?.incorrectGuesses.includes(socket!.id)
+      gameState?.incorrectGuesses.includes(socket!.id) ||
+      !teamIsConnected
   );
 
   useEffect(() => {
-    const sessionName = localStorage.getItem("bz-roomId") || "";
-    socket?.emit(
-      "player signed up",
-      localStorage.getItem(`dt-${sessionName}-playerName`) || "",
-      sessionName
-    );
+    const signIn = () => {
+      const sessionName = localStorage.getItem("bz-roomId") || "";
+      socket?.emit(
+        "player signed up",
+        localStorage.getItem(`dt-${sessionName}-playerName`) || "",
+        sessionName
+      );
+    };
+
+    socket?.on("connect", signIn);
+
+    return () => {
+      socket?.off("connect", signIn);
+    };
   }, [socket]);
 
   const noOneHasGoneYet = gameState?.game.rounds?.[gameState.round - 1]?.every(
@@ -101,7 +112,7 @@ const Buzzer = () => {
         className={cx(
           "fixed inset-0 h-full w-full bg-[#060ce9] z-10 text-white text-3xl",
           {
-            "-translate-x-full": !showModal,
+            "-translate-x-full": !showModal || !teamIsConnected,
           }
         )}
       >
@@ -151,9 +162,10 @@ const Buzzer = () => {
           </p>
         )}
       </button>
+
       <div className="fixed top-0 w-full left-0 text-center pt-10 text-6xl pointer-events-none">
         <p className="text-6xl uppercase font-semibold">
-          Team {gameState?.players?.[socket?.id || ""]?.name}
+          Team {teamIsConnected}
         </p>
         <p className="text-sm">
           Session Name:{" "}
