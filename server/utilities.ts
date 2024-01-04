@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport({
 export async function sendEmail(email: string, body: string) {
   const info = await transporter
     .sendMail({
-      from: `"User" <${email}>`,
+      from: `${email}`,
       to: ["sdennett55@gmail.com"], // list of receivers
       subject: "Buzzinga.io Feedback", // Subject
       text: body, // plain text body
