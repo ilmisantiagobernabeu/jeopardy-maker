@@ -16,7 +16,7 @@ export async function sendEmail(email: string, body: string) {
       from: `${email}`,
       to: ["sdennett55@gmail.com"], // list of receivers
       subject: "Buzzinga.io Feedback", // Subject
-      text: body, // plain text body
+      text: `${body} - sent by ${email}`, // plain text body
       //   html: "<b>Hello world?</b>", // html body
     })
     .catch(console.error);
