@@ -409,7 +409,7 @@ const GameCard = ({ clue, index, round }: Props) => {
                   </audio>
                 ) : isImageClue ? (
                   <div
-                    className="flex justify-center items-center w-[50vw] h-[50vh]"
+                    className="flex justify-center items-center w-[80vw] h-[80vh]"
                     style={{
                       transform: `scale(${scale?.x / (scale?.x * scale?.x)}, ${
                         scale?.y / (scale?.y * scale?.y)

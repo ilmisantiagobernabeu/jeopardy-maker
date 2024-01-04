@@ -28,7 +28,7 @@ const NobodyKnowsButton = ({
     <button
       type="button"
       onClick={onClick}
-      className="text-red-600 disabled:opacity-30 text-6xl bg-white hover:bg-black p-4 rounded-md"
+      className="text-red-600 disabled:opacity-30 text-6xl bg-white hover:bg-black p-4 rounded-md drop-shadow-2xl"
     >
       Nobody Knows!
     </button>
