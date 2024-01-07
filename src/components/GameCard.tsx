@@ -86,6 +86,7 @@ const GameCard = ({ clue, index, round }: Props) => {
         // this will run for every game card instance
         // so we only want to mark incorrect for the currently flipped one
         if (isFlipped && !clue.alreadyPlayed) {
+          // once audio timer runs out, activate buzzers
           handleBuzzerToggle();
           audioReset();
         }
@@ -103,6 +104,7 @@ const GameCard = ({ clue, index, round }: Props) => {
         // this will run for every game card instance
         // so we only want to mark incorrect for the currently flipped one
         if (isFlipped && !clue.alreadyPlayed) {
+          // once image timer runs out, activate buzzers
           handleBuzzerToggle();
           imageReset();
         }
@@ -331,8 +333,12 @@ const GameCard = ({ clue, index, round }: Props) => {
       setTimeout(() => {
         audioRef.current?.play();
       });
-      audioStart();
-    } else if (isImageClue) {
+      // if it's a daily double, that has its own countdown
+      // so we don't want to start these ones and activate the buzzers when they end
+      if (!clue.isDailyDouble) {
+        audioStart();
+      }
+    } else if (isImageClue && !clue.isDailyDouble) {
       imageStart();
     }
 

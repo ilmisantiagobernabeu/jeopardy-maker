@@ -9,6 +9,7 @@ import { Clue, ClueType } from "../../stateTypes";
 import { useGetGameBoard } from "../api/useGetGameBoard";
 import { Loader } from "lucide-react";
 import { useGetUserBoards } from "../api/useGetUserBoards";
+import { InfoModal } from "./InfoModal";
 
 function preloadResources(clues: Clue[]): void {
   clues.forEach((clue) => {
@@ -29,6 +30,7 @@ function App() {
   const { gameState, socket, roundOver, setRoundOver, session } =
     useGlobalState();
   const [pointerOver, setPointerOver] = useState(false);
+  const [showInfoModal, setShowInfoModal] = useState(false);
   const timeout = useRef<NodeJS.Timeout | null>(null);
   const { data: userBoards } = useGetUserBoards(session?.user.id || "");
 
@@ -103,6 +105,20 @@ function App() {
     };
   }, [round, isEveryCluePlayed, isEveryCluePlayedInAllRounds]);
 
+  useEffect(() => {
+    const handleInfo = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.key === "i") {
+        setShowInfoModal((prevShow) => !prevShow);
+      }
+    };
+
+    window.addEventListener("keyup", handleInfo);
+
+    return () => {
+      window.removeEventListener("keyup", handleInfo);
+    };
+  }, []);
+
   if (isLoading) {
     return (
       <div className="Game">
@@ -134,6 +150,13 @@ function App() {
   return (
     <>
       <div className="Game">
+        {showInfoModal && (
+          <InfoModal
+            onRequestClose={() => {
+              setShowInfoModal(false);
+            }}
+          />
+        )}
         <HamburgerMenu
           isVisible={pointerOver}
           onPointerOver={() => {
