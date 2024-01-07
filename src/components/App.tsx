@@ -44,8 +44,6 @@ function App() {
     !!localStorage.getItem("bz-roomId") && !!localStorage.getItem("dt-gameName")
   );
 
-  console.log("wtf dude");
-
   useEffect(() => {
     const resourceClues = gameState?.game?.rounds?.[gameState.round - 1]
       ?.flatMap((round) => round.clues)

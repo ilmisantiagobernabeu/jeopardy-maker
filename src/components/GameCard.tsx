@@ -183,12 +183,16 @@ const GameCard = ({ clue, index, round }: Props) => {
     if (buzzedInUserExists) {
       if (gameState?.dailyDoubleAmount) {
         dailyDoubleCountdownStart();
+        // let audioRef render first
+        setTimeout(() => {
+          audioRef.current?.play();
+        });
       } else {
         start();
       }
       audioRef.current?.pause();
     } else {
-      if (!audioRef.current?.ended) {
+      if (!clue.isDailyDouble && !audioRef.current?.ended) {
         audioRef.current?.play();
       }
       reset();
@@ -216,7 +220,10 @@ const GameCard = ({ clue, index, round }: Props) => {
     // Only show answer if this is the last incorrect guess
     const numOfPlayers =
       Object.values(gameState?.players || {}).filter((x) => x.name).length || 0;
-    if (gameState?.incorrectGuesses.length === numOfPlayers - 1) {
+    if (
+      gameState?.incorrectGuesses.length === numOfPlayers - 1 ||
+      (clue.isDailyDouble && gameState?.dailyDoubleAmount)
+    ) {
       setShowAnswer(true);
     }
   };
@@ -290,14 +297,16 @@ const GameCard = ({ clue, index, round }: Props) => {
       localStorage.getItem("bz-roomId") || ""
     );
 
-    if (isAudioClue) {
-      // let audioRef render first
-      setTimeout(() => {
-        audioRef.current?.play();
-      });
-      audioStart();
-    } else if (isImageClue) {
-      imageStart();
+    if (!clue.isDailyDouble) {
+      if (isAudioClue) {
+        // let audioRef render first
+        setTimeout(() => {
+          audioRef.current?.play();
+        });
+        audioStart();
+      } else if (isImageClue) {
+        imageStart();
+      }
     }
   };
 
@@ -316,6 +325,16 @@ const GameCard = ({ clue, index, round }: Props) => {
       },
       localStorage.getItem("bz-roomId") || ""
     );
+
+    if (isAudioClue) {
+      // let audioRef render first
+      setTimeout(() => {
+        audioRef.current?.play();
+      });
+      audioStart();
+    } else if (isImageClue) {
+      imageStart();
+    }
 
     setShowDailyDoubleScreen(false);
     setDailyDoubleAmount(0);
@@ -386,7 +405,7 @@ const GameCard = ({ clue, index, round }: Props) => {
                     id="wager"
                     type="range"
                     step="200"
-                    min="200"
+                    min="0"
                     onChange={handleRangeChange}
                     value={dailyDoubleAmount}
                     max={Math.max(
@@ -396,7 +415,13 @@ const GameCard = ({ clue, index, round }: Props) => {
                     )}
                   />
                   <p>${dailyDoubleAmount}</p>
-                  <button onClick={handleSetWager}>Set Wager</button>
+                  <button
+                    className="disabled:opacity-30"
+                    onClick={handleSetWager}
+                    disabled={!dailyDoubleAmount}
+                  >
+                    Set Wager
+                  </button>
                 </div>
               )}
               <p className="ClueModal-text">
@@ -465,7 +490,7 @@ const GameCard = ({ clue, index, round }: Props) => {
               </>
             </>
           )}
-          {gameState?.isBuzzerActive && (
+          {gameState?.isBuzzerActive && !clue.isDailyDouble && (
             <NobodyKnowsButton onClick={handleNobodyKnows} />
           )}
           {showActivateBuzzersButton && (
