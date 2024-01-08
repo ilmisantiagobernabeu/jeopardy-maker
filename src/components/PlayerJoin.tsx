@@ -35,6 +35,7 @@ const PlayerJoin = () => {
       alert("Team name already exists, please pick a new name");
     } else {
       handleSubmission(playerName);
+      localStorage.setItem("bz-roomId", sessionName);
     }
   }
 
