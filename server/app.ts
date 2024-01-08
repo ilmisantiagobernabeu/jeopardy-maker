@@ -126,6 +126,10 @@ async function start() {
 
       socket.on("player signed up", (playerName, roomId) => {
         if (!rooms[roomId]) {
+          console.log(
+            "Error: player failed to join game, no roomId of ",
+            roomId
+          );
           return;
         }
 
@@ -152,7 +156,6 @@ async function start() {
             ping: 0,
           };
           rooms[roomId].players[socket.id].name = playerName;
-          socket.emit("gameState updated", rooms[roomId]);
           socket.emit("player successfully added to game");
         }
         io.to(roomId).emit("gameState updated", rooms[roomId]);
