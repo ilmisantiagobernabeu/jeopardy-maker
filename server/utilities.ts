@@ -1,5 +1,4 @@
 import nodemailer from "nodemailer";
-import { GameState } from "../stateTypes";
 
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
@@ -23,13 +22,4 @@ export async function sendEmail(email: string, body: string) {
     .catch(console.error);
 
   return info ? info.messageId : null;
-}
-
-export function markTeamAsBuzzedIn(gameState: GameState, socketId: string) {
-  gameState.activePlayer = socketId;
-  gameState.lastActivePlayer = socketId;
-  gameState.isBuzzerActive = false;
-
-  gameState.firstBuzz = false;
-  gameState.buzzerHits = {};
 }
