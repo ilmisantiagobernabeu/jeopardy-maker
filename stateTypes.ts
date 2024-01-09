@@ -49,6 +49,11 @@ export type Game = {
   [key: string]: SingleGame;
 };
 
+type BuzzerHit = {
+  timestamp: number;
+  socketId: string;
+};
+
 export interface GameState {
   name: string;
   guid: string;
@@ -64,13 +69,19 @@ export interface GameState {
   previousClue: Clue | null;
   dailyDoubleAmount?: number;
   history: HistoryPlayer[];
+  firstBuzz: boolean;
+  buzzerHits: { [socketId: string]: BuzzerHit };
+  secondPlace: { name: string; amountInMs: number } | null;
 }
 
 export interface ServerToClientEvents {
-  ["pong"]: (timestamp: number) => void;
   ["gameState updated"]: (gameStateFromServer: GameState) => void;
   ["player successfully added to game"]: () => void;
   ["Buzzers are activated"]: () => void;
+  ["buzzer hit ping"]: (
+    clientTimeStamp: number,
+    serverTimeStamp: number
+  ) => void;
 }
 
 type DailyDoubleObject = {
@@ -87,7 +98,6 @@ export interface ClientToServerEvents {
     newPlayerName: string
   ) => void;
   ["Set ping of a phone buzzer"]: (roomId: string, timestamp: number) => void;
-  ["ping"]: (timestamp: number) => void;
   ["old player rejoined"]: (roomId: string, playerName?: string | null) => void;
   ["player signed up"]: (playerName: string, roomId: string) => void;
   ["A player answers the clue"]: (clueObject: {
@@ -104,7 +114,10 @@ export interface ClientToServerEvents {
     roomId: string;
   }) => void;
   ["Host activates the buzzers"]: (roomId: string) => void;
-  ["A player hits the buzzer"]: (roomId: string) => void;
+  ["A player hits the buzzer"]: (
+    roomId: string,
+    clientTimeStamp: number
+  ) => void;
   ["A player with a button hits the buzzer"]: (
     playerName: string,
     roomId: string
@@ -158,5 +171,10 @@ export interface ClientToServerEvents {
     socketId: string,
     score: number,
     roomId: string
+  ) => void;
+  ["buzzer hit pong"]: (
+    roomId: string,
+    ping: number,
+    serverTimeStamp: number
   ) => void;
 }

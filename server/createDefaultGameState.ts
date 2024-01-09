@@ -50,5 +50,8 @@ export const createDefaultGameState = async ({
     players: previousPlayersWithoutScores || {},
     incorrectGuesses: [],
     history: [],
+    firstBuzz: false,
+    buzzerHits: {},
+    secondPlace: null,
   };
 };
