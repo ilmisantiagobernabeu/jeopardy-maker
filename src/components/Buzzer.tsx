@@ -8,7 +8,6 @@ import { useGetUpdatedGameState } from "../hooks/useGetUpdatedGameState";
 const Buzzer = () => {
   const { socket, gameState } = useGlobalState();
   const [showModal, setShowModal] = useState(true);
-  const [ping, setPing] = useState<number | null>(null);
 
   useGetUpdatedGameState();
 
@@ -17,27 +16,28 @@ const Buzzer = () => {
     sound.play();
     socket?.emit(
       "A player hits the buzzer",
-      localStorage.getItem("bz-roomId") || ""
+      localStorage.getItem("bz-roomId") || "",
+      new Date().getTime()
     );
   };
 
   useEffect(() => {
-    const handlePong = (initialTimeStamp: number) => {
-      const newPing = new Date().getTime() - initialTimeStamp;
-      setPing(newPing);
+    const handleBuzzerPing = (
+      clientTimeStamp: number,
+      serverTimeStamp: number
+    ) => {
+      const newPing = new Date().getTime() - clientTimeStamp;
       socket?.emit(
-        "Set ping of a phone buzzer",
+        "buzzer hit pong",
         localStorage.getItem("bz-roomId") || "",
-        newPing
+        newPing,
+        serverTimeStamp
       );
     };
-    socket?.on("pong", handlePong);
-    if (localStorage.getItem("bz-roomId")) {
-      socket?.emit("ping", new Date().getTime());
-    }
+    socket?.on("buzzer hit ping", handleBuzzerPing);
 
     return () => {
-      socket?.off("pong", handlePong);
+      socket?.off("buzzer hit ping", handleBuzzerPing);
     };
   }, [socket]);
 
@@ -102,6 +102,10 @@ const Buzzer = () => {
     (cat) => cat.clues.every((clue) => !clue.alreadyPlayed)
   );
 
+  const activePlayerName = isActivePlayer
+    ? "YOU"
+    : gameState?.players?.[gameState.activePlayer || ""]?.name;
+
   return (
     <div className="fixed inset-0 h-full w-full bg-white font-korinna">
       <button
@@ -119,17 +123,6 @@ const Buzzer = () => {
         Tap screen to show buzzer
       </button>
 
-      {!showModal && disabled && (
-        <button
-          className="fixed inset-0 h-full w-full z-10"
-          onClick={() => {
-            if (socket) {
-              socket.emit("ping", new Date().getTime());
-            }
-          }}
-        ></button>
-      )}
-
       <button
         type="button"
         className={cx(
@@ -138,28 +131,32 @@ const Buzzer = () => {
             "bg-red-500": !isActivePlayer,
             "bg-opacity-50": disabled,
             "bg-green-500": isActivePlayer,
+            "!bg-yellow-500": !!gameState?.firstBuzz && !disabled,
           }
         )}
-        disabled={disabled}
         onClick={handleClick}
       >
-        {disabled && !gameState?.activePlayer && (
+        {disabled && !gameState?.activePlayer && !gameState?.firstBuzz ? (
           <p className="text-3xl">Buzzer deactivated</p>
-        )}
-        {!disabled && !isActivePlayer && (
+        ) : !disabled && !isActivePlayer && !gameState?.firstBuzz ? (
           <p className="text-3xl">
             Buzzer activated!
             <span className="block text-lg">(Spacebar)</span>
           </p>
-        )}
+        ) : gameState?.firstBuzz && !disabled ? (
+          <p className="text-3xl">Detecting...</p>
+        ) : null}
+
         {gameState?.activePlayer && (
-          <p className="text-3xl">
-            Buzzed in:{" "}
-            {isActivePlayer
-              ? "YOU"
-              : gameState?.players?.[gameState.activePlayer || ""]?.name}
-            !
-          </p>
+          <>
+            <p className="text-3xl">Buzzed in: {activePlayerName}!</p>
+            {gameState.secondPlace && (
+              <p className="text-lg">
+                {activePlayerName} beat {gameState.secondPlace?.name} by:{" "}
+                {gameState.secondPlace?.amountInMs}ms
+              </p>
+            )}
+          </>
         )}
       </button>
 
@@ -172,9 +169,6 @@ const Buzzer = () => {
           <span className="font-semibold">
             {localStorage.getItem("bz-roomId")}
           </span>
-        </p>
-        <p className="text-sm">
-          Ping: <span className="font-semibold">{ping}ms</span>
         </p>
       </div>
       <ul className="fixed bottom-0 w-full left-0 pb-10 text-2xl px-4 pointer-events-none">
