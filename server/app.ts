@@ -338,10 +338,16 @@ async function start() {
             const firstPlayerToBuzzIn = sortedTeams[0].socketId;
 
             markTeamAsBuzzedIn(rooms[roomId], firstPlayerToBuzzIn);
-            rooms[roomId].secondPlace = {
-              name: rooms[roomId].players[sortedTeams[1].socketId].name,
-              amountInMs: sortedTeams[1].timestamp - sortedTeams[0].timestamp,
-            };
+
+            if (
+              sortedTeams[1] &&
+              rooms[roomId].players?.[sortedTeams[1].socketId]?.name
+            ) {
+              rooms[roomId].secondPlace = {
+                name: rooms[roomId].players[sortedTeams[1].socketId].name,
+                amountInMs: sortedTeams[1].timestamp - sortedTeams[0].timestamp,
+              };
+            }
 
             io.to(roomId).emit("gameState updated", rooms[roomId]);
             clearTimeout(buzzerCheckTimeoutId);
