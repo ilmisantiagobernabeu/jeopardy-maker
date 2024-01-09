@@ -93,6 +93,7 @@ export const HamburgerMenu = ({
                 <div className="pt-2 border-b mb-2" />
               </>
             )}
+            <li></li>
             <li>
               <NavLink
                 to="/"
@@ -124,7 +125,9 @@ export const HamburgerMenu = ({
               <li>
                 <NavLink
                   to={`/board${
-                    gameState?.name ? `?game=${gameState.name}` : ""
+                    gameState?.name
+                      ? `?game=${gameState.name}&round=${gameState.round}`
+                      : ""
                   }`}
                   className={({ isActive }) =>
                     isActive
