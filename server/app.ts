@@ -301,7 +301,11 @@ async function start() {
       });
 
       socket.on("A player hits the buzzer", (roomId, clientTimeStamp) => {
-        if (!rooms[roomId] || !rooms[roomId].isBuzzerActive) {
+        if (
+          !rooms[roomId] ||
+          !rooms[roomId].isBuzzerActive ||
+          rooms[roomId].incorrectGuesses.includes(socket.id)
+        ) {
           return;
         }
         if (rooms[roomId].activePlayer) return;
