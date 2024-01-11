@@ -25,7 +25,6 @@ export const QRCode = ({ className = "" }: { className?: string }) => {
       <QRCodeLib
         value={getUrl(gameState?.guid || "")}
         className="w-full h-full max-w-fit"
-        preserveAspectRatio="xMidYMid slice"
       />
     </div>
   );
