@@ -114,9 +114,9 @@ const Buzzer = () => {
           setShowModal(false);
         }}
         className={cx(
-          "fixed inset-0 h-full w-full bg-[#060ce9] z-10 text-white text-3xl",
+          "fixed inset-0 h-full w-full bg-[#060ce9] z-10 text-white text-3xl p-4 transition-transform duration-300 ",
           {
-            "-translate-x-full": !showModal || !teamIsConnected,
+            "-translate-x-full": !showModal,
           }
         )}
       >
@@ -126,7 +126,7 @@ const Buzzer = () => {
       <button
         type="button"
         className={cx(
-          "fixed font-bold inset-0 h-full w-full leading-none color-white appearance-none",
+          "fixed font-bold inset-0 h-full w-full px-4 leading-none color-white appearance-none",
           {
             "bg-red-500": !isActivePlayer,
             "bg-opacity-50": disabled,
@@ -137,7 +137,12 @@ const Buzzer = () => {
         onClick={handleClick}
       >
         {disabled && !gameState?.activePlayer && !gameState?.firstBuzz ? (
-          <p className="text-3xl">Buzzer deactivated</p>
+          <p className="flex flex-col items-center text-3xl">
+            Buzzer ready!{" "}
+            <span className="flex gap-2 text-base">
+              Tap anywhere to buzz in
+            </span>
+          </p>
         ) : !disabled && !isActivePlayer && !gameState?.firstBuzz ? (
           <p className="text-3xl">
             Buzzer activated!
@@ -160,7 +165,7 @@ const Buzzer = () => {
         )}
       </button>
 
-      <div className="fixed top-0 w-full left-0 text-center pt-10 text-6xl pointer-events-none">
+      <div className="fixed top-0 w-full left-0 text-center pt-10 px-4 text-6xl pointer-events-none">
         <p className="text-6xl uppercase font-semibold">
           Team {teamIsConnected}
         </p>
