@@ -103,8 +103,8 @@ app.get("/api/getPrivateBoards", async (req, res) => {
 });
 
 app.post("/api/contact", async (req, res) => {
-  const { email, body } = req.body;
-  sendEmail(email, body);
+  const { email, body, subject } = req.body;
+  sendEmail(email, body, subject);
 
   res.status(200).send("Success");
 });

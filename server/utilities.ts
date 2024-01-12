@@ -11,14 +11,17 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export async function sendEmail(email: string, body: string) {
+export async function sendEmail(
+  email: string,
+  body: string,
+  subject = "Buzzinga.io Feedback"
+) {
   const info = await transporter
     .sendMail({
       from: `${email}`,
-      to: ["sdennett55@gmail.com"], // list of receivers
-      subject: "Buzzinga.io Feedback", // Subject
-      text: `${body} - sent by ${email}`, // plain text body
-      //   html: "<b>Hello world?</b>", // html body
+      to: ["buzzingaiogame@gmail.com", "sdennett55@gmail.com"], // list of receivers
+      subject: subject, // Subject
+      text: `${body}${email ? ` - sent by ${email}` : ""}`, // plain text body
     })
     .catch(console.error);
 

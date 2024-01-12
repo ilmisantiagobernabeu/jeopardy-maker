@@ -4,10 +4,39 @@ import cx from "classnames";
 import buzzerSound from "../sounds/buzzer.mp3";
 import { requestScreenWakeLock } from "../hooks/requestScreenWakeLock";
 import { useGetUpdatedGameState } from "../hooks/useGetUpdatedGameState";
+import { FeedbackRating } from "./FeedbackRating";
+import { useNavigate } from "react-router-dom";
+
+function isDateMoreThanAWeekAgo(inputDate: Date): boolean {
+  const twentyFourHoursInMillis = 24 * 7 * 60 * 60 * 1000; // 48 hours in milliseconds
+  const currentDate = new Date();
+
+  return currentDate.getTime() - inputDate.getTime() > twentyFourHoursInMillis;
+}
 
 const Buzzer = () => {
+  const navigate = useNavigate();
   const { socket, gameState } = useGlobalState();
   const [showModal, setShowModal] = useState(true);
+  const [showFeedbackScreen, setShowFeedbackScreen] = useState(
+    !localStorage.getItem("bz-feedbackSubmittedDate") ||
+      isDateMoreThanAWeekAgo(
+        new Date(localStorage.getItem("bz-feedbackSubmittedDate") || "")
+      )
+  );
+
+  const playerWasActiveInGame = gameState?.history.some(
+    (h) => h.name === gameState?.players?.[socket?.id || ""]?.name
+  );
+
+  const feedbackScreenIsShowing =
+    playerWasActiveInGame &&
+    gameState?.game?.rounds?.every((round) =>
+      round.every((column) =>
+        column.clues.every((clue) => clue.alreadyPlayed || !clue.answer)
+      )
+    ) &&
+    showFeedbackScreen;
 
   useGetUpdatedGameState();
 
@@ -20,6 +49,15 @@ const Buzzer = () => {
       new Date().getTime()
     );
   };
+
+  // if someone goes to the buzzer page directly
+  // and there's no roomId in localStorage
+  // kick them to the join page.
+  useEffect(() => {
+    if (!localStorage.getItem("bz-roomId")) {
+      navigate("/join");
+    }
+  }, []);
 
   useEffect(() => {
     const handleBuzzerPing = (
@@ -43,7 +81,7 @@ const Buzzer = () => {
 
   useEffect(() => {
     const handleSpacebar = (e: KeyboardEvent) => {
-      if (e.code === "Space") {
+      if (!feedbackScreenIsShowing && e.code === "Space") {
         handleClick();
       }
     };
@@ -52,7 +90,7 @@ const Buzzer = () => {
     return () => {
       window.removeEventListener("keydown", handleSpacebar);
     };
-  }, []);
+  }, [feedbackScreenIsShowing]);
 
   useEffect(() => {
     const handleDisconnect = () => {
@@ -106,6 +144,18 @@ const Buzzer = () => {
     ? "YOU"
     : gameState?.players?.[gameState.activePlayer || ""]?.name;
 
+  if (feedbackScreenIsShowing) {
+    return (
+      <div className="fixed inset-0 h-full w-full bg-[#060ce9] z-10 text-white text-3xl p-4 font-korinna flex flex-col items-center justify-center">
+        <FeedbackRating
+          onRequestClose={() => {
+            setShowFeedbackScreen(false);
+          }}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="fixed inset-0 h-full w-full bg-white font-korinna">
       <button
@@ -128,41 +178,44 @@ const Buzzer = () => {
         className={cx(
           "fixed font-bold inset-0 h-full w-full px-4 leading-none color-white appearance-none",
           {
-            "bg-red-500": !isActivePlayer,
+            "bg-red-500": !feedbackScreenIsShowing && !isActivePlayer,
             "bg-opacity-50": disabled,
             "bg-green-500": isActivePlayer,
             "!bg-yellow-500": !!gameState?.firstBuzz && !disabled,
+            "!bg-[#060ce9]": feedbackScreenIsShowing,
           }
         )}
-        onClick={handleClick}
+        onClick={feedbackScreenIsShowing ? undefined : handleClick}
       >
-        {disabled && !gameState?.activePlayer && !gameState?.firstBuzz ? (
-          <p className="flex flex-col items-center text-3xl">
-            Buzzer ready!{" "}
-            <span className="flex gap-2 text-base">
-              Tap anywhere to buzz in
-            </span>
-          </p>
-        ) : !disabled && !isActivePlayer && !gameState?.firstBuzz ? (
-          <p className="text-3xl">
-            Buzzer activated!
-            <span className="block text-lg">(Spacebar)</span>
-          </p>
-        ) : gameState?.firstBuzz && !disabled ? (
-          <p className="text-3xl">Detecting...</p>
-        ) : null}
+        <>
+          {disabled && !gameState?.activePlayer && !gameState?.firstBuzz ? (
+            <p className="flex flex-col items-center text-3xl">
+              Buzzer ready!{" "}
+              <span className="flex gap-2 text-base">
+                Tap anywhere to buzz in
+              </span>
+            </p>
+          ) : !disabled && !isActivePlayer && !gameState?.firstBuzz ? (
+            <p className="text-3xl">
+              Buzzer activated!
+              <span className="block text-lg">(Spacebar)</span>
+            </p>
+          ) : gameState?.firstBuzz && !disabled ? (
+            <p className="text-3xl">Detecting...</p>
+          ) : null}
 
-        {gameState?.activePlayer && (
-          <>
-            <p className="text-3xl">Buzzed in: {activePlayerName}!</p>
-            {gameState.secondPlace && (
-              <p className="text-lg">
-                {activePlayerName} beat {gameState.secondPlace?.name} by:{" "}
-                {gameState.secondPlace?.amountInMs}ms
-              </p>
-            )}
-          </>
-        )}
+          {gameState?.activePlayer && (
+            <>
+              <p className="text-3xl">Buzzed in: {activePlayerName}!</p>
+              {gameState.secondPlace && (
+                <p className="text-lg">
+                  {activePlayerName} beat {gameState.secondPlace?.name} by:{" "}
+                  {gameState.secondPlace?.amountInMs}ms
+                </p>
+              )}
+            </>
+          )}
+        </>
       </button>
 
       <div className="fixed top-0 w-full left-0 text-center pt-10 px-4 text-6xl pointer-events-none">

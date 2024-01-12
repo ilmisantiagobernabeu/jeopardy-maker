@@ -85,6 +85,7 @@ const PlayerJoin = () => {
               className="w-full max-w-lg px-4 py-2 text-black"
               value={sessionName}
               onChange={handleSessionChange}
+              required
             />
           </div>
           <div className="flex flex-col gap-4">
@@ -103,6 +104,7 @@ const PlayerJoin = () => {
               onChange={handleChange}
               ref={inputRef}
               autoFocus
+              required
             />
           </div>
 
