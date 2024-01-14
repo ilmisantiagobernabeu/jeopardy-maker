@@ -18,6 +18,7 @@ export type ContextType = {
   setSession: React.Dispatch<React.SetStateAction<Session | null>>;
   roundOver: boolean;
   setRoundOver: React.Dispatch<React.SetStateAction<boolean>>;
+  socketChangeCount: number;
 };
 
 const GlobalStateContext = React.createContext<ContextType | null>(
@@ -34,6 +35,7 @@ const GlobalStateProvider = ({ children }: { children: React.ReactNode }) => {
     ServerToClientEvents,
     ClientToServerEvents
   > | null>(null);
+  const [socketChangeCount, setSocketChangeCount] = useState(0);
   const localSession = localStorage.getItem("bz-session")
     ? JSON.parse(localStorage.getItem("bz-session") || "")
     : null;
@@ -43,7 +45,21 @@ const GlobalStateProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     // connect to the socket server
-    setSocket(io(SOCKET_SERVER_URL));
+    const socket = io(SOCKET_SERVER_URL);
+
+    socket.on("connect", () => {
+      setSocket(socket);
+      setSocketChangeCount((prevCount) => (prevCount += 1));
+    });
+
+    socket.on("disconnect", () => {
+      setSocket(socket);
+      setSocketChangeCount((prevCount) => (prevCount += 1));
+    });
+
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 
   useEffect(() => {
@@ -105,6 +121,7 @@ const GlobalStateProvider = ({ children }: { children: React.ReactNode }) => {
         setSession,
         roundOver,
         setRoundOver,
+        socketChangeCount,
       }}
     >
       {children}

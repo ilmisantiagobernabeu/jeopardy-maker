@@ -96,6 +96,19 @@ app.post("/api/uploadAudio", upload.single("mp3"), async (req, res) => {
   res.send(audioName);
 });
 
+app.get("/api/getRoom/:roomId", async (req, res) => {
+  const {
+    params: { roomId },
+  } = req;
+  const doesRoomExist = !!rooms[roomId];
+
+  if (doesRoomExist) {
+    return res.status(200).json({ message: "Session name found." });
+  }
+
+  return res.status(404).json({ error: "Session name not found." });
+});
+
 app.get("/api/getPrivateBoards", async (req, res) => {
   const games = await getPublicGames({ isPublic: false });
 

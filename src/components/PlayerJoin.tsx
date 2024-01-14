@@ -3,6 +3,8 @@ import { useGlobalState } from "./GlobalStateProvider";
 import { useNavigate, useParams } from "react-router-dom";
 import { PageWrapper } from "./PageWrapper";
 import { requestScreenWakeLock } from "../hooks/requestScreenWakeLock";
+import { useGetRoom } from "../api/useGetRoom";
+import { AlertTriangle, CheckCircle2 } from "lucide-react";
 
 const PlayerJoin = () => {
   const { roomId } = useParams();
@@ -11,7 +13,13 @@ const PlayerJoin = () => {
   const [playerName, setPlayerName] = useState(
     localStorage.getItem("dt-playerName") || ""
   );
-  const [sessionName, setSessionName] = useState(roomId || "");
+  const [sessionName, setSessionName] = useState(
+    roomId || localStorage.getItem("bz-roomId") || ""
+  );
+  const { data, isLoading, error } = useGetRoom(
+    sessionName,
+    sessionName.trim().length === 5
+  );
 
   const navigate = useNavigate();
 
@@ -70,28 +78,41 @@ const PlayerJoin = () => {
           background-color: #060ce9;
         }`}
         </style>
-        <div className="flex flex-col gap-8">
-          <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-2">
             <label
               htmlFor="sessionName"
-              className="font-bold text-2xl leading-none normal-case"
+              className="font-bold text-2xl leading-none normal-case dark-text-shadow"
             >
               Session name
             </label>
-            <input
-              id="sessionName"
-              type="text"
-              placeholder="e.g. abcde"
-              className="w-full max-w-lg px-4 py-2 text-black"
-              value={sessionName}
-              onChange={handleSessionChange}
-              required
-            />
+            <div className="flex flex-col gap-2">
+              <input
+                id="sessionName"
+                type="text"
+                placeholder="e.g. abcde"
+                className="w-full max-w-lg px-4 py-2 text-black rounded-md"
+                value={sessionName}
+                onChange={handleSessionChange}
+                required
+                maxLength={5}
+              />
+              {!!error ? (
+                <p className="flex gap-1 justify-center items-center text-color-error font-semibold rounded-sm px-2 py-0.5 py-13 bg-red-500 text-sm text-center">
+                  <AlertTriangle width={16} />{" "}
+                  {error?.response?.data.error || "Please try again later."}
+                </p>
+              ) : data?.message && sessionName.trim().length === 5 ? (
+                <p className="flex gap-1 justify-center items-center text-color-error font-semibold rounded-sm px-2 py-0.5 py-13 bg-green-500 text-sm text-center">
+                  <CheckCircle2 width={16} /> {data.message}
+                </p>
+              ) : null}
+            </div>
           </div>
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
             <label
               htmlFor="playerJoin"
-              className="font-bold text-2xl leading-none normal-case"
+              className="font-bold text-2xl leading-none normal-case dark-text-shadow"
             >
               Select a team name
             </label>
@@ -99,7 +120,7 @@ const PlayerJoin = () => {
               id="playerJoin"
               type="text"
               placeholder="Team Name"
-              className="w-full max-w-lg px-4 py-2 text-black"
+              className="w-full max-w-lg px-4 py-2 text-black rounded-md"
               value={playerName}
               onChange={handleChange}
               ref={inputRef}
@@ -111,7 +132,13 @@ const PlayerJoin = () => {
           <div className="flex gap-4">
             <button
               className="primary-btn disabled:opacity-40"
-              disabled={!playerName.trim() || sessionName.trim().length !== 5}
+              disabled={
+                !playerName.trim() ||
+                sessionName.trim().length !== 5 ||
+                isLoading ||
+                !!error ||
+                !socket?.connected
+              }
             >
               Join Game
             </button>

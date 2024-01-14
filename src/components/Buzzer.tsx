@@ -6,6 +6,7 @@ import { requestScreenWakeLock } from "../hooks/requestScreenWakeLock";
 import { useGetUpdatedGameState } from "../hooks/useGetUpdatedGameState";
 import { FeedbackRating } from "./FeedbackRating";
 import { useNavigate } from "react-router-dom";
+import { useGetRoom } from "../api/useGetRoom";
 
 function isDateMoreThanAWeekAgo(inputDate: Date): boolean {
   const twentyFourHoursInMillis = 24 * 7 * 60 * 60 * 1000; // 48 hours in milliseconds
@@ -23,6 +24,10 @@ const Buzzer = () => {
       isDateMoreThanAWeekAgo(
         new Date(localStorage.getItem("bz-feedbackSubmittedDate") || "")
       )
+  );
+  const { data, isLoading, error } = useGetRoom(
+    localStorage.getItem("bz-roomId") || "",
+    true
   );
 
   const playerWasActiveInGame = gameState?.history.some(
@@ -52,12 +57,15 @@ const Buzzer = () => {
 
   // if someone goes to the buzzer page directly
   // and there's no roomId in localStorage
+  // or the server says that room doesn't exist
   // kick them to the join page.
   useEffect(() => {
     if (!localStorage.getItem("bz-roomId")) {
       navigate("/join");
+    } else if (error) {
+      navigate(`/join/${localStorage.getItem("bz-roomId")}`);
     }
-  }, []);
+  }, [error, socket]);
 
   useEffect(() => {
     const handleBuzzerPing = (
@@ -92,18 +100,6 @@ const Buzzer = () => {
     };
   }, [feedbackScreenIsShowing]);
 
-  useEffect(() => {
-    const handleDisconnect = () => {
-      window.location.reload();
-    };
-
-    socket?.on("disconnect", handleDisconnect);
-
-    return () => {
-      socket?.off("disconnect", handleDisconnect);
-    };
-  }, [socket]);
-
   const isActivePlayer =
     gameState?.activePlayer && gameState?.activePlayer === socket!.id;
 
@@ -120,21 +116,15 @@ const Buzzer = () => {
   );
 
   useEffect(() => {
-    const signIn = () => {
+    if (!teamIsConnected && socket?.connected) {
       const sessionName = localStorage.getItem("bz-roomId") || "";
       socket?.emit(
         "player signed up",
         localStorage.getItem(`dt-${sessionName}-playerName`) || "",
         sessionName
       );
-    };
-
-    socket?.on("connect", signIn);
-
-    return () => {
-      socket?.off("connect", signIn);
-    };
-  }, [socket]);
+    }
+  }, [socket, teamIsConnected]);
 
   const noOneHasGoneYet = gameState?.game.rounds?.[gameState.round - 1]?.every(
     (cat) => cat.clues.every((clue) => !clue.alreadyPlayed)
