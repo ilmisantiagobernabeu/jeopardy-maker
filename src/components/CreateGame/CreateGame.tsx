@@ -1,3 +1,4 @@
+import cx from "classnames";
 import "../App.scss";
 import { useGlobalState } from "../GlobalStateProvider";
 import GameCardStatic from "../GameCardStatic";
@@ -112,7 +113,7 @@ function CreateGame({ isPreview = false }: { isPreview?: boolean }) {
     <>
       <HamburgerMenu isVisible />
       <div className="Game">
-        <div className="text-white text-center flex flex-col justify-center items-center bg-[#060ce9] p-4 gap-4">
+        <div className="text-white text-center flex flex-col justify-center items-center bg-[#060ce9] py-4 px-4 gap-2">
           <div className="flex gap-2">
             {isEditGameName ? (
               <input
@@ -140,13 +141,15 @@ function CreateGame({ isPreview = false }: { isPreview?: boolean }) {
                   {gameState.name.replaceAll("-", " ")}
                 </h2>
                 {!isPreview && (
-                  <button
-                    onClick={() => {
-                      setIsEditGameName(true);
-                    }}
-                  >
-                    <Edit width={20} />
-                  </button>
+                  <>
+                    <button
+                      onClick={() => {
+                        setIsEditGameName(true);
+                      }}
+                    >
+                      <Edit width={20} />
+                    </button>
+                  </>
                 )}
               </>
             )}
@@ -155,7 +158,11 @@ function CreateGame({ isPreview = false }: { isPreview?: boolean }) {
             <p>
               <Link
                 to={`${path}?name=${gameState.name}&round=1`}
-                className="block border rounded-md py-1 px-2"
+                className={cx("btn-sm", {
+                  "secondary-btn": round !== 1,
+                  "primary-btn": round === 1,
+                })}
+                style={{ textShadow: "rgb(0, 0, 0) 0.08em 0.08em" }}
               >
                 Round 1
               </Link>
@@ -163,7 +170,11 @@ function CreateGame({ isPreview = false }: { isPreview?: boolean }) {
             <p>
               <Link
                 to={`${path}?name=${gameState.name}&round=2`}
-                className="block border rounded-md py-1 px-2"
+                className={cx("btn-sm", {
+                  "secondary-btn": round !== 2,
+                  "primary-btn": round === 2,
+                })}
+                style={{ textShadow: "rgb(0, 0, 0) 0.08em 0.08em" }}
               >
                 Round 2
               </Link>
