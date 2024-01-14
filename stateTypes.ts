@@ -166,7 +166,10 @@ export interface ClientToServerEvents {
     }[],
     roomId: string
   ) => void;
-  ["Team selects a daily double clue"]: (roomId: string) => void;
+  ["Team selects a daily double clue"]: (
+    roomId: string,
+    socketId: string
+  ) => void;
   ["update player score manually"]: (
     socketId: string,
     score: number,

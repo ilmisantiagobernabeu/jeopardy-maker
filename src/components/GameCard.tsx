@@ -42,6 +42,20 @@ const GameCard = ({ clue, index, round }: Props) => {
 
   const { settingsState } = useGameSettings();
 
+  const firstPlayerId =
+    Object.values(gameState?.players || {}).find((player) => player.name)
+      ?.socketId || "";
+
+  const buzzedInPlayerName =
+    gameState?.players[gameState?.activePlayer || ""]?.name ||
+    gameState?.players[gameState?.lastActivePlayer || ""]?.name ||
+    gameState?.players[firstPlayerId || ""]?.name;
+
+  const buzzedInPlayerId =
+    gameState?.players[gameState?.activePlayer || ""]?.socketId ||
+    gameState?.players[gameState?.lastActivePlayer || ""]?.socketId ||
+    gameState?.players[firstPlayerId || ""]?.socketId;
+
   const [{ seconds }, { start, reset }] = useCountDown({
     // Start time in milliseconds
     startTimeMilliseconds: settingsState.countdownTimeToAnswer * 1000,
@@ -138,7 +152,8 @@ const GameCard = ({ clue, index, round }: Props) => {
       audio.play();
       socket?.emit(
         "Team selects a daily double clue",
-        localStorage.getItem("bz-roomId") || ""
+        localStorage.getItem("bz-roomId") || "",
+        buzzedInPlayerId || ""
       );
     }
   }, [isFlipped]);
@@ -346,11 +361,6 @@ const GameCard = ({ clue, index, round }: Props) => {
     setDailyDoubleAmount(0);
   };
 
-  const buzzedInPlayer =
-    gameState?.players[
-      gameState?.activePlayer || gameState.lastActivePlayer || ""
-    ]?.name;
-
   const showActivateBuzzersButton = Boolean(
     !gameState?.isBuzzerActive &&
       !gameState?.activePlayer &&
@@ -402,8 +412,11 @@ const GameCard = ({ clue, index, round }: Props) => {
               style={{ ...styles, ...resetStyles }}
             >
               {showDailyDoubleScreen && clue.isDailyDouble && (
-                <div className="absolute top-0 w-full h-full flex flex-col justify-center items-center z-20 bg-[#060ce9]">
-                  It's a daily double!
+                <div className="absolute top-0 w-full h-full flex flex-col justify-center items-center z-20 bg-[#060ce9] dark-text-shadow max-w-sm">
+                  <h2>
+                    It's a daily double,{" "}
+                    <span className="gold-text">{buzzedInPlayerName}</span>!
+                  </h2>
                   <label htmlFor="wager">
                     How much would you like to wager?
                   </label>
@@ -478,7 +491,7 @@ const GameCard = ({ clue, index, round }: Props) => {
               )}
               <p className="fixed top-4 w-full text-center text-6xl text-white">
                 Buzzed In:{" "}
-                <span className="text-green-500">{buzzedInPlayer}</span>
+                <span className="text-green-500">{buzzedInPlayerName}</span>
               </p>
               <>
                 <button

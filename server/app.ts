@@ -131,10 +131,18 @@ async function start() {
           return;
         }
 
+        const playerNameAlreadyExists = Object.values(
+          rooms[roomId].players || {}
+        ).find((player) => player.name === playerName);
+
+        if (playerNameAlreadyExists) {
+          return;
+        }
+
         socket.roomId = roomId;
         socket.join(roomId);
 
-        console.log("A player has joined", playerName);
+        console.log("A player has joined", playerName, roomId);
         const returnedPlayer = rooms[roomId].playersThatLeft.find(
           (player) => player?.name && player.name === playerName
         );
@@ -142,6 +150,14 @@ async function start() {
           (player) => player?.name && player.name !== playerName
         );
         if (returnedPlayer) {
+          // if the person who left and came back was the activePlayer
+          // or the lastActivePlayer, let's update their socketId
+          if (rooms[roomId].activePlayer === returnedPlayer.socketId) {
+            rooms[roomId].activePlayer = socket.id;
+          }
+          if (rooms[roomId].lastActivePlayer === returnedPlayer.socketId) {
+            rooms[roomId].lastActivePlayer = socket.id;
+          }
           returnedPlayer.socketId = socket.id;
           rooms[roomId].players[socket.id] = returnedPlayer;
           rooms[roomId].playersThatLeft = filteredPlayersThatLeft;
@@ -436,16 +452,12 @@ async function start() {
         io.to(roomId).emit("gameState updated", rooms[roomId]);
       });
 
-      socket.on("Team selects a daily double clue", (roomId) => {
+      socket.on("Team selects a daily double clue", (roomId, socketId) => {
         if (!rooms[roomId]) {
           return;
         }
         if (!rooms[roomId].lastActivePlayer) {
-          const firstPlayer =
-            Object.entries(rooms[roomId].players || {}).find(
-              ([_, player]) => player.name
-            )?.[0] || null;
-          rooms[roomId].lastActivePlayer = firstPlayer;
+          rooms[roomId].lastActivePlayer = socketId;
         }
         io.to(roomId).emit("gameState updated", rooms[roomId]);
       });
