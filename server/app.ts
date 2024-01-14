@@ -456,7 +456,8 @@ async function start() {
         if (!rooms[roomId]) {
           return;
         }
-        if (!rooms[roomId].lastActivePlayer) {
+        const lastActivePlayer = rooms[roomId].lastActivePlayer;
+        if (!lastActivePlayer || !rooms[roomId].players[lastActivePlayer]) {
           rooms[roomId].lastActivePlayer = socketId;
         }
         io.to(roomId).emit("gameState updated", rooms[roomId]);
