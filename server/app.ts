@@ -489,21 +489,21 @@ async function start() {
 
       socket.on("disconnect", function () {
         const roomId = socket.roomId || "";
-        if (!rooms[roomId]) {
+        if (!rooms[roomId] || !rooms[roomId].players[socket.id]) {
           return;
         }
         // if they had a name and left, let them rejoin with old score
-        console.log(
-          "DISCONNECTED",
-          rooms[roomId].players?.[socket.id]?.name,
-          rooms[roomId].playersThatLeft.map((player) => player.name)
-        );
         if (
           rooms[roomId].players?.[socket.id]?.name &&
           !rooms[roomId].playersThatLeft.find(
             (player) => player.name === rooms[roomId].players[socket.id].name
           )
         ) {
+          console.log(
+            "DISCONNECTED",
+            rooms[roomId].players?.[socket.id]?.name,
+            rooms[roomId].playersThatLeft.map((player) => player.name)
+          );
           rooms[roomId].playersThatLeft.push(rooms[roomId].players[socket.id]);
         }
         delete rooms[roomId].players[socket.id];
