@@ -150,6 +150,25 @@ const Homepage = () => {
                           >
                             <button
                               onClick={() => {
+                                let response = true;
+                                const isGameInProgress =
+                                  !!gameState?.game.rounds.some((round) =>
+                                    round.some((r) =>
+                                      r.clues.some((clue) => clue.alreadyPlayed)
+                                    )
+                                  );
+                                if (
+                                  gameState?.name &&
+                                  gameState?.name !== game.name &&
+                                  isGameInProgress
+                                ) {
+                                  response = confirm(
+                                    `Are you sure you want to quit the ${gameState?.name} game in progress?`
+                                  );
+                                  if (!response) {
+                                    return;
+                                  }
+                                }
                                 socket?.emit(
                                   "Host changes the game",
                                   game.name,

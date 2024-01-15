@@ -50,11 +50,13 @@ const GlobalStateProvider = ({ children }: { children: React.ReactNode }) => {
     socket.on("connect", () => {
       setSocket(socket);
       setSocketChangeCount((prevCount) => (prevCount += 1));
+      console.log("Socket reconnected");
     });
 
     socket.on("disconnect", () => {
       setSocket(socket);
       setSocketChangeCount((prevCount) => (prevCount += 1));
+      console.log("Socket disconnected");
     });
 
     return () => {
