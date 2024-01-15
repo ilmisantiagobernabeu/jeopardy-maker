@@ -1,7 +1,6 @@
 import QRCodeLib from "react-qr-code";
 import cx from "classnames";
 import { useGlobalState } from "./GlobalStateProvider";
-import { useGetUpdatedGameState } from "../hooks/useGetUpdatedGameState";
 
 const getUrl = (roomId = "") =>
   import.meta.env.PROD
@@ -9,7 +8,6 @@ const getUrl = (roomId = "") =>
     : `http://${import.meta.env.VITE_STATIC_IP}:5173/join/${roomId}`;
 
 export const QRCode = ({ className = "" }: { className?: string }) => {
-  useGetUpdatedGameState();
   const { gameState } = useGlobalState();
   return (
     <div

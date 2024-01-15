@@ -1,10 +1,9 @@
-import { useGetUpdatedGameState } from "../hooks/useGetUpdatedGameState";
 import { useGlobalState } from "./GlobalStateProvider";
 import { PageWrapper } from "./PageWrapper";
 
 const HostControls = () => {
   const { gameState } = useGlobalState();
-  useGetUpdatedGameState();
+
   return (
     <PageWrapper>
       <div>

@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { useGlobalState } from "./GlobalStateProvider";
 import { useState } from "react";
 import { PageWrapper } from "./PageWrapper";
-import { useGetUpdatedGameState } from "../hooks/useGetUpdatedGameState";
+
 import { KeyDetectVeil } from "./KeyDetectVeil";
 import { useBuzzers } from "../hooks/useBuzzers";
 import { PlayerWithButton } from "./PlayerWIthButton";
@@ -13,8 +13,6 @@ const Teams = () => {
   const [playerName, setPlayerName] = useState("");
   const [keys, setKeys] = useState<string[]>([]);
   const [showKeyDetectVeil, setShowKeyDetectVeil] = useState(false);
-
-  useGetUpdatedGameState();
 
   const playersWithButtons = Object.values(gameState?.players || {}).filter(
     (player) => Boolean(player.name && player?.keys?.length)

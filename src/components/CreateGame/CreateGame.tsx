@@ -38,8 +38,6 @@ function CreateGame({ isPreview = false }: { isPreview?: boolean }) {
   const [isEditGameName, setIsEditGameName] = useState(false);
   const [gameTitle, setGameTitle] = useState(gameState.name);
 
-  useGetUpdatedGameState();
-
   const catTitles = gameState.rounds?.[round - 1]?.map(
     (round) => round.category
   );

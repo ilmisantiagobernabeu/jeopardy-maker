@@ -8,6 +8,8 @@ import {
 } from "../../stateTypes";
 import { SOCKET_SERVER_URL } from "../api/constants";
 import { supabase } from "../api/supabase";
+import { queryClient } from "../main";
+import { getRoomQueryKey } from "../api/useGetRoom";
 
 export type ContextType = {
   gameState: GameState | null;
@@ -50,6 +52,10 @@ const GlobalStateProvider = ({ children }: { children: React.ReactNode }) => {
     socket.on("connect", () => {
       setSocket(socket);
       setSocketChangeCount((prevCount) => (prevCount += 1));
+      socket.emit(
+        "User gets updated game state",
+        localStorage.getItem("bz-roomId") || ""
+      );
       console.log("Socket reconnected");
     });
 
@@ -74,6 +80,7 @@ const GlobalStateProvider = ({ children }: { children: React.ReactNode }) => {
       // set the new game state on the client
       setGameState(gameStateFromServer);
       localStorage.setItem("bz-roomId", gameStateFromServer.guid);
+      queryClient.invalidateQueries(getRoomQueryKey);
     });
 
     socket?.on("Buzzers are activated", function () {

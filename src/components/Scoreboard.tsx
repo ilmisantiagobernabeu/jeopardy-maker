@@ -3,7 +3,6 @@ import { useGlobalState } from "./GlobalStateProvider";
 import cx from "classnames";
 import { PageWrapper } from "./PageWrapper";
 import EditIcon from "../icons/EditIcon";
-import { useGetUpdatedGameState } from "../hooks/useGetUpdatedGameState";
 
 function formatScore(score: number) {
   if (score < 0) {
@@ -16,8 +15,6 @@ function formatScore(score: number) {
 const Scoreboard = () => {
   const { gameState, socket } = useGlobalState() || {};
   const { name } = useParams();
-
-  useGetUpdatedGameState();
 
   // if a user goes to /scoreboard/[team name], let's show just their score
   const singlePlayerStats =

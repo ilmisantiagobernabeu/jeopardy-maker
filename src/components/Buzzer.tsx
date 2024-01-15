@@ -3,7 +3,7 @@ import { useGlobalState } from "./GlobalStateProvider";
 import cx from "classnames";
 import buzzerSound from "../sounds/buzzer.mp3";
 import { requestScreenWakeLock } from "../hooks/requestScreenWakeLock";
-import { useGetUpdatedGameState } from "../hooks/useGetUpdatedGameState";
+
 import { FeedbackRating } from "./FeedbackRating";
 import { useNavigate } from "react-router-dom";
 import { useGetRoom } from "../api/useGetRoom";
@@ -42,8 +42,6 @@ const Buzzer = () => {
       )
     ) &&
     showFeedbackScreen;
-
-  useGetUpdatedGameState();
 
   const handleClick = () => {
     const sound = new Audio(buzzerSound);

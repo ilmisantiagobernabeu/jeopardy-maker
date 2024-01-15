@@ -2,13 +2,10 @@ import { useParams } from "react-router-dom";
 import { useGlobalState } from "./GlobalStateProvider";
 import { HistoryPlayer } from "../../stateTypes";
 import { PageWrapper } from "./PageWrapper";
-import { useGetUpdatedGameState } from "../hooks/useGetUpdatedGameState";
 
 const History = () => {
   const { gameState, socket } = useGlobalState() || {};
   const { name } = useParams();
-
-  useGetUpdatedGameState();
 
   const handleUndo = (player: HistoryPlayer) => {
     socket?.emit("Host modifies the score", {

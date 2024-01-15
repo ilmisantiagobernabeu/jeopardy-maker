@@ -4,7 +4,7 @@ import "./App.scss";
 import { useGlobalState } from "./GlobalStateProvider";
 import { Link, useLocation } from "react-router-dom";
 import { HamburgerMenu } from "./HamburgerMenu";
-import { useGetUpdatedGameState } from "../hooks/useGetUpdatedGameState";
+
 import { Clue, ClueType } from "../../stateTypes";
 import { useGetGameBoard } from "../api/useGetGameBoard";
 import { Loader } from "lucide-react";
@@ -33,8 +33,6 @@ function App() {
   const [showInfoModal, setShowInfoModal] = useState(false);
   const timeout = useRef<NodeJS.Timeout | null>(null);
   const { data: userBoards } = useGetUserBoards(session?.user.id || "");
-
-  useGetUpdatedGameState();
 
   const {
     data: gameBoardData,

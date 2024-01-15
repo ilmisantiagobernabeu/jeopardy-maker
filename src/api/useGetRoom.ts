@@ -20,5 +20,6 @@ export const useGetRoom = (roomId: string, enabled: boolean) => {
     queryFn: () => getRoom(roomId),
     enabled,
     retry: false,
+    refetchOnWindowFocus: true,
   });
 };
