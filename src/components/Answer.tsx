@@ -19,8 +19,7 @@ const Answer = ({ setShowAnswer }: Props) => {
   }, []);
 
   return (
-    <div className="text-white text-9xl flex flex-col justify-center items-center h-full fixed inset-0 bg-[#060ce9] z-50 gap-y-8">
-      <p className="underline">Answer:</p>
+    <div className="text-white text-9xl flex flex-col justify-center items-center h-full fixed inset-0 bg-[#060ce9] z-50 gap-y-8 dark-text-shadow">
       {gameState?.activeClue?.answer}
     </div>
   );
