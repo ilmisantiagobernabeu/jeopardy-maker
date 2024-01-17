@@ -355,9 +355,11 @@ async function start() {
             const sortedTeams = Object.values(rooms[roomId].buzzerHits).sort(
               (a, b) => (a.timestamp > b.timestamp ? 1 : -1)
             );
-            const firstPlayerToBuzzIn = sortedTeams[0].socketId;
+            const firstPlayerToBuzzIn = sortedTeams[0]?.socketId;
 
-            markTeamAsBuzzedIn(rooms[roomId], firstPlayerToBuzzIn);
+            if (firstPlayerToBuzzIn) {
+              markTeamAsBuzzedIn(rooms[roomId], firstPlayerToBuzzIn);
+            }
 
             if (
               sortedTeams[1] &&
