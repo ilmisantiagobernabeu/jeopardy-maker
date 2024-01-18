@@ -343,40 +343,7 @@ async function start() {
 
         socket.emit("buzzer hit ping", clientTimeStamp, new Date().getTime());
 
-        // first player to buzz in starts the latency time out
-        // to determine who actually buzzed in first
-        if (!rooms[roomId].firstBuzz) {
-          rooms[roomId].firstBuzz = true;
-          io.to(roomId).emit("gameState updated", rooms[roomId]);
-
-          const buzzerCheckTimeoutId = setTimeout(() => {
-            // determine who buzzed in first from buzzerHits
-
-            const sortedTeams = Object.values(rooms[roomId].buzzerHits).sort(
-              (a, b) => (a.timestamp > b.timestamp ? 1 : -1)
-            );
-            const firstPlayerToBuzzIn = sortedTeams[0]?.socketId;
-
-            if (firstPlayerToBuzzIn) {
-              markTeamAsBuzzedIn(rooms[roomId], firstPlayerToBuzzIn);
-            }
-
-            if (
-              sortedTeams[1] &&
-              rooms[roomId].players?.[sortedTeams[1].socketId]?.name
-            ) {
-              rooms[roomId].secondPlace = {
-                name: rooms[roomId].players[sortedTeams[1].socketId].name,
-                amountInMs: sortedTeams[1].timestamp - sortedTeams[0].timestamp,
-              };
-            }
-
-            io.to(roomId).emit("gameState updated", rooms[roomId]);
-            clearTimeout(buzzerCheckTimeoutId);
-          }, 1000);
-        } else {
-          io.to(roomId).emit("gameState updated", rooms[roomId]);
-        }
+        io.to(roomId).emit("gameState updated", rooms[roomId]);
       });
 
       socket.on("buzzer hit pong", (roomId, ping, serverTimeStamp) => {
@@ -390,6 +357,44 @@ async function start() {
             timestamp: serverTimeStamp - ping / 2,
             socketId: socket.id,
           };
+        }
+
+        if (Object.keys(rooms[roomId].buzzerHits).length === 1) {
+          // first player to buzz in starts the latency time out
+          // to determine who actually buzzed in first
+          if (!rooms[roomId].firstBuzz) {
+            rooms[roomId].firstBuzz = true;
+            io.to(roomId).emit("gameState updated", rooms[roomId]);
+
+            const buzzerCheckTimeoutId = setTimeout(() => {
+              // determine who buzzed in first from buzzerHits
+
+              const sortedTeams = Object.values(rooms[roomId].buzzerHits).sort(
+                (a, b) => (a.timestamp > b.timestamp ? 1 : -1)
+              );
+              const firstPlayerToBuzzIn = sortedTeams[0]?.socketId;
+
+              if (firstPlayerToBuzzIn) {
+                markTeamAsBuzzedIn(rooms[roomId], firstPlayerToBuzzIn);
+              } else {
+                rooms[roomId].firstBuzz = false;
+              }
+
+              if (
+                sortedTeams[1] &&
+                rooms[roomId].players?.[sortedTeams[1].socketId]?.name
+              ) {
+                rooms[roomId].secondPlace = {
+                  name: rooms[roomId].players[sortedTeams[1].socketId].name,
+                  amountInMs:
+                    sortedTeams[1].timestamp - sortedTeams[0].timestamp,
+                };
+              }
+
+              io.to(roomId).emit("gameState updated", rooms[roomId]);
+              clearTimeout(buzzerCheckTimeoutId);
+            }, 1000);
+          }
         }
       });
 
